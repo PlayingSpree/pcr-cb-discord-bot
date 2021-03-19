@@ -2,14 +2,19 @@ const dotenv = require('dotenv');
 const fs = require('fs');
 const Discord = require('discord.js');
 const appConfig = require('./config.json');
+const queueManager = require('./queue/queue_manager.js');
 
 dotenv.config();
 
 const client = new Discord.Client();
+// Attach per server settings to client.settings
+client.settings = require('./per_server_setting/server_setting_manager.js');
+
 client.login(process.env.TOKEN);
 
 client.once('ready', () => {
     console.log(`Ready! Logged in as ${client.user.tag}`);
+    client.user.setPresence({ activity: { name: 'Beta Test OwO' }, status: 'online' });
 });
 
 client.commands = new Discord.Collection();
@@ -30,10 +35,11 @@ for (const folder of commandFolders) {
 const cooldowns = new Discord.Collection();
 
 client.on('message', message => {
+    const prefix = message.guild ? message.client.settings.get(message.guild.id).prefix : appConfig.prefix;
     // Extract command from message
-    if (!message.content.startsWith(appConfig.prefix) || message.author.bot) return;
+    if (!message.content.startsWith(prefix) || message.author.bot) return;
 
-    const args = message.content.slice(appConfig.prefix.length).trim().split(/ +/);
+    const args = message.content.slice(prefix.length).trim().split(/ +/);
     const commandName = args.shift().toLowerCase();
 
     // Find command (name: string, aliases: [string])
@@ -47,7 +53,7 @@ client.on('message', message => {
         let reply = `You didn't provide any arguments, ${message.author}!`;
 
         if (command.usage) {
-            reply += `\nThe proper usage would be: \`${appConfig.prefix}${command.name} ${command.usage}\``;
+            reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
         }
 
         return message.channel.send(reply);
@@ -87,6 +93,7 @@ client.on('message', message => {
     setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
 
     // Execute command
+    console.log(`Execute: ${command.name} with args: ${args.join(' ')}`);
     try {
         command.execute(message, args);
     }
@@ -94,6 +101,14 @@ client.on('message', message => {
         console.error(error);
         message.reply('there was an error trying to execute that command!');
     }
+});
+
+client.on('messageReactionAdd', async (reaction, user) => {
+    queueManager.reactionEvent(reaction, user);
+});
+
+client.on('guildDelete', guild => {
+    client.settings.delete(guild.id);
 });
 
 process.on('unhandledRejection', error => {

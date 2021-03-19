@@ -1,3 +1,9 @@
+# Database
+data/
+
+# Invite link
+invitelink.txt
+
 # Logs
 logs
 *.log
