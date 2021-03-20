@@ -22,12 +22,10 @@ const subCommands = [{
     execute(message, args) {
         if (message.mentions.users.size > 0) {
             queueManager.queueAdd(message.channel, [...message.mentions.users.values()]);
-            queueManager.printQueue();
         }
         else {
             const prefix = message.client.settings.get(message.guild.id).prefix;
-            message.channel.send(`กรุณา Mention User ที่ต้องการเพิ่ม\nวิธีใช้: ${prefix}${this.name} ${this.usage}`);
-            return;
+            return message.channel.send(`กรุณา Mention User ที่ต้องการเพิ่ม\nวิธีใช้: ${prefix}${this.name} ${this.usage}`);
         }
     }
 }, {
@@ -37,12 +35,10 @@ const subCommands = [{
     execute(message, args) {
         if (message.mentions.users.size > 0) {
             queueManager.queueRemove(message.channel, [...message.mentions.users.values()]);
-            queueManager.printQueue();
         }
         else {
             const prefix = message.client.settings.get(message.guild.id).prefix;
-            message.channel.send(`กรุณา Mention User ที่ต้องการเพิ่ม\nวิธีใช้: ${prefix}${this.name} ${this.usage}`);
-            return;
+            return message.channel.send(`กรุณา Mention User ที่ต้องการเพิ่ม\nวิธีใช้: ${prefix}${this.name} ${this.usage}`);
         }
     }
 }];
@@ -58,24 +54,20 @@ module.exports = {
         const prefix = guildConfig.prefix;
         // Check Role
         if (!message.member.roles.cache.some(role => role.name === guildConfig.approvalRole)) {
-            message.channel.send(`ท่านต้องมี Role: \`${guildConfig.approvalRole}\` ถึงจะใช้งานได้`);
-            return;
+            return message.channel.send(`ท่านต้องมี Role: \`${guildConfig.approvalRole}\` ถึงจะใช้งานได้`);
         }
         // Sub commands
         if (subCommandManager.execute(subCommands, message, args)) return;
         // Validation
         if (args.length < 2) {
-            message.channel.send(`arguments ไม่พอ\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
-            return;
+            return message.channel.send(`arguments ไม่พอ\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
         }
         const teamCount = parseInt(args[1]);
         if (isNaN(teamCount)) {
-            message.channel.send(`arguments ที่ 2 ต้องเป็นตัวเลข\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
-            return;
+            return message.channel.send(`arguments ที่ 2 ต้องเป็นตัวเลข\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
         }
         if (teamCount <= 0) {
-            message.channel.send(`arguments ที่ 2 ต้องมากกว่า 0\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
-            return;
+            return message.channel.send(`arguments ที่ 2 ต้องมากกว่า 0\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
         }
         // run
         queueManager.startQueue(message.channel, teamCount);

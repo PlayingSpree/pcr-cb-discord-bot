@@ -23,7 +23,7 @@ async function clearChat(message) {
 module.exports = {
     name: 'clearchat',
     aliases: ['cc'],
-    description: 'Clear all chat in the channel.',
+    description: 'ลบแชทใน channel ทั้งหมด (Admin เท่านั้น)',
     permissions: 'ADMINISTRATOR',
     guildOnly: true,
     execute(message, args) {

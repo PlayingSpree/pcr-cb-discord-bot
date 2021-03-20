@@ -1,7 +1,7 @@
 module.exports = {
     name: 'ping',
-    description: 'Ping!',
+    description: 'แสดงค่า latency',
     execute(message, args) {
-        message.channel.send('Pong.');
+        message.channel.send(`🏓Latency: ${Math.round(message.client.ws.ping)}ms`);
     }
 };

@@ -1,10 +1,8 @@
-const { prefix } = require('../../config.json');
-
 module.exports = {
     name: 'help',
-    description: 'List all of my commands or info about a specific command.',
+    description: 'แสดงรายการ command ทั้งหมด หรือ แสดงรายละเอียด command ที่ใส่',
     aliases: ['commands'],
-    usage: '[command name]',
+    usage: '[command name] แสดงรายละเอียด command',
     cooldown: 5,
     execute(message, args) {
         const data = [];
@@ -12,35 +10,27 @@ module.exports = {
         const guildConf = message.guild ? settings.get(message.guild.id) : null;
 
         if (!args.length) {
-            data.push('Here\'s a list of all my commands:');
+            data.push('รายการ commands ทั้งหมด:');
             data.push(`\`\`\`${commands.map(command => command.name).join(', ')}\`\`\``);
-            if (guildConf) data.push(`Your server prefix: \`${guildConf.prefix}\``);
-            data.push(`You can send \`${prefix}help [command name]\` to get info on a specific command!`);
+            if (guildConf) data.push(`prefix ของ server นี้: \`${guildConf.prefix}\``);
+            data.push(`สามารถใช้ \`${guildConf.prefix}help [command name]\` เพื่อแสดงรายละเอียดเกี่ยวกับ command นั้น ๆ ได้`);
 
-            return message.author.send(data, { split: true })
-                .then(() => {
-                    if (message.channel.type === 'dm') return;
-                    message.reply('I\'ve sent you a DM with all my commands!');
-                })
-                .catch(error => {
-                    console.error(`Could not send help DM to ${message.author.tag}.\n`, error);
-                    message.reply('it seems like I can\'t DM you! Do you have DMs disabled?');
-                });
+            return message.channel.send(data, { split: true });
         }
 
         const name = args[0].toLowerCase();
         const command = commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name));
 
         if (!command) {
-            return message.reply('that\'s not a valid command!');
+            return message.reply('ไม่พบ command ที่ใส่ใว้');
         }
 
-        data.push(`**Name:** ${command.name}`);
+        data.push(`**ชื่อ command:** ${command.name}`);
 
-        if (command.aliases) data.push(`**Aliases:** ${command.aliases.join(', ')}`);
-        data.push(`**Cooldown:** ${command.cooldown || 3} second(s)`);
-        if (command.description) data.push(`**Description:** ${command.description}`);
-        if (command.usage) data.push(`**Usage:** ${prefix}${command.name} ${command.usage}`);
+        if (command.aliases) data.push(`**ชื่อเพิ่มเติม:** ${command.aliases.join(', ')}`);
+        data.push(`**Cooldown:** ${command.cooldown || 3} วินาที`);
+        if (command.description) data.push(`**รายละเอียด:** ${command.description}`);
+        if (command.usage) data.push(`**วิธีใช้:** ${guildConf.prefix}${command.name} ${command.usage}`);
 
         message.channel.send(data, { split: true });
     },

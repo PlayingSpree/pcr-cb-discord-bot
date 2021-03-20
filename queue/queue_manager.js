@@ -45,17 +45,28 @@ module.exports = {
             for (const user of users) {
                 state.playerQueue.push(user);
             }
+            channel.send(`อนุมัติผู้เล่นเพิ่ม${users.length > 1 ? `อีก ${users.length} คน` : ''}แล้วจ้า~`);
+            this.printQueue(channel);
         }
     },
     queueRemove(channel, users) {
         const state = getState(channel);
+        const notFoundUsers = [];
         if (state) {
             for (const user of users) {
                 const index = state.playerQueue.indexOf(user);
-                if (index !== -1) {
+                if (index == -1) {
+                    notFoundUsers.push(user);
+                }
+                else {
                     state.playerQueue.splice(index, 1);
                 }
             }
+            if (notFoundUsers.length > 0) {
+                channel.send(`ไม่เจอ ${notFoundUsers.join(' ')} ในรายชื่ออนุมัติ`, { 'allowedMentions': { 'users': [] } });
+            }
+            channel.send(`นำผู้เล่น${users.filter(user => !notFoundUsers.includes(user)).join(' ')} ออกจากรายชื่ออนุมัติ`, { 'allowedMentions': { 'users': [] } });
+            this.printQueue(channel);
         }
     },
     printQueue(channel) {
@@ -66,7 +77,7 @@ module.exports = {
                 return;
             }
             const playerList = state.playerQueue.map((player, index) => `${index + 1}. ${player}`).join('\n');
-            channel.send(`ขณะนี้มีคนได้รับอนุมัติไปแล้ว ${state.playerQueue.length}/${state.queueMax} ไม้\n${playerList}`, { 'allowedMentions': { 'users': [] } });
+            channel.send(`:crossed_swords: ขณะนี้มีคนได้รับอนุมัติไปแล้ว ${state.playerQueue.length}/${state.queueMax} ไม้\n${playerList}`, { 'allowedMentions': { 'users': [] } });
         }
     },
     reactionEvent(reaction, user) {
