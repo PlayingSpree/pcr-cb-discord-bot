@@ -6,22 +6,27 @@ const subCommands = [{
     aliases: ['l'],
     usage: 'รายชื่อคนที่ได้รับอนุมัติไปแล้ว',
     execute(message, args) {
-        queueManager.printQueue(message.channel);
+        queueManager.print(message.channel);
     }
 }, {
     name: 'stop',
     aliases: ['s'],
     usage: 'หยุดการอนุมัติตีบอส',
     execute(message, args) {
-        queueManager.stopQueue(message.channel);
+        queueManager.stop(message.channel);
     }
 }, {
     name: 'add',
     aliases: ['a'],
-    usage: '[@user] เพิ่มคนที่ Mention ในรายชื่ออนุมัติ (เพิ่มทีละหลายคนได้)',
+    usage: '<-p> [@user] เพิ่มคนที่ Mention ในรายชื่ออนุมัติ (เพิ่มทีละหลายคนได้) สามารถเพิ่ม -p เพื่อให้พอสรอได้',
     execute(message, args) {
         if (message.mentions.users.size > 0) {
-            queueManager.queueAdd(message.channel, [...message.mentions.users.values()]);
+            if (args.length > 0 && args[0] == '-p') {
+                queueManager.add(message.channel, [...message.mentions.users.values()], true);
+            }
+            else {
+                queueManager.add(message.channel, [...message.mentions.users.values()], false);
+            }
         }
         else {
             const prefix = message.client.settings.get(message.guild.id).prefix;
@@ -34,12 +39,19 @@ const subCommands = [{
     usage: '[@user] ลบคนที่ Mention ในรายชื่ออนุมัติ (ลบทีละหลายคนได้)',
     execute(message, args) {
         if (message.mentions.users.size > 0) {
-            queueManager.queueRemove(message.channel, [...message.mentions.users.values()]);
+            queueManager.remove(message.channel, [...message.mentions.users.values()]);
         }
         else {
             const prefix = message.client.settings.get(message.guild.id).prefix;
             return message.channel.send(`กรุณา Mention User ที่ต้องการเพิ่ม\nวิธีใช้: ${prefix}${this.name} ${this.usage}`);
         }
+    }
+}, {
+    name: 'unpause',
+    aliases: ['up'],
+    usage: 'Mention คนที่พอสอยู่ในรายชื่ออนุมัติ และลบสถานะ Pause',
+    execute(message, args) {
+        queueManager.unpause(message.channel);
     }
 }];
 
@@ -69,8 +81,8 @@ module.exports = {
         if (teamCount <= 0) {
             return message.channel.send(`arguments ที่ 2 ต้องมากกว่า 0\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
         }
-        // run
-        queueManager.startQueue(message.channel, teamCount);
+        // Run
+        queueManager.start(message.channel, teamCount);
         message.channel.send(`บอส ${args[0]} มาแล้ว ต้องการ ${teamCount} ไม้ โพสรูปแล้วรออนุมัติ เมื่อได้รับอนุมัติแล้วก็ตีได้เลยจ้า~`);
         message.delete();
     }

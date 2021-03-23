@@ -1,4 +1,5 @@
 {
 	"prefix": "%",
-    "debug": true
+    "debug": true,
+    "presence": "Beta Test v0.0.2"
 }

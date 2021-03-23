@@ -14,7 +14,7 @@ client.login(process.env.TOKEN);
 
 client.once('ready', () => {
     console.log(`Ready! Logged in as ${client.user.tag}`);
-    client.user.setPresence({ activity: { name: 'Beta Test OwO' }, status: 'online' });
+    client.user.setPresence({ activity: { name: appConfig.presence }, status: 'online' });
 });
 
 client.commands = new Discord.Collection();

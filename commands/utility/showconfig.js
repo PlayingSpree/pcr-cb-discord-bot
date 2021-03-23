@@ -1,6 +1,6 @@
 module.exports = {
     name: 'showconfig',
-    aliases: ['showconf', 'listconfig'],
+    aliases: ['showconf', 'listconfig', 'listconf'],
     description: 'แสดงรายการการตั้งค่าบอทสำหรับ server นี้ (Admin เท่านั้น)',
     permissions: 'ADMINISTRATOR',
     execute(message, args) {

@@ -17,7 +17,8 @@ module.exports = {
 
         if (!command) return false;
 
-        command.execute(message, args.shift());
+        args.shift();
+        command.execute(message, args);
         return true;
     }
 };

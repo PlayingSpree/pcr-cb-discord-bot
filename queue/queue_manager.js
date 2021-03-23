@@ -8,6 +8,14 @@ class QueueState {
         this.queueChannel = channel;
         this.queueMax = max;
         this.playerQueue = [];
+        this.reactedMessage = [];
+    }
+}
+
+class playerQueueState {
+    constructor(user, paused) {
+        this.user = user;
+        this.paused = paused;
     }
 }
 
@@ -27,11 +35,11 @@ function getState(channel) {
 }
 
 module.exports = {
-    startQueue(channel, max) {
+    start(channel, max) {
         queueStates.set(channel.guild.id, new QueueState(channel, max));
         console.log(`queue started at ${channel.guild.name} on ${channel.name}`);
     },
-    stopQueue(channel) {
+    stop(channel) {
         const state = getState(channel);
         if (state) {
             state.isActive = false;
@@ -39,22 +47,22 @@ module.exports = {
             console.log(`queue stoped at ${channel.guild.name} on ${channel.name}`);
         }
     },
-    queueAdd(channel, users) {
+    add(channel, users, pause) {
         const state = getState(channel);
         if (state) {
             for (const user of users) {
-                state.playerQueue.push(user);
+                state.playerQueue.push(new playerQueueState(user, pause));
             }
             channel.send(`อนุมัติผู้เล่นเพิ่ม${users.length > 1 ? `อีก ${users.length} คน` : ''}แล้วจ้า~`);
-            this.printQueue(channel);
+            this.print(channel);
         }
     },
-    queueRemove(channel, users) {
+    remove(channel, users) {
         const state = getState(channel);
-        const notFoundUsers = [];
         if (state) {
+            const notFoundUsers = [];
             for (const user of users) {
-                const index = state.playerQueue.indexOf(user);
+                const index = state.playerQueue.findIndex(x => x.user == user);
                 if (index == -1) {
                     notFoundUsers.push(user);
                 }
@@ -66,18 +74,35 @@ module.exports = {
                 channel.send(`ไม่เจอ ${notFoundUsers.join(' ')} ในรายชื่ออนุมัติ`, { 'allowedMentions': { 'users': [] } });
             }
             channel.send(`นำผู้เล่น${users.filter(user => !notFoundUsers.includes(user)).join(' ')} ออกจากรายชื่ออนุมัติ`, { 'allowedMentions': { 'users': [] } });
-            this.printQueue(channel);
+            this.print(channel);
         }
     },
-    printQueue(channel) {
+    unpause(channel) {
+        const state = getState(channel);
+        if (state) {
+            const pausedUsers = [];
+            for (const user of state.playerQueue) {
+                if (user.paused === true) {
+                    pausedUsers.push(user.user);
+                    user.paused = false;
+                }
+            }
+            if (pausedUsers.length === 0) {
+                channel.send('ไม่มีผู้เล่นที่กำลังพอสอยู่ในรายชื่ออนุมัติ');
+            }
+            channel.send(`${pausedUsers.join(' ')} ปล่อยพอสได้เลยจ้า~`);
+        }
+    },
+    print(channel) {
         const state = getState(channel);
         if (state) {
             if (state.playerQueue.length === 0) {
                 channel.send('ขณะนี้มียังไม่มีคนได้รับอนุมัติ');
                 return;
             }
-            const playerList = state.playerQueue.map((player, index) => `${index + 1}. ${player}`).join('\n');
-            channel.send(`:crossed_swords: ขณะนี้มีคนได้รับอนุมัติไปแล้ว ${state.playerQueue.length}/${state.queueMax} ไม้\n${playerList}`, { 'allowedMentions': { 'users': [] } });
+            const playerList = state.playerQueue.map((player, index) => `${index + 1}. ${player.user.username} (${player.user})${player.paused ? ' ⏸️' : ''}`).join('\n');
+            const pauseCount = state.playerQueue.filter(x => x.paused === true).length;
+            channel.send(`:crossed_swords: ขณะนี้มีคนได้รับอนุมัติไปแล้ว ${state.playerQueue.length}/${state.queueMax} ไม้${pauseCount > 0 ? ` ⏸️ พอสอยู่ ${pauseCount} ไม้` : ''}\n${playerList}`, { 'allowedMentions': { 'users': [] } });
         }
     },
     reactionEvent(reaction, user) {
@@ -88,6 +113,8 @@ module.exports = {
         if (user.bot) return;
         // Check channel
         if (messageChannel.id !== state.queueChannel.id) return;
+        // Check duplicate
+        if (state.reactedMessage.indexOf(reaction.message) !== -1) return;
         // Check role
         const guildConfig = messageChannel.client.settings.get(messageChannel.guild.id);
         const member = messageChannel.guild.member(user);
@@ -96,16 +123,19 @@ module.exports = {
         // Reply for each emoji
         const player = reaction.message.author;
         if (reaction.emoji.name === '✅') {
-            state.playerQueue.push(reaction.message.author);
+            state.playerQueue.push(new playerQueueState(reaction.message.author, false));
+            state.reactedMessage.push(reaction.message);
             messageChannel.send(`${player} ตีได้เลยจ้า~`);
-            this.printQueue(messageChannel);
+            this.print(messageChannel);
         }
-        if (reaction.emoji.name === '❌') {
+        if (reaction.emoji.name === '❌' || reaction.emoji.name === '❎') {
             messageChannel.send(`${player} อย่าเพิ่งตีก่อน ซ้อมให้ดีกว่านี้แล้วมาขออนุญาตใหม่น้า~`);
+            state.reactedMessage.push(reaction.message);
         } if (reaction.emoji.name === '⏸️') {
-            state.playerQueue.push(reaction.message.author);
+            state.playerQueue.push(new playerQueueState(reaction.message.author, true));
             messageChannel.send(`${player} ตีได้เลยจ้า~ แต่ต้องพอสรอด้วยน้า~`);
-            this.printQueue(messageChannel);
+            state.reactedMessage.push(reaction.message);
+            this.print(messageChannel);
         }
     }
 };
