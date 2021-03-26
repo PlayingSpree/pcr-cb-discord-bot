@@ -35,8 +35,9 @@ function getState(channel) {
 }
 
 module.exports = {
-    start(channel, max) {
+    start(channel, max, name) {
         queueStates.set(channel.guild.id, new QueueState(channel, max));
+        channel.send(`บอส ${name} มาแล้ว ต้องการ ${max} ไม้ โพสรูปแล้วรออนุมัติ เมื่อได้รับอนุมัติแล้วก็ตีได้เลยจ้า~`);
         console.log(`queue started at ${channel.guild.name} on ${channel.name}`);
     },
     stop(channel) {
@@ -73,8 +74,14 @@ module.exports = {
             if (notFoundUsers.length > 0) {
                 channel.send(`ไม่เจอ ${notFoundUsers.join(' ')} ในรายชื่ออนุมัติ`, { 'allowedMentions': { 'users': [] } });
             }
-            channel.send(`นำผู้เล่น${users.filter(user => !notFoundUsers.includes(user)).join(' ')} ออกจากรายชื่ออนุมัติ`, { 'allowedMentions': { 'users': [] } });
-            this.print(channel);
+            const removedUsers = users.filter(user => !notFoundUsers.includes(user));
+            if (removedUsers.length > 0) {
+                channel.send(`นำผู้เล่น${removedUsers.join(' ')} ออกจากรายชื่ออนุมัติ`, { 'allowedMentions': { 'users': [] } });
+                this.print(channel);
+            }
+            else {
+                channel.send('ไม่มีผู้เล่นที่ถูกนำออกจากรายชื่ออนุมัติ');
+            }
         }
     },
     unpause(channel) {

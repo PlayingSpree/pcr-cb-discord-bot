@@ -1,0 +1,126 @@
+[
+    {
+        "name": "clearchat",
+        "description": "ลบแชทใน channel ทั้งหมด (Admin เท่านั้น)"
+    },
+    {
+        "name": "queue",
+        "description": "ใช้เตรียมอนุมัติตีบอส",
+        "options": [
+            {
+                "type": 1,
+                "name": "start",
+                "description": "เริ่มการอนุมัติตีบอส",
+                "options": [
+                    {
+                        "type": 3,
+                        "name": "bossname",
+                        "description": "ชื่อบอส",
+                        "required": true
+                    },
+                    {
+                        "type": 4,
+                        "name": "count",
+                        "description": "จำนวนไม้ที่ต้องการ",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "type": 1,
+                "name": "list",
+                "description": "รายชื่อคนที่ได้รับอนุมัติไปแล้ว"
+            },
+            {
+                "type": 1,
+                "name": "stop",
+                "description": "หยุดการอนุมัติตีบอส"
+            },
+            {
+                "type": 1,
+                "name": "add",
+                "description": "เพิ่ม User ในรายชื่ออนุมัติ (เพิ่มได้สูงสุดทีละ 5 คน)",
+                "options": [
+                    {
+                        "type": 5,
+                        "name": "pause",
+                        "description": "ให้หยุดรอหรือไม่",
+                        "required": true
+                    },
+                    {
+                        "type": 6,
+                        "name": "user1",
+                        "description": "User ที่อนุมัติ",
+                        "required": true
+                    },
+                    {
+                        "type": 6,
+                        "name": "user2",
+                        "description": "User ที่อนุมัติ",
+                        "required": false
+                    },
+                    {
+                        "type": 6,
+                        "name": "user3",
+                        "description": "User ที่อนุมัติ",
+                        "required": false
+                    },
+                    {
+                        "type": 6,
+                        "name": "user4",
+                        "description": "User ที่อนุมัติ",
+                        "required": false
+                    },
+                    {
+                        "type": 6,
+                        "name": "user5",
+                        "description": "User ที่อนุมัติ",
+                        "required": false
+                    }
+                ]
+            },
+            {
+                "type": 1,
+                "name": "remove",
+                "description": "ลบ User ในรายชื่ออนุมัติ (ลบได้สูงสุดทีละ 5 คน)",
+                "options": [
+                    {
+                        "type": 6,
+                        "name": "user1",
+                        "description": "User ที่ลบจากรายชื่อ",
+                        "required": true
+                    },
+                    {
+                        "type": 6,
+                        "name": "user2",
+                        "description": "User ที่ลบจากรายชื่อ",
+                        "required": false
+                    },
+                    {
+                        "type": 6,
+                        "name": "user3",
+                        "description": "User ที่ลบจากรายชื่อ",
+                        "required": false
+                    },
+                    {
+                        "type": 6,
+                        "name": "user4",
+                        "description": "User ที่ลบจากรายชื่อ",
+                        "required": false
+                    },
+                    {
+                        "type": 6,
+                        "name": "user5",
+                        "description": "User ที่ลบจากรายชื่อ",
+                        "required": false
+                    }
+                ]
+            },
+            {
+                "type": 1,
+                "name": "unpause",
+                "description": "Mention คนที่พอสอยู่ในรายชื่ออนุมัติ และลบสถานะ Pause"
+            }
+        ]
+    }
+]

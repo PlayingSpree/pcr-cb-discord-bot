@@ -3,6 +3,8 @@ const fs = require('fs');
 const Discord = require('discord.js');
 const appConfig = require('./config.json');
 const queueManager = require('./queue/queue_manager.js');
+const slashManager = require('./slash_commands/slash_commands_manager.js');
+const commands_validator = require('./command_validator.js');
 
 dotenv.config();
 
@@ -50,27 +52,18 @@ client.on('message', message => {
 
     // Arguments check (args: bool,usage: string)
     if (command.args && !args.length) {
-        let reply = `You didn't provide any arguments, ${message.author}!`;
+        let reply = 'กรุณาใส่ argument';
 
         if (command.usage) {
-            reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
+            reply += `\nวิธีใช้: \`${prefix}${command.name} ${command.usage}\``;
         }
 
         return message.channel.send(reply);
     }
 
-    // Guild Check (guildOnly: true)
-    if (command.guildOnly && message.channel.type === 'dm') {
-        return message.reply('I can\'t execute that command inside DMs!');
-    }
-
-    // Permission Check (permissions: string)
-    if (command.permissions) {
-        const authorPerms = message.channel.permissionsFor(message.author);
-        if (!authorPerms || !authorPerms.has(command.permissions)) {
-            return message.reply(`You need ${command.permissions} permission to do this!`);
-        }
-    }
+    // Command Validation Check
+    const invalid = commands_validator(command, message);
+    if (invalid) return message.reply(invalid);
 
     // Cooldown Check (cooldown: num)
     if (!cooldowns.has(command.name)) {
@@ -99,7 +92,7 @@ client.on('message', message => {
     }
     catch (error) {
         console.error(error);
-        message.reply('there was an error trying to execute that command!');
+        message.reply('มีข้อผิดพลาดระหว่างการทำคำสั่ง');
     }
 });
 
@@ -109,6 +102,37 @@ client.on('messageReactionAdd', async (reaction, user) => {
 
 client.on('guildDelete', guild => {
     client.settings.delete(guild.id);
+});
+
+client.ws.on('INTERACTION_CREATE', async interaction => {
+    if (interaction.type !== 2) return;
+    console.log(`Got interaction: ${interaction.data.name} from: ${interaction.guild_id}`);
+    if (interaction.data.name === 'enableslashcmd') {
+        if (interaction.guild_id !== undefined) {
+            slashManager.registerServer(client, interaction);
+            client.api.interactions(interaction.id, interaction.token).callback.post({
+                data: {
+                    type: 4,
+                    data: {
+                        content: 'อัพเดต Slash Commands แล้ว'
+                    }
+                }
+            });
+        }
+        else {
+            client.api.interactions(interaction.id, interaction.token).callback.post({
+                data: {
+                    type: 4,
+                    data: {
+                        content: 'ใช้ได้เฉพาะใน Server เท่านั้น'
+                    }
+                }
+            });
+        }
+    }
+    else {
+        slashManager.handleInteraction(client, interaction);
+    }
 });
 
 process.on('unhandledRejection', error => {

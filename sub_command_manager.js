@@ -18,7 +18,14 @@ module.exports = {
         if (!command) return false;
 
         args.shift();
-        command.execute(message, args);
+        return command.execute(message, args);
+    },
+    executeSlash(subCommands, commandName, interaction, args) {
+        const command = subCommands.find(cmd => (cmd.name === commandName) || (cmd.aliases && cmd.aliases.includes(commandName)));
+
+        if (!command) return false;
+
+        command.executeSlash(interaction, args);
         return true;
     }
 };

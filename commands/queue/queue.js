@@ -1,5 +1,6 @@
 const queueManager = require('../../queue/queue_manager.js');
 const subCommandManager = require('../../sub_command_manager.js');
+const slashManager = require('../../slash_commands/slash_commands_manager.js');
 
 const subCommands = [{
     name: 'list',
@@ -7,6 +8,9 @@ const subCommands = [{
     usage: 'รายชื่อคนที่ได้รับอนุมัติไปแล้ว',
     execute(message, args) {
         queueManager.print(message.channel);
+    },
+    executeSlash(interaction, args) {
+        queueManager.print(interaction.channel);
     }
 }, {
     name: 'stop',
@@ -14,6 +18,9 @@ const subCommands = [{
     usage: 'หยุดการอนุมัติตีบอส',
     execute(message, args) {
         queueManager.stop(message.channel);
+    },
+    executeSlash(interaction, args) {
+        queueManager.stop(interaction.channel);
     }
 }, {
     name: 'add',
@@ -32,6 +39,15 @@ const subCommands = [{
             const prefix = message.client.settings.get(message.guild.id).prefix;
             return message.channel.send(`กรุณา Mention User ที่ต้องการเพิ่ม\nวิธีใช้: ${prefix}${this.name} ${this.usage}`);
         }
+    },
+    async executeSlash(interaction, args) {
+        const users = [];
+        for (const arg in args) {
+            if (arg.includes('user')) {
+                users.push(await interaction.client.users.fetch(args[arg]));
+            }
+        }
+        queueManager.add(interaction.channel, users, args.pause);
     }
 }, {
     name: 'remove',
@@ -45,6 +61,15 @@ const subCommands = [{
             const prefix = message.client.settings.get(message.guild.id).prefix;
             return message.channel.send(`กรุณา Mention User ที่ต้องการเพิ่ม\nวิธีใช้: ${prefix}${this.name} ${this.usage}`);
         }
+    },
+    async executeSlash(interaction, args) {
+        const users = [];
+        for (const arg in args) {
+            if (arg.includes('user')) {
+                users.push(await interaction.client.users.fetch(args[arg]));
+            }
+        }
+        queueManager.remove(interaction.channel, users);
     }
 }, {
     name: 'unpause',
@@ -52,6 +77,9 @@ const subCommands = [{
     usage: 'Mention คนที่พอสอยู่ในรายชื่ออนุมัติ และลบสถานะ Pause',
     execute(message, args) {
         queueManager.unpause(message.channel);
+    },
+    executeSlash(interaction, args) {
+        queueManager.unpause(interaction.channel);
     }
 }];
 
@@ -82,8 +110,22 @@ module.exports = {
             return message.channel.send(`arguments ที่ 2 ต้องมากกว่า 0\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
         }
         // Run
-        queueManager.start(message.channel, teamCount);
-        message.channel.send(`บอส ${args[0]} มาแล้ว ต้องการ ${teamCount} ไม้ โพสรูปแล้วรออนุมัติ เมื่อได้รับอนุมัติแล้วก็ตีได้เลยจ้า~`);
+        queueManager.start(message.channel, teamCount, args[0]);
         message.delete();
+    },
+    executeSlash(interaction) {
+        // Check Role
+        const guildConfig = interaction.client.settings.get(interaction.guild.id);
+        if (!interaction.member.roles.cache.some(role => role.name === guildConfig.approvalRole)) {
+            return interaction.channel.send(`ท่านต้องมี Role: \`${guildConfig.approvalRole}\` ถึงจะใช้งานได้`);
+        }
+        if (interaction.data.options[0].name === 'start') {
+            const args = slashManager.parseArgs(interaction.data.options[0].options);
+            queueManager.start(interaction.channel, args.count, args.bossname);
+        }
+        else {
+            const args = slashManager.parseArgs(interaction.data.options[0].options);
+            subCommandManager.executeSlash(subCommands, interaction.data.options[0].name, interaction, args);
+        }
     }
 };

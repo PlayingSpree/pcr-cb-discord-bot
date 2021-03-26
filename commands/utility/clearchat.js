@@ -1,19 +1,19 @@
-async function clearChat(message) {
-    console.log('Clearing all chat from ' + message.channel.name);
+async function clearChat(channel) {
+    console.log('Clearing all chat from ' + channel.name);
     let fetched;
     let error = false;
     do {
         try {
-            fetched = await message.channel.messages.fetch({ limit: 100 });
-            await message.channel.bulkDelete(fetched);
+            fetched = await channel.messages.fetch({ limit: 100 });
+            await channel.bulkDelete(fetched);
         }
         catch (err) {
             console.error(err.message);
-            message.channel.send(err.message);
+            channel.send(err.message);
             error = true;
         }
         finally {
-            message.channel.bulkDelete(fetched, true);
+            channel.bulkDelete(fetched, true);
         }
     }
     while (fetched.size >= 2 && !error);
@@ -27,6 +27,9 @@ module.exports = {
     permissions: 'ADMINISTRATOR',
     guildOnly: true,
     execute(message, args) {
-        clearChat(message);
+        clearChat(message.channel);
+    },
+    executeSlash(interaction) {
+        clearChat(interaction.channel);
     }
 };
