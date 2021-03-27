@@ -88,6 +88,8 @@ client.on('message', message => {
     // Execute command
     console.log(`Execute: ${command.name} with args: ${args.join(' ')}`);
     try {
+        // Normal reply
+        message.channel.cmdreply = { send(data, send_args) { message.channel.send(data, send_args); } };
         command.execute(message, args);
     }
     catch (error) {

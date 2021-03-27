@@ -1,5 +1,6 @@
 {
-    "latest": "v0.3.0",
+    "latest": "v0.3.1",
+    "v0.3.1": "- ปรับปรุง Reply ของ Slash Commands",
     "v0.3.0": "- รองรับ Slash Commands ในบางคำสั่ง\n- เพิ่ม Global Slash Command enableslashcmd เพื่อเปิดใช้งาน Slash Commands ใน Server นั้น",
     "v0.2.1": "- แสดง Patchnote ใน Version ใหญ่ได้\n- แก้ไข Patchnote v0.2.0",
     "v0.2.0": "- แสดงชื่อ, สถานะ ⏸️ Pause ใน List รายชื่ออนุมัติ\n- เพิ่มคำสั่ง queue unpause เพื่อ Mention คนที่พอสอยู่ในรายชื่ออนุมัติ และลบสถานะ Pause\n- ไม่สามารถ React เพื่ออนุมัติในข้อความเดิมซ้ำได้\n- ใส่ argument -p ใน queue add เพื่อเพิ่มคนที่ต้องพอสรอ (ex. queue add -p [@user])\n- เพิ่ม React ❎ เพื่อไม่อนุมัติ\n- เพิ่ม Patchnote"

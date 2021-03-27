@@ -18,7 +18,14 @@ module.exports = {
         if (!command) return false;
 
         args.shift();
-        return command.execute(message, args);
+        try {
+            command.execute(message, args);
+        }
+        catch (error) {
+            console.error(error);
+            message.channel.cmdreply.reply('มีข้อผิดพลาดระหว่างการทำคำสั่ง', { 'flags': 64 });
+        }
+        return true;
     },
     executeSlash(subCommands, commandName, interaction, args) {
         const command = subCommands.find(cmd => (cmd.name === commandName) || (cmd.aliases && cmd.aliases.includes(commandName)));

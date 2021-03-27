@@ -30,6 +30,7 @@ module.exports = {
         clearChat(message.channel);
     },
     executeSlash(interaction) {
+        interaction.channel.cmdreply.send('กำลังลบข้อความทั้งหมด', { 'flags': 64 });
         clearChat(interaction.channel);
     }
 };

@@ -117,8 +117,9 @@ module.exports = {
         // Check Role
         const guildConfig = interaction.client.settings.get(interaction.guild.id);
         if (!interaction.member.roles.cache.some(role => role.name === guildConfig.approvalRole)) {
-            return interaction.channel.send(`ท่านต้องมี Role: \`${guildConfig.approvalRole}\` ถึงจะใช้งานได้`);
+            return interaction.channel.cmdreply.send(`ท่านต้องมี Role: \`${guildConfig.approvalRole}\` ถึงจะใช้งานได้`, { 'flags': 64 });
         }
+        // Run
         if (interaction.data.options[0].name === 'start') {
             const args = slashManager.parseArgs(interaction.data.options[0].options);
             queueManager.start(interaction.channel, args.count, args.bossname);

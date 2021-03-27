@@ -21,7 +21,7 @@ class playerQueueState {
 
 function getState(channel) {
     if (!queueStates.has(channel.guild.id)) {
-        channel.send('ขณะนี้ยังไม่มีการอนุมัติการตีบอสใน Server นี้');
+        channel.cmdreply.send('ขณะนี้ยังไม่มีการอนุมัติการตีบอสใน Server นี้', { 'flags': 64 });
         return;
     }
     const state = queueStates.get(channel.guild.id);
@@ -29,7 +29,7 @@ function getState(channel) {
         return state;
     }
     else {
-        channel.send('ขณะนี้การอนุมัติการตีบอสใน Server นี้ได้หยุดไปแล้ว');
+        channel.cmdreply.send('ขณะนี้การอนุมัติการตีบอสใน Server นี้ได้หยุดไปแล้ว', { 'flags': 64 });
         return;
     }
 }
@@ -37,14 +37,14 @@ function getState(channel) {
 module.exports = {
     start(channel, max, name) {
         queueStates.set(channel.guild.id, new QueueState(channel, max));
-        channel.send(`บอส ${name} มาแล้ว ต้องการ ${max} ไม้ โพสรูปแล้วรออนุมัติ เมื่อได้รับอนุมัติแล้วก็ตีได้เลยจ้า~`);
+        channel.cmdreply.send(`บอส ${name} มาแล้ว ต้องการ ${max} ไม้ โพสรูปแล้วรออนุมัติ เมื่อได้รับอนุมัติแล้วก็ตีได้เลยจ้า~`);
         console.log(`queue started at ${channel.guild.name} on ${channel.name}`);
     },
     stop(channel) {
         const state = getState(channel);
         if (state) {
             state.isActive = false;
-            channel.send('หยุดการอนุมัติการตีบอสใน Server นี้แล้ว');
+            channel.cmdreply.send('หยุดการอนุมัติการตีบอสใน Server นี้แล้ว');
             console.log(`queue stoped at ${channel.guild.name} on ${channel.name}`);
         }
     },
@@ -54,7 +54,7 @@ module.exports = {
             for (const user of users) {
                 state.playerQueue.push(new playerQueueState(user, pause));
             }
-            channel.send(`อนุมัติผู้เล่นเพิ่ม${users.length > 1 ? `อีก ${users.length} คน` : ''}แล้วจ้า~`);
+            channel.cmdreply.send(`อนุมัติผู้เล่นเพิ่ม${users.length > 1 ? `อีก ${users.length} คน` : ''}แล้วจ้า~`);
             this.print(channel);
         }
     },
@@ -72,15 +72,15 @@ module.exports = {
                 }
             }
             if (notFoundUsers.length > 0) {
-                channel.send(`ไม่เจอ ${notFoundUsers.join(' ')} ในรายชื่ออนุมัติ`, { 'allowedMentions': { 'users': [] } });
+                channel.cmdreply.send(`ไม่เจอ ${notFoundUsers.join(' ')} ในรายชื่ออนุมัติ`, { 'allowedMentions': { 'users': [] }, 'flags': 64 });
             }
             const removedUsers = users.filter(user => !notFoundUsers.includes(user));
             if (removedUsers.length > 0) {
-                channel.send(`นำผู้เล่น${removedUsers.join(' ')} ออกจากรายชื่ออนุมัติ`, { 'allowedMentions': { 'users': [] } });
+                channel.cmdreply.send(`นำผู้เล่น${removedUsers.join(' ')} ออกจากรายชื่ออนุมัติ`, { 'allowedMentions': { 'users': [] } });
                 this.print(channel);
             }
             else {
-                channel.send('ไม่มีผู้เล่นที่ถูกนำออกจากรายชื่ออนุมัติ');
+                channel.cmdreply.send('ไม่มีผู้เล่นที่ถูกนำออกจากรายชื่ออนุมัติ');
             }
         }
     },
@@ -95,21 +95,22 @@ module.exports = {
                 }
             }
             if (pausedUsers.length === 0) {
-                channel.send('ไม่มีผู้เล่นที่กำลังพอสอยู่ในรายชื่ออนุมัติ');
+                channel.cmdreply.send('ไม่มีผู้เล่นที่กำลังพอสอยู่ในรายชื่ออนุมัติ', { 'flags': 64 });
+                return;
             }
-            channel.send(`${pausedUsers.join(' ')} ปล่อยพอสได้เลยจ้า~`);
+            channel.cmdreply.send(`${pausedUsers.join(' ')} ปล่อยพอสได้เลยจ้า~`);
         }
     },
     print(channel) {
         const state = getState(channel);
         if (state) {
             if (state.playerQueue.length === 0) {
-                channel.send('ขณะนี้มียังไม่มีคนได้รับอนุมัติ');
+                channel.cmdreply.send('ขณะนี้มียังไม่มีคนได้รับอนุมัติ', { 'flags': 64 });
                 return;
             }
             const playerList = state.playerQueue.map((player, index) => `${index + 1}. ${player.user.username} (${player.user})${player.paused ? ' ⏸️' : ''}`).join('\n');
             const pauseCount = state.playerQueue.filter(x => x.paused === true).length;
-            channel.send(`:crossed_swords: ขณะนี้มีคนได้รับอนุมัติไปแล้ว ${state.playerQueue.length}/${state.queueMax} ไม้${pauseCount > 0 ? ` ⏸️ พอสอยู่ ${pauseCount} ไม้` : ''}\n${playerList}`, { 'allowedMentions': { 'users': [] } });
+            channel.cmdreply.send(`:crossed_swords: ขณะนี้มีคนได้รับอนุมัติไปแล้ว ${state.playerQueue.length}/${state.queueMax} ไม้${pauseCount > 0 ? ` ⏸️ พอสอยู่ ${pauseCount} ไม้` : ''}\n${playerList}`, { 'allowedMentions': { 'users': [] } });
         }
     },
     reactionEvent(reaction, user) {
