@@ -113,7 +113,7 @@ module.exports = {
         queueManager.start(message.channel, teamCount, args[0]);
         message.delete();
     },
-    executeSlash(interaction) {
+    executeSlash(interaction, args) {
         // Check Role
         const guildConfig = interaction.client.settings.get(interaction.guild.id);
         if (!interaction.member.roles.cache.some(role => role.name === guildConfig.approvalRole)) {
@@ -121,12 +121,12 @@ module.exports = {
         }
         // Run
         if (interaction.data.options[0].name === 'start') {
-            const args = slashManager.parseArgs(interaction.data.options[0].options);
-            queueManager.start(interaction.channel, args.count, args.bossname);
+            const subArgs = slashManager.parseArgs(interaction.data.options[0].options);
+            queueManager.start(interaction.channel, subArgs.count, subArgs.bossname);
         }
         else {
-            const args = slashManager.parseArgs(interaction.data.options[0].options);
-            subCommandManager.executeSlash(subCommands, interaction.data.options[0].name, interaction, args);
+            const subArgs = slashManager.parseArgs(interaction.data.options[0].options);
+            subCommandManager.executeSlash(subCommands, interaction.data.options[0].name, interaction, subArgs);
         }
     }
 };

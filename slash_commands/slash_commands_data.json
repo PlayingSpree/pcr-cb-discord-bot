@@ -122,5 +122,29 @@
                 "description": "Mention คนที่พอสอยู่ในรายชื่ออนุมัติ และลบสถานะ Pause"
             }
         ]
+    },
+    {
+        "name": "overkill",
+        "description": "คำนวณเวลาและดาเมจหาก Overkill",
+        "options": [
+            {
+                "type": 4,
+                "name": "hp",
+                "description": "เลือดบอสที่เหลือ",
+                "required": true
+            },
+            {
+                "type": 4,
+                "name": "dmg1",
+                "description": "ดาเมจทีม 1",
+                "required": true
+            },
+            {
+                "type": 4,
+                "name": "dmg2",
+                "description": "ดาเมจทีม 2",
+                "required": false
+            }
+        ]
     }
 ]

@@ -26,10 +26,11 @@ module.exports = {
     description: 'ลบแชทใน channel ทั้งหมด (Admin เท่านั้น)',
     permissions: 'ADMINISTRATOR',
     guildOnly: true,
+    cooldown: 15,
     execute(message, args) {
         clearChat(message.channel);
     },
-    executeSlash(interaction) {
+    executeSlash(interaction, args) {
         interaction.channel.cmdreply.send('กำลังลบข้อความทั้งหมด', { 'flags': 64 });
         clearChat(interaction.channel);
     }

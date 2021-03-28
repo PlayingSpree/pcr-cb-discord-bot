@@ -1,5 +1,6 @@
 {
-	"prefix": "%",
+    "prefix": "%",
     "debug": true,
-    "presence": "ใช้ / ได้แล้วนะ"
+    "presence": "ใช้ / ได้แล้วนะ",
+    "overkill_time_gain": 10
 }

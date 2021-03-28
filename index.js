@@ -34,8 +34,6 @@ for (const folder of commandFolders) {
     }
 }
 
-const cooldowns = new Discord.Collection();
-
 client.on('message', message => {
     const prefix = message.guild ? message.client.settings.get(message.guild.id).prefix : appConfig.prefix;
     // Extract command from message
@@ -64,26 +62,6 @@ client.on('message', message => {
     // Command Validation Check
     const invalid = commands_validator(command, message);
     if (invalid) return message.reply(invalid);
-
-    // Cooldown Check (cooldown: num)
-    if (!cooldowns.has(command.name)) {
-        cooldowns.set(command.name, new Discord.Collection());
-    }
-
-    const now = Date.now();
-    const timestamps = cooldowns.get(command.name);
-    const cooldownAmount = (command.cooldown || 3) * 1000;
-
-    if (timestamps.has(message.author.id)) {
-        const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
-
-        if (now < expirationTime) {
-            const timeLeft = (expirationTime - now) / 1000;
-            return message.reply(`please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`);
-        }
-    }
-    timestamps.set(message.author.id, now);
-    setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
 
     // Execute command
     console.log(`Execute: ${command.name} with args: ${args.join(' ')}`);

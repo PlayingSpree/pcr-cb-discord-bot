@@ -1,5 +1,6 @@
 {
-    "latest": "v0.3.1",
+    "latest": "v0.4.0",
+    "v0.4.0": "- เพิ่มคำสั่ง overkill เพื่อคำนวณเวลาและดาเมจหาก Overkill",
     "v0.3.1": "- ปรับปรุง Reply ของ Slash Commands",
     "v0.3.0": "- รองรับ Slash Commands ในบางคำสั่ง\n- เพิ่ม Global Slash Command enableslashcmd เพื่อเปิดใช้งาน Slash Commands ใน Server นั้น",
     "v0.2.1": "- แสดง Patchnote ใน Version ใหญ่ได้\n- แก้ไข Patchnote v0.2.0",

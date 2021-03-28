@@ -38,6 +38,9 @@ module.exports = {
         }
     },
     async handleInteraction(client, interaction) {
+        // Get command
+        const command = client.commands.get(interaction.data.name);
+        // Inject obj
         interaction.client = client;
         if (interaction.channel_id) interaction.channel = await client.channels.fetch(interaction.channel_id);
         if (interaction.guild_id) {
@@ -49,9 +52,7 @@ module.exports = {
         else {
             interaction.user = await client.users.fetch(interaction.user.id);
         }
-
-        const command = client.commands.get(interaction.data.name);
-
+        // Validation
         const invalid = commands_validator(command, interaction);
         if (invalid) {
             client.api.interactions(interaction.id, interaction.token).callback.post({
@@ -65,12 +66,13 @@ module.exports = {
             });
             return;
         }
-
-        console.log(`command: ${interaction.data.name}${interaction.data.options ? ' with options.' : ''}`);
+        // Get args
+        const args = this.parseArgs(interaction.data.options);
+        console.log(`command: ${interaction.data.name}${interaction.data.options ? ` with args: ${JSON.stringify(args)}` : ''}`);
         try {
             // Slash reply
             interaction.channel.cmdreply = new SlashReply(interaction);
-            command.executeSlash(interaction);
+            command.executeSlash(interaction, args);
         }
         catch (error) {
             console.error(error);
