@@ -1,7 +1,7 @@
 const appConfig = require('../../config.json');
 
 function calcOverkill(hp, dmg1, dmg2) {
-    const dmgNeed = Math.ceil((hp - dmg1) / (appConfig.overkill_time_gain / 90));
+    const dmgNeed = ((hp - dmg1) / (appConfig.overkill_time_gain / 90)).toFixed(dmg1 < 1000 ? 2 : 0);
     let time = null;
     if (dmg2) {
         time = Math.floor(Math.min((90 + appConfig.overkill_time_gain) - (90 * ((hp - dmg1) / dmg2)), 90));
@@ -18,7 +18,7 @@ function calcOverkill(hp, dmg1, dmg2) {
 function validateOverkill(hp, dmg1, dmg2) {
     const args = [hp, dmg1, dmg2];
     for (let i = 0; i < (dmg2 ? 3 : 2); i++) {
-        const n = parseInt(args[i]);
+        const n = parseFloat(args[i]);
         if (isNaN(n)) {
             return [`arguments ที่ ${i + 1} ต้องเป็นตัวเลข`, args];
         }
@@ -55,9 +55,7 @@ module.exports = {
         return message.channel.send(calcOverkill(args[0], args[1], args[2]));
     },
     executeSlash(interaction, args) {
-        let invalid = null;
-        let _ = null;
-        [invalid, _] = validateOverkill(args.hp, args.dmg1, args.dmg2);
+        const [invalid, _] = validateOverkill(args.hp, args.dmg1, args.dmg2);
         if (invalid) return interaction.channel.cmdreply.send(invalid, { 'flags': 64 });
 
         interaction.channel.cmdreply.send(calcOverkill(args.hp, args.dmg1, args.dmg2));
