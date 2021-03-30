@@ -1,6 +1,6 @@
 {
     "prefix": "%",
     "debug": true,
-    "presence": "แมงป่องแห่ง RNG",
+    "presence": "RNGโนแมงป่อง (/checkluck)",
     "overkill_time_gain": 10
 }

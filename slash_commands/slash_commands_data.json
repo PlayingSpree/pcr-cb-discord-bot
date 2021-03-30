@@ -146,5 +146,9 @@
                 "required": false
             }
         ]
+    },
+    {
+        "name": "checkluck",
+        "description": "เช็คดวงก่อนต่อสู้จริงใน Clan Battle"
     }
 ]
