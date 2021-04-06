@@ -17,7 +17,7 @@ function calcOverkill(hp, dmg1, dmg2) {
         }
     }
     return `:smiling_imp: เลือดบอส: \`${hp}\` :crossed_swords: ดาเมจทีม 1:  \`${dmg1}\`${dmg2 ? ` :crossed_swords: ดาเมจทีม 2:  \`${dmg2}\`` : ''}
-    \n**:crossed_swords: ${time !== null ? 'ดาเมจทีม 2 ที่ต้องทำได้เพื่อได้ 90s' : 'ดาเมจแต่งเลือดบอสที่ต้องทำได้เพื่อได้ 90s'}**\n\`${dmgNeed + '`'}${time !== null ? `
+    \n**:crossed_swords: ${time === null ? 'ดาเมจทีม 2 ที่ต้องทำได้เพื่อได้ 90s' : 'ดาเมจแต่งเลือดบอสที่ต้องทำได้เพื่อได้ 90s'}**\n\`${dmgNeed + '`'}${time !== null ? `
     \n**:clock1: เวลาที่ได้ในรอบถัดไปถ้า Overkill**\n\`${time + '`'}` : ''}`;
 }
 
