@@ -6,7 +6,7 @@ class SlashReply {
         this.isReplied = false;
         this.interaction = interaction;
     }
-    send(data, args) {
+    async send(data, args) {
         if (this.isReplied) {
             this.interaction.channel.send(data, args);
         }
@@ -20,7 +20,7 @@ class SlashReply {
                     res.allowed_mentions = args.allowedMentions;
                 }
             }
-            this.interaction.channel.client.api.interactions(this.interaction.id, this.interaction.token).callback.post({
+            await this.interaction.channel.client.api.interactions(this.interaction.id, this.interaction.token).callback.post({
                 data: {
                     type: 4,
                     data: res
@@ -32,9 +32,9 @@ class SlashReply {
 }
 
 module.exports = {
-    registerServer(client, interaction) {
+    registerServer(client, guild_id) {
         for (const command of commands_data_list) {
-            client.api.applications(client.user.id).guilds(interaction.guild_id).commands.post({ data: command });
+            client.api.applications(client.user.id).guilds(guild_id).commands.post({ data: command });
         }
     },
     async handleInteraction(client, interaction) {

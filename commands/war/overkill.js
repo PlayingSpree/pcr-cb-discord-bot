@@ -1,9 +1,13 @@
 const appConfig = require('../../config.json');
 
 function calcOverkill(hp, dmg1, dmg2) {
-    const dmgNeed = ((hp - dmg1) / (appConfig.overkill_time_gain / 90)).toFixed(dmg1 < 1000 ? 2 : 0);
+    let dmgNeed = ((hp - dmg1) / (appConfig.overkill_time_gain / 90)).toFixed(dmg1 < 1000 ? 2 : 0);
     let time = null;
     if (dmg2) {
+        dmgNeed = (hp - dmg1 - (dmg2 * (appConfig.overkill_time_gain / 90))).toFixed(dmg1 < 1000 ? 2 : 0);
+        if (dmgNeed <= 0) {
+            dmgNeed = 'ไม่จำเป็น';
+        }
         time = Math.floor(Math.min((90 + appConfig.overkill_time_gain) - (90 * ((hp - dmg1) / dmg2)), 90));
         if (time >= 60) {
             time = `${Math.floor(time / 60)}:${time - 60 < 10 ? `0${time - 60}` : time - 60}`;
@@ -12,7 +16,9 @@ function calcOverkill(hp, dmg1, dmg2) {
             time = `0:${time < 10 ? `0${time}` : time}`;
         }
     }
-    return `:smiling_imp: เลือดบอส: \`${hp}\` :crossed_swords: ดาเมจทีม 1:  \`${dmg1}\`${dmg2 ? ` :crossed_swords: ดาเมจทีม 2:  \`${dmg2}\`` : ''}\n\n**:crossed_swords: ดาเมจทีม 2 ที่ต้องทำได้เพื่อได้ 90s**\n\`${dmgNeed + '`'}${time !== null ? `\n\n**:clock1: เวลาที่ได้ในรอบถัดไปถ้า Overkill**\n\`${time + '`'}` : ''}`;
+    return `:smiling_imp: เลือดบอส: \`${hp}\` :crossed_swords: ดาเมจทีม 1:  \`${dmg1}\`${dmg2 ? ` :crossed_swords: ดาเมจทีม 2:  \`${dmg2}\`` : ''}
+    \n**:crossed_swords: ${time !== null ? 'ดาเมจทีม 2 ที่ต้องทำได้เพื่อได้ 90s' : 'ดาเมจแต่งเลือดบอสที่ต้องทำได้เพื่อได้ 90s'}**\n\`${dmgNeed + '`'}${time !== null ? `
+    \n**:clock1: เวลาที่ได้ในรอบถัดไปถ้า Overkill**\n\`${time + '`'}` : ''}`;
 }
 
 function validateOverkill(hp, dmg1, dmg2) {

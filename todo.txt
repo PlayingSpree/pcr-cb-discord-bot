@@ -1,0 +1,15 @@
+TODO
+-Auto Clear Queue On Clear chat
+-Add score calculator
+-Add Reeeeeeee Counter
+-Add Pause Counter
+-Clear Chat Complete Reply
+-Edit channel name to queue count
+
+Future
+- Boss notification
+- Add 
+
+Done
+-Checkluck text order 
+-Overkill ovt damage to full time

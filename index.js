@@ -89,7 +89,7 @@ client.ws.on('INTERACTION_CREATE', async interaction => {
     console.log(`Got interaction: ${interaction.data.name} from: ${interaction.guild_id}`);
     if (interaction.data.name === 'enableslashcmd') {
         if (interaction.guild_id !== undefined) {
-            slashManager.registerServer(client, interaction);
+            slashManager.registerServer(client, interaction.guild_id);
             client.api.interactions(interaction.id, interaction.token).callback.post({
                 data: {
                     type: 4,
