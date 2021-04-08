@@ -13,8 +13,8 @@ function calcOverkill(hp, dmg1, dmg2) {
             time = `0:${time < 10 ? `0${time}` : time}`;
         }
         return `:smiling_imp: เลือดบอส: \`${hp}\` :crossed_swords: ดาเมจทีม 1:  \`${dmg1}\`${dmg2 ? ` :crossed_swords: ดาเมจทีม 2:  \`${dmg2}\`` : ''}
-        \n**:clock1: เวลาที่ได้ในรอบถัดไปถ้า Overkill**\n\`${time}
-        \n**:crossed_swords: ดาเมจแต่งเลือดบอสที่ต้องทำได้เพื่อได้ 90s**\n\`${dmgNeed + '`'}`;
+        \n**:clock1: เวลาที่ได้ในรอบถัดไปถ้า Overkill**\n\`${time}\`${time == '1:30' ? '' : `
+        \n**:crossed_swords: ดาเมจแต่งเลือดบอสที่ต้องทำเพื่อได้ 90s**\n\`${dmgNeed + '`'}`}`;
     }
     else {
         return `:smiling_imp: เลือดบอส: \`${hp}\` :crossed_swords: ดาเมจทีม 1:  \`${dmg1}\`${dmg2 ? ` :crossed_swords: ดาเมจทีม 2:  \`${dmg2}\`` : ''}

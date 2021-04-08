@@ -3,6 +3,7 @@ const fs = require('fs');
 const Discord = require('discord.js');
 const appConfig = require('./config.json');
 const queueManager = require('./queue/queue_manager.js');
+const notifyManager = require('./notify/notify_manager.js');
 const slashManager = require('./slash_commands/slash_commands_manager.js');
 const commands_validator = require('./command_validator.js');
 
@@ -16,6 +17,7 @@ client.login(process.env.TOKEN);
 
 client.once('ready', () => {
     console.log(`Ready! Logged in as ${client.user.tag}`);
+    // slashManager.registerServer(client, '249887769462177793');
     client.user.setPresence({ activity: { name: appConfig.presence }, status: 'online' });
 });
 
@@ -78,6 +80,11 @@ client.on('message', message => {
 
 client.on('messageReactionAdd', async (reaction, user) => {
     queueManager.reactionEvent(reaction, user);
+    notifyManager.reactionEvent(reaction, user);
+});
+
+client.on('messageReactionRemove', (reaction, user) => {
+    notifyManager.reactionRemoveEvent(reaction, user);
 });
 
 client.on('guildDelete', guild => {

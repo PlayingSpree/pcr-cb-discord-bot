@@ -12,7 +12,7 @@ class QueueState {
     }
 }
 
-class playerQueueState {
+class PlayerQueueState {
     constructor(user, paused) {
         this.user = user;
         this.paused = paused;
@@ -52,7 +52,7 @@ module.exports = {
         const state = getState(channel);
         if (state) {
             for (const user of users) {
-                state.playerQueue.push(new playerQueueState(user, pause));
+                state.playerQueue.push(new PlayerQueueState(user, pause));
             }
             channel.cmdreply.send(`อนุมัติผู้เล่นเพิ่ม${users.length > 1 ? `อีก ${users.length} คน` : ''}แล้วจ้า~`);
             this.print(channel);
@@ -101,16 +101,19 @@ module.exports = {
             channel.cmdreply.send(`${pausedUsers.join(' ')} ปล่อยพอสได้เลยจ้า~`);
         }
     },
-    print(channel) {
+    async print(channel) {
         const state = getState(channel);
         if (state) {
             if (state.playerQueue.length === 0) {
                 channel.cmdreply.send('ขณะนี้มียังไม่มีคนได้รับอนุมัติ', { 'flags': 64 });
                 return;
             }
-            const playerList = state.playerQueue.map((player, index) => `${index + 1}. ${player.user.username} (${player.user})${player.paused ? ' ⏸️' : ''}`).join('\n');
+            const playerList = await Promise.all(state.playerQueue.map(async (player, index) => {
+                const member = await channel.guild.members.fetch(player.user);
+                return `${index + 1}. ${member.nickname ?? player.user.username} (${player.user})${player.paused ? ' ⏸️' : ''}`
+            }));
             const pauseCount = state.playerQueue.filter(x => x.paused === true).length;
-            channel.cmdreply.send(`:crossed_swords: ขณะนี้มีคนได้รับอนุมัติไปแล้ว ${state.playerQueue.length}/${state.queueMax} ไม้${pauseCount > 0 ? ` ⏸️ พอสอยู่ ${pauseCount} ไม้` : ''}\n${playerList}`, { 'allowedMentions': { 'users': [] } });
+            channel.cmdreply.send(`:crossed_swords: ขณะนี้มีคนได้รับอนุมัติไปแล้ว ${state.playerQueue.length}/${state.queueMax} ไม้${pauseCount > 0 ? ` ⏸️ พอสอยู่ ${pauseCount} ไม้` : ''}\n${playerList.join('\n')}`, { 'allowedMentions': { 'users': [] } });
         }
     },
     reactionEvent(reaction, user) {
@@ -127,11 +130,11 @@ module.exports = {
         const guildConfig = messageChannel.client.settings.get(messageChannel.guild.id);
         const member = messageChannel.guild.member(user);
         if (!member.roles.cache.some(role => role.name === guildConfig.approvalRole)) return;
-        console.log('React: ' + reaction.emoji.name);
+        console.log('Queue React: ' + reaction.emoji.name);
         // Reply for each emoji
         const player = reaction.message.author;
         if (reaction.emoji.name === '✅') {
-            state.playerQueue.push(new playerQueueState(reaction.message.author, false));
+            state.playerQueue.push(new PlayerQueueState(reaction.message.author, false));
             state.reactedMessage.push(reaction.message);
             messageChannel.send(`${player} ตีได้เลยจ้า~`);
             this.print(messageChannel);
@@ -140,7 +143,7 @@ module.exports = {
             messageChannel.send(`${player} อย่าเพิ่งตีก่อน ซ้อมให้ดีกว่านี้แล้วมาขออนุญาตใหม่น้า~`);
             state.reactedMessage.push(reaction.message);
         } if (reaction.emoji.name === '⏸️') {
-            state.playerQueue.push(new playerQueueState(reaction.message.author, true));
+            state.playerQueue.push(new PlayerQueueState(reaction.message.author, true));
             messageChannel.send(`${player} ตีได้เลยจ้า~ แต่ต้องพอสรอด้วยน้า~`);
             state.reactedMessage.push(reaction.message);
             this.print(messageChannel);
