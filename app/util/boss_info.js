@@ -1,4 +1,4 @@
-const appConfig = require('../config.json');
+const appConfig = require('../../config.json');
 
 class BossInfo {
     constructor(boss, round) {
@@ -25,5 +25,8 @@ module.exports = {
     },
     bossIntToString(i) {
         return `${appConfig.bossname[((i - 1) % 5) + 1]} รอบ ${Math.floor((i - 1) / 5) + 1}`;
+    },
+    bossInfoToString(boss, round) {
+        return this.bossIntToString(this.bossInfoToInt(boss, round));
     },
 };

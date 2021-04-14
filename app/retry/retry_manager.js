@@ -1,9 +1,9 @@
 const Discord = require('discord.js');
-const bossInfo = require('./boss_info.js');
+const bossInfo = require('../util/boss_info.js');
 
-const notifyStates = new Discord.Collection();
+const retryStates = new Discord.Collection();
 
-class NotifyState {
+class RetryState {
     constructor(channel) {
         this.isActive = true;
         this.queueChannel = channel;
@@ -11,48 +11,46 @@ class NotifyState {
     }
 }
 
-class NotifyMessage {
+class RetryMessage {
     constructor(bossInt, max) {
-        this.bossInt = bossInt;
-        this.max = max;
         this.players = [];
         this.message = null;
     }
 }
 
 function getState(channel) {
-    if (!notifyStates.has(channel.guild.id)) {
-        channel.cmdreply.send('ขณะนี้ยังไม่มีระบบแจ้งเตือบอสใน Server นี้', { 'flags': 64 });
+    if (!retryStates.has(channel.guild.id)) {
+        channel.cmdreply.send('ขณะนี้ยังไม่มีการนับคนรีแล้วใน Server นี้', { 'flags': 64 });
         return;
     }
-    const state = notifyStates.get(channel.guild.id);
+    const state = retryStates.get(channel.guild.id);
     if (state.isActive) {
         return state;
     }
     else {
-        channel.cmdreply.send('ขณะนี้ระบบแจ้งเตือบอสใน Server นี้ได้หยุดไปแล้ว', { 'flags': 64 });
+        channel.cmdreply.send('ขณะนี้ระบบการนับคนรีแล้วใน Server นี้ได้หยุดไปแล้ว', { 'flags': 64 });
         return;
     }
 }
 
-async function printMessage(notifyMessage) {
-    const playerList = await Promise.all(notifyMessage.players.map(async (user, index) => {
-        const member = await notifyMessage.message.channel.guild.members.fetch(user);
+async function printMessage(retryMessage) {
+    const playerList = await Promise.all(retryMessage.players.map(async (user, index) => {
+        const member = await channel.guild.members.fetch(user);
         return `${index + 1}. ${member.nickname ?? user.username} (${user})`
     }));
     return `====================================
-:smiling_imp: **${bossInfo.bossIntToString(notifyMessage.bossInt)}** :crossed_swords: ต้องการประมาณ ${notifyMessage.max} ไม้ ${notifyMessage.players.length == 0 ? 'ยังไม่มีคนจอง' : `จองแล้ว ${notifyMessage.players.length} คน
+:repeat: ${notifyMessage.players.length == 0 ? 'ยังไม่มีคนรีแล้วในขณะนี้' : `รีแล้ว ${notifyMessage.players.length} คน
 ${playerList.join('\n')}`}
 ====================================`;
 }
 
 module.exports = {
     async start(channel, boss, round, args) {
-        channel.cmdreply.send(':crossed_swords: เริ่มการจองคิวบอส กด React ที่บอสที่ต้องการจองเพื่อจองบอส และรับการแจ้งเตือนเมื่อถึงบอส\n**การจองบอส ไม่มีผลต่อการเข้าตี ก่อนตียังคงต้องแปะรูปตามปกติ**');
+        channel.cmdreply.send(':crossed_swords: เริ่มการนับคนรีแล้ว กด React ที่ข้อความด้านล่างเพื่อบอกว่าตัวเองรีแล้ว**');
         notifyStates.set(channel.guild.id, new NotifyState(channel));
         this.add(channel, boss, round, args);
         console.log(`notify started at ${channel.guild.name} on ${channel.name}`);
-    },
+    }, // TODO ======================================================================================================================
     async add(channel, boss, round, args) {
         const state = getState(channel);
         if (state) {
@@ -74,7 +72,7 @@ module.exports = {
     },
     async reactionEvent(reaction, user) {
         const messageChannel = reaction.message.channel;
-        const state = notifyStates.get(messageChannel.guild.id);
+        const state = retryStates.get(messageChannel.guild.id);
         if (!state || !state.isActive) return;
         // Check bot
         if (user.bot) return;
@@ -90,10 +88,8 @@ module.exports = {
     },
     async reactionRemoveEvent(reaction, user) {
         const messageChannel = reaction.message.channel;
-        const state = notifyStates.get(messageChannel.guild.id);
+        const state = retryStates.get(messageChannel.guild.id);
         if (!state || !state.isActive) return;
-        // Check bot
-        if (user.bot) return;
         // Check channel
         if (messageChannel.id !== state.queueChannel.id) return;
         // Check message

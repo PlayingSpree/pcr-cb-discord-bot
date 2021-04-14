@@ -1,4 +1,4 @@
-const queueManager = require('../../queue/queue_manager.js');
+const queueManager = require('../../app/queue/queue_manager.js');
 const subCommandManager = require('../../sub_command_manager.js');
 const slashManager = require('../../slash_commands/slash_commands_manager.js');
 

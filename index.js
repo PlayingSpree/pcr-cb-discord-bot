@@ -2,8 +2,8 @@ const dotenv = require('dotenv');
 const fs = require('fs');
 const Discord = require('discord.js');
 const appConfig = require('./config.json');
-const queueManager = require('./queue/queue_manager.js');
-const notifyManager = require('./notify/notify_manager.js');
+const queueManager = require('./app/queue/queue_manager.js');
+const notifyManager = require('./app/notify/notify_manager.js');
 const slashManager = require('./slash_commands/slash_commands_manager.js');
 const commands_validator = require('./command_validator.js');
 
@@ -11,7 +11,7 @@ dotenv.config();
 
 const client = new Discord.Client();
 // Attach per server settings to client.settings
-client.settings = require('./per_server_setting/server_setting_manager.js');
+client.settings = require('./app/per_server_setting/server_setting_manager.js');
 
 client.login(process.env.TOKEN);
 
@@ -79,11 +79,15 @@ client.on('message', message => {
 });
 
 client.on('messageReactionAdd', async (reaction, user) => {
+    // Check bot
+    if (user.bot) return;
     queueManager.reactionEvent(reaction, user);
     notifyManager.reactionEvent(reaction, user);
 });
 
 client.on('messageReactionRemove', (reaction, user) => {
+    // Check bot
+    if (user.bot) return;
     notifyManager.reactionRemoveEvent(reaction, user);
 });
 

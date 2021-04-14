@@ -1,15 +1,9 @@
 TODO
 -Auto Clear Queue On Clear chat
 -Add score calculator
--Add Reeeeeeee Counter
+-Complete Reeeeeeee Counter
 -Add Pause Counter
 -Clear Chat Complete Reply
 -Edit channel name to queue count
 
-Future is now
-- Boss notification
-
 Done
--Checkluck text order 
--Overkill ovt damage to full time
--Queue Use nickname
