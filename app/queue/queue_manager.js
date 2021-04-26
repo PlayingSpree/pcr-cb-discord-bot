@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const notifyManager = require('../notify/notify_manager.js');
 
 const queueStates = new Discord.Collection();
 
@@ -19,9 +20,9 @@ class PlayerQueueState {
     }
 }
 
-function getState(channel) {
+function getState(channel, reply = true) {
     if (!queueStates.has(channel.guild.id)) {
-        channel.cmdreply.send('ขณะนี้ยังไม่มีการอนุมัติการตีบอสใน Server นี้', { 'flags': 64 });
+        if (reply) channel.cmdreply.send('ขณะนี้ยังไม่มีการอนุมัติการตีบอสใน Server นี้', { 'flags': 64 });
         return;
     }
     const state = queueStates.get(channel.guild.id);
@@ -29,24 +30,29 @@ function getState(channel) {
         return state;
     }
     else {
-        channel.cmdreply.send('ขณะนี้การอนุมัติการตีบอสใน Server นี้ได้หยุดไปแล้ว', { 'flags': 64 });
+        if (reply) channel.cmdreply.send('ขณะนี้การอนุมัติการตีบอสใน Server นี้ได้หยุดไปแล้ว', { 'flags': 64 });
         return;
     }
 }
 
 module.exports = {
-    start(channel, max, name) {
+    async start(channel, max, name, boss, round) {
         queueStates.set(channel.guild.id, new QueueState(channel, max));
-        channel.cmdreply.send(`บอส ${name} มาแล้ว ต้องการ ${max} ไม้ โพสรูปแล้วรออนุมัติ เมื่อได้รับอนุมัติแล้วก็ตีได้เลยจ้า~`);
+        await channel.cmdreply.send(`บอส ${name} มาแล้ว ต้องการ ${max} ไม้ โพสรูปแล้วรออนุมัติ เมื่อได้รับอนุมัติแล้วก็ตีได้เลยจ้า~`);
+        if (boss != null && round != null) {
+            notifyManager.call(channel, boss, round);
+        }
         console.log(`queue started at ${channel.guild.name} on ${channel.name}`);
     },
-    stop(channel) {
-        const state = getState(channel);
+    stop(channel, reply = true) {
+        const state = getState(channel, reply);
         if (state) {
             state.isActive = false;
-            channel.cmdreply.send('หยุดการอนุมัติการตีบอสใน Server นี้แล้ว');
+            if (reply) channel.cmdreply.send('หยุดการอนุมัติการตีบอสใน Server นี้แล้ว');
             console.log(`queue stoped at ${channel.guild.name} on ${channel.name}`);
+            return true;
         }
+        return false;
     },
     add(channel, users, pause) {
         const state = getState(channel);

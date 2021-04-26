@@ -1,3 +1,5 @@
+const queueManager = require('../../app/queue/queue_manager.js');
+
 const usedChannels = [];
 
 async function clearChat(channel) {
@@ -22,6 +24,12 @@ async function clearChat(channel) {
         }
         while (fetched.size >= 2 && !error);
         console.log('Chat cleared.');
+        let reply = 'ล้างแชทเสร็จแล้วจ้า~ พิมพ์ต่อกันได้เลย';
+        if (queueManager.stop(channel, false)) {
+            reply = 'หยุดการอนุมัติบอสและล้างแชทเสร็จแล้วจ้า~ พิมพ์ต่อกันได้เลย';
+        }
+        const message = await channel.send(reply);
+        setTimeout(() => message.delete(), 10000);
     }
     else {
         channel.cmdreply.send(':warning: ยังไม่เคยใช้คำสั่งนี้ในช่องนี้มาก่อนในช่วงเร็ว ๆ นี้\n:exclamation: พิมพ์คำสั่งอีกครั้งเพื่อยืนยันการใช้งาน');
@@ -35,7 +43,7 @@ module.exports = {
     description: 'ลบแชทใน channel ทั้งหมด (Admin เท่านั้น)',
     permissions: 'ADMINISTRATOR',
     guildOnly: true,
-    cooldown: 5,
+    cooldown: 3,
     execute(message, args) {
         clearChat(message.channel);
     },

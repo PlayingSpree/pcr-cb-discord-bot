@@ -6,6 +6,7 @@ const queueManager = require('./app/queue/queue_manager.js');
 const notifyManager = require('./app/notify/notify_manager.js');
 const slashManager = require('./slash_commands/slash_commands_manager.js');
 const commands_validator = require('./command_validator.js');
+const secretCommands = require('./commands/secret_command.js');
 
 dotenv.config();
 
@@ -22,11 +23,15 @@ client.once('ready', () => {
 });
 
 client.commands = new Discord.Collection();
+client.secretCommands = secretCommands.load();
 
 const commandFolders = fs.readdirSync('./commands');
 
 for (const folder of commandFolders) {
     if (!appConfig.debug & folder == 'debug') {
+        continue;
+    }
+    if (folder == 'secret_command.js') {
         continue;
     }
     const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'));
@@ -46,7 +51,9 @@ client.on('message', message => {
 
     // Find command (name: string, aliases: [string])
     const command = client.commands.get(commandName)
-        || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+        || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName))
+        || client.secretCommands.get(commandName)
+        || client.secretCommands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
     if (!command) return;
 

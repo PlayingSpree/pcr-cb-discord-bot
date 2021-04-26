@@ -23,6 +23,18 @@
                         "name": "count",
                         "description": "จำนวนไม้ที่ต้องการ",
                         "required": true
+                    },
+                    {
+                        "type": 4,
+                        "name": "boss",
+                        "description": "เลขบอส (1,2,3,4,5) (ไว้เรียกคนที่จองบอส)",
+                        "required": false
+                    },
+                    {
+                        "type": 4,
+                        "name": "round",
+                        "description": "รอบบอส (ไว้เรียกคนที่จองบอส)",
+                        "required": false
                     }
                 ]
             },

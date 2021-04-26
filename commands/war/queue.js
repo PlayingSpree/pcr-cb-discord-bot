@@ -109,8 +109,29 @@ module.exports = {
         if (teamCount <= 0) {
             return message.channel.send(`arguments ที่ 2 ต้องมากกว่า 0\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
         }
-        // Run
-        queueManager.start(message.channel, teamCount, args[0]);
+        if (args.length >= 4) {
+            const boss = parseInt(args[2]);
+            if (isNaN(boss)) {
+                return message.channel.send(`boss ต้องเป็นตัวเลข\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
+            }
+            if (boss <= 0) {
+                return message.channel.send(`boss ต้องมากกว่า 0\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
+            }
+            if (boss > 5) {
+                return message.channel.send(`boss ต้องน้อยกว่า 5\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
+            }
+            const round = parseInt(args[3]);
+            if (isNaN(round)) {
+                return message.channel.send(`round ต้องเป็นตัวเลข\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
+            }
+            if (round <= 0) {
+                return message.channel.send(`round ต้องมากกว่า 0\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
+            }
+            queueManager.start(message.channel, teamCount, args[0], boss, round);
+        }
+        else {
+            queueManager.start(message.channel, teamCount, args[0]);
+        }
         message.delete();
     },
     executeSlash(interaction, args) {
@@ -122,7 +143,7 @@ module.exports = {
         // Run
         if (interaction.data.options[0].name === 'start') {
             const subArgs = slashManager.parseArgs(interaction.data.options[0].options);
-            queueManager.start(interaction.channel, subArgs.count, subArgs.bossname);
+            queueManager.start(interaction.channel, subArgs.count, subArgs.bossname, subArgs.boss ?? null, subArgs.round ?? null);
         }
         else {
             const subArgs = slashManager.parseArgs(interaction.data.options[0].options);
