@@ -13,7 +13,7 @@ async function tryClearChat(channel) {
     }
 }
 
-async function clearChat(channel, stopQueue = true) {
+async function clearChat(channel) {
     console.log('Clearing all chat from ' + channel.name);
     let fetched;
     let error = false;
@@ -33,13 +33,7 @@ async function clearChat(channel, stopQueue = true) {
     }
     while (fetched.size >= 2 && !error);
     console.log('Chat cleared.');
-    let reply = 'ล้างแชทเสร็จแล้วจ้า~ พิมพ์ต่อกันได้เลย';
-    if (stopQueue) {
-        if (queueManager.stop(channel, false)) {
-            reply = 'หยุดการอนุมัติบอสและล้างแชทเสร็จแล้วจ้า~ พิมพ์ต่อกันได้เลย';
-        }
-    }
-    const message = await channel.send(reply);
+    const message = await channel.send('ล้างแชทเสร็จแล้วจ้า~ พิมพ์ต่อกันได้เลย');
     setTimeout(() => message.delete(), 10000);
 }
 
@@ -50,14 +44,14 @@ module.exports = {
     permissions: 'ADMINISTRATOR',
     guildOnly: true,
     cooldown: 3,
-    async forceClear(channel, user, stopQueue = false) {
+    async forceClear(channel, user) {
         const authorPerms = channel.permissionsFor(user);
         if (!authorPerms || !authorPerms.has(this.permissions)) {
             channel.cmdreply.send(`ใช้ได้เฉพาะ User ที่มี Permission ${this.permissions} เท่านั้น`, { 'flags': 64 });
             return false;
         }
         usedChannels.push(channel);
-        await clearChat(channel, stopQueue);
+        await clearChat(channel);
         return true;
     },
     execute(message, args) {

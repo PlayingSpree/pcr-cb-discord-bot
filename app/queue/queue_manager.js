@@ -67,10 +67,6 @@ module.exports = {
     stop(channel, reply = true) {
         const state = getState(channel, reply);
         if (state) {
-            if (channel != state.queueChannel) {
-                if (reply) channel.cmdreply.send('กรุณาใช้ในช่องที่มีการอนุมัติ', { 'flags': 64 });
-                return false;
-            }
             state.isActive = false;
             if (reply) channel.cmdreply.send('หยุดการอนุมัติการตีบอสใน Server นี้แล้ว');
             console.log(`queue stoped at ${channel.guild.name} on ${channel.name}`);
