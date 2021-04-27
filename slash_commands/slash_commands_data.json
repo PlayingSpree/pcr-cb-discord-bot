@@ -28,13 +28,32 @@
                         "type": 4,
                         "name": "boss",
                         "description": "เลขบอส (1,2,3,4,5) (ไว้เรียกคนที่จองบอส)",
-                        "required": false
+                        "required": true
                     },
                     {
                         "type": 4,
                         "name": "round",
                         "description": "รอบบอส (ไว้เรียกคนที่จองบอส)",
-                        "required": false
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "type": 1,
+                "name": "next",
+                "description": "เริ่มการอนุมัติตีและเรียกคนที่จองบอสถัดไป และถ้าเป็น Admin จะล้างแชทอัตโนมัติ",
+                "options": [
+                    {
+                        "type": 3,
+                        "name": "bossname",
+                        "description": "ชื่อบอส",
+                        "required": true
+                    },
+                    {
+                        "type": 4,
+                        "name": "count",
+                        "description": "จำนวนไม้ที่ต้องการ",
+                        "required": true
                     }
                 ]
             },

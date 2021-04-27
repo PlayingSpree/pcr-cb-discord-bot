@@ -1,6 +1,7 @@
 const queueManager = require('../../app/queue/queue_manager.js');
 const subCommandManager = require('../../sub_command_manager.js');
 const slashManager = require('../../slash_commands/slash_commands_manager.js');
+const clearchat = require('../utility/clearchat.js');
 
 const subCommands = [{
     name: 'list',
@@ -87,9 +88,9 @@ module.exports = {
     name: 'queue',
     aliases: ['q'],
     description: 'ใช้เตรียมอนุมัติตีบอส',
-    usage: '[บอส] [จำนวนทีมที่ใช้ในบอสนี้] เริ่มการอนุมัติตีบอส' + subCommandManager.getSubCommandsUsage(subCommands),
+    usage: '<-n> [บอส] [จำนวนทีมที่ใช้ในบอสนี้] (เลขบอส) (รอบบอส) เริ่มการอนุมัติตีบอส สามารถใส่บอสเพื่อเรียกคนที่จองบอสไว้ได้ หากใส่ -n (next) จะเรียกบอสถัดไปโดยไม่ต้องใส่บอสและรอบ และถ้าเป็น Admin จะล้างแชทอัตโนมัติ' + subCommandManager.getSubCommandsUsage(subCommands),
     guildOnly: true,
-    execute(message, args) {
+    async execute(message, args) {
         const guildConfig = message.client.settings.get(message.guild.id);
         const prefix = guildConfig.prefix;
         // Check Role
@@ -101,6 +102,11 @@ module.exports = {
         // Validation
         if (args.length < 2) {
             return message.channel.send(`arguments ไม่พอ\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
+        }
+        const n = args.indexOf('-n');
+        if (n !== -1) {
+            args.splice(n, 1)
+            if (!await clearchat.forceClear(message.channel, message.member)) return;
         }
         const teamCount = parseInt(args[1]);
         if (isNaN(teamCount)) {
@@ -127,26 +133,30 @@ module.exports = {
             if (round <= 0) {
                 return message.channel.send(`round ต้องมากกว่า 0\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
             }
-            queueManager.start(message.channel, teamCount, args[0], boss, round);
+            queueManager.start(message.channel, teamCount, args[0], n !== -1, boss, round);
         }
         else {
             queueManager.start(message.channel, teamCount, args[0]);
         }
         message.delete();
     },
-    executeSlash(interaction, args) {
+    async executeSlash(interaction, args) {
         // Check Role
         const guildConfig = interaction.client.settings.get(interaction.guild.id);
         if (!interaction.member.roles.cache.some(role => role.name === guildConfig.approvalRole)) {
             return interaction.channel.cmdreply.send(`ท่านต้องมี Role: \`${guildConfig.approvalRole}\` ถึงจะใช้งานได้`, { 'flags': 64 });
         }
+        const subArgs = slashManager.parseArgs(interaction.data.options[0].options);
         // Run
-        if (interaction.data.options[0].name === 'start') {
-            const subArgs = slashManager.parseArgs(interaction.data.options[0].options);
-            queueManager.start(interaction.channel, subArgs.count, subArgs.bossname, subArgs.boss ?? null, subArgs.round ?? null);
+        const next = interaction.data.options[0].name === 'next';
+        if (interaction.data.options[0].name === 'start' || next) {
+            if (next) {
+                interaction.channel.cmdreply.send(`กำลังล้างแชทแล้วเริ่มบอสถัดไป`, { 'flags': 64 });
+                if (!await clearchat.forceClear(interaction.channel, interaction.member)) return;
+            }
+            queueManager.start(interaction.channel, subArgs.count, subArgs.bossname, next, subArgs.boss ?? null, subArgs.round ?? null);
         }
         else {
-            const subArgs = slashManager.parseArgs(interaction.data.options[0].options);
             subCommandManager.executeSlash(subCommands, interaction.data.options[0].name, interaction, subArgs);
         }
     }

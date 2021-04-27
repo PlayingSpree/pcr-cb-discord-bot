@@ -1,12 +1,12 @@
 TODO
--Auto Clear Queue On Clear chat
 -Add score calculator
 -Edit channel name to queue count
--Auto mention โพย channel
 -Approve save message
+-Set boss name
 
 Low Prio
 -Complete Reeeeeeee Counter
 -Add Pause Counter
+-Auto mention โพย channel
 
 Done

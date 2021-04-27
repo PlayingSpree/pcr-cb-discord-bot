@@ -20,13 +20,13 @@ class SlashReply {
                     res.allowed_mentions = args.allowedMentions;
                 }
             }
+            this.isReplied = true;
             await this.interaction.channel.client.api.interactions(this.interaction.id, this.interaction.token).callback.post({
                 data: {
                     type: 4,
                     data: res
                 }
             });
-            this.isReplied = true;
         }
     }
 }

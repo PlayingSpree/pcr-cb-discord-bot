@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const notifyManager = require('../notify/notify_manager.js');
+const appConfig = require('../../config.json');
 
 const queueStates = new Discord.Collection();
 
@@ -8,15 +9,18 @@ class QueueState {
         this.isActive = true;
         this.queueChannel = channel;
         this.queueMax = max;
+        this.boss = 1;
+        this.round = 1;
         this.playerQueue = [];
         this.reactedMessage = [];
     }
 }
 
 class PlayerQueueState {
-    constructor(user, paused) {
+    constructor(user, paused, comment = null) {
         this.user = user;
         this.paused = paused;
+        this.comment = comment;
     }
 }
 
@@ -36,10 +40,26 @@ function getState(channel, reply = true) {
 }
 
 module.exports = {
-    async start(channel, max, name, boss, round) {
-        queueStates.set(channel.guild.id, new QueueState(channel, max));
+    async start(channel, max, name, cont, boss, round) {
+        if (cont) {
+            const oldState = getState(channel);
+            if (oldState) {
+                boss = oldState.boss + 1;
+                if (boss == 6) {
+                    round = oldState.round + 1;
+                    boss = 1;
+                }
+                else {
+                    round = oldState.round;
+                }
+            }
+        }
+        const state = new QueueState(channel, max);
+        queueStates.set(channel.guild.id, state);
         await channel.cmdreply.send(`บอส ${name} มาแล้ว ต้องการ ${max} ไม้ โพสรูปแล้วรออนุมัติ เมื่อได้รับอนุมัติแล้วก็ตีได้เลยจ้า~`);
         if (boss != null && round != null) {
+            state.boss = boss;
+            state.round = round;
             notifyManager.call(channel, boss, round);
         }
         console.log(`queue started at ${channel.guild.name} on ${channel.name}`);
@@ -47,6 +67,10 @@ module.exports = {
     stop(channel, reply = true) {
         const state = getState(channel, reply);
         if (state) {
+            if (channel != state.queueChannel) {
+                if (reply) channel.cmdreply.send('กรุณาใช้ในช่องที่มีการอนุมัติ', { 'flags': 64 });
+                return false;
+            }
             state.isActive = false;
             if (reply) channel.cmdreply.send('หยุดการอนุมัติการตีบอสใน Server นี้แล้ว');
             console.log(`queue stoped at ${channel.guild.name} on ${channel.name}`);
@@ -116,7 +140,7 @@ module.exports = {
             }
             const playerList = await Promise.all(state.playerQueue.map(async (player, index) => {
                 const member = await channel.guild.members.fetch(player.user);
-                return `${index + 1}. ${member.nickname ?? player.user.username} (${player.user})${player.paused ? ' ⏸️' : ''}`
+                return `${index + 1}. ${player.comment || member.nickname || player.user.username} (${player.user})${player.paused ? ' ⏸️' : ''}`;
             }));
             const pauseCount = state.playerQueue.filter(x => x.paused === true).length;
             channel.cmdreply.send(`:crossed_swords: ขณะนี้มีคนได้รับอนุมัติไปแล้ว ${state.playerQueue.length}/${state.queueMax} ไม้${pauseCount > 0 ? ` ⏸️ พอสอยู่ ${pauseCount} ไม้` : ''}\n${playerList.join('\n')}`, { 'allowedMentions': { 'users': [] } });
@@ -139,8 +163,9 @@ module.exports = {
         console.log('Queue React: ' + reaction.emoji.name);
         // Reply for each emoji
         const player = reaction.message.author;
+        const comment = reaction.message.content;
         if (reaction.emoji.name === '✅') {
-            state.playerQueue.push(new PlayerQueueState(reaction.message.author, false));
+            state.playerQueue.push(new PlayerQueueState(reaction.message.author, false, comment.length > appConfig.queue_comment_length ? null : comment));
             state.reactedMessage.push(reaction.message);
             messageChannel.send(`${player} ตีได้เลยจ้า~`);
             this.print(messageChannel);
@@ -149,7 +174,7 @@ module.exports = {
             messageChannel.send(`${player} อย่าเพิ่งตีก่อน ซ้อมให้ดีกว่านี้แล้วมาขออนุญาตใหม่น้า~`);
             state.reactedMessage.push(reaction.message);
         } if (reaction.emoji.name === '⏸️') {
-            state.playerQueue.push(new PlayerQueueState(reaction.message.author, true));
+            state.playerQueue.push(new PlayerQueueState(reaction.message.author, true, comment.length > appConfig.queue_comment_length ? null : comment));
             messageChannel.send(`${player} ตีได้เลยจ้า~ แต่ต้องพอสรอด้วยน้า~`);
             state.reactedMessage.push(reaction.message);
             this.print(messageChannel);
