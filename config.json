@@ -1,7 +1,7 @@
 {
     "prefix": "%",
     "debug": true,
-    "presence": "Senyo is coming...",
+    "presence": "กำลังทดสอบระบบ",
     "overkill_time_gain": 10,
     "bossname": {
         "1": "ไวเวิร์น",

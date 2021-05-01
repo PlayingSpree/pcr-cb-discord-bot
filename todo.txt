@@ -1,8 +1,11 @@
-TODO
+1.1.0
 -Add score calculator
+-Add gacha luck
+
+TODO
 -Edit channel name to queue count
--Approve save message
 -Set boss name
+-Persistence Presence
 
 Low Prio
 -Complete Reeeeeeee Counter

@@ -18,8 +18,15 @@ client.login(process.env.TOKEN);
 
 client.once('ready', () => {
     console.log(`Ready! Logged in as ${client.user.tag}`);
+    // Update Slash Command
     // slashManager.registerServer(client, '249887769462177793');
-    client.user.setPresence({ activity: { name: appConfig.presence }, status: 'online' });
+
+    // List Emoji id
+    // console.log(client.guilds.cache.get('804347937647099924').emojis.cache.map((e) => `${e.name} - ${e.id}`).join('\n'));
+    secretCommands.client = client;
+    secretCommands.defaultPresence = appConfig.presence;
+    setInterval(secretCommands.setPresence, 1000 * 60 * 60);
+    client.user.setPresence({ activity: { name: secretCommands.defaultPresence }, status: 'online' });
 });
 
 client.commands = new Discord.Collection();

@@ -151,7 +151,6 @@ module.exports = {
         const next = interaction.data.options[0].name === 'next';
         if (interaction.data.options[0].name === 'start' || next) {
             if (next) {
-                interaction.channel.cmdreply.send(`กำลังล้างแชทแล้วเริ่มบอสถัดไป`, { 'flags': 64 });
                 if (!await clearchat.forceClear(interaction.channel, interaction.member)) return;
             }
             queueManager.start(interaction.channel, subArgs.count, subArgs.bossname, next, subArgs.boss ?? null, subArgs.round ?? null);

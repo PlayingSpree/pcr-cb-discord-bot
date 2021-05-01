@@ -15,11 +15,14 @@ async function tryClearChat(channel) {
 
 async function clearChat(channel) {
     console.log('Clearing all chat from ' + channel.name);
+    const message = await channel.send(':warning: กำลังล้างแชท อย่าเพิ่งพิมพ์น้า~ :warning:');
     let fetched;
     let error = false;
     do {
         try {
+            console.log(message.id);
             fetched = await channel.messages.fetch({ limit: 100 });
+            fetched = fetched.filter(m => m.id !== message.id);
             await channel.bulkDelete(fetched);
         }
         catch (err) {
@@ -32,8 +35,8 @@ async function clearChat(channel) {
         }
     }
     while (fetched.size >= 2 && !error);
+    message.edit('ล้างแชทเสร็จแล้วจ้า~ พิมพ์ต่อกันได้เลย');
     console.log('Chat cleared.');
-    const message = await channel.send('ล้างแชทเสร็จแล้วจ้า~ พิมพ์ต่อกันได้เลย');
     setTimeout(() => message.delete(), 10000);
 }
 
