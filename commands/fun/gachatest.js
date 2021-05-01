@@ -42,7 +42,7 @@ module.exports = {
     name: 'gachatest',
     aliases: ['gacha'],
     cooldown: 1,
-    description: 'ทดลองกาชา ว่าเปิดกี่ครั้งถึงจะได้ตัวที่ต้องการ',
+    description: 'จำลองเปิดกาชา ว่าเปิดกี่ครั้งถึงจะได้ตัวที่ต้องการ',
     execute(message, args) {
         const gachastr = getGacha();
         message.channel.send(gachastr[0]);
