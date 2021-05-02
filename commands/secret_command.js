@@ -4,6 +4,7 @@ const commands = new Discord.Collection();
 let currentPresence = null;
 
 const setpresence = {
+    name: 'setpresence',
     aliases: ['setp'],
     args: true,
     execute(message, args) {
@@ -13,8 +14,11 @@ const setpresence = {
 };
 
 module.exports = {
-    setPresence() {
-        this.client.user.setPresence({ activity: { name: currentPresence ?? this.defaultPresence }, status: 'online' });
+    setPresence(client) {
+        if (currentPresence) {
+            console.log(`Reseting Presence... [${currentPresence}]`);
+            client.user.setPresence({ activity: { name: currentPresence }, status: 'online' });
+        }
     },
     load() {
         commands.set('setpresence', setpresence);
