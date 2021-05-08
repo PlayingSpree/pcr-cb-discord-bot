@@ -27,8 +27,30 @@
                     {
                         "type": 4,
                         "name": "boss",
-                        "description": "เลขบอส (1,2,3,4,5) (ไว้เรียกคนที่จองบอส)",
-                        "required": true
+                        "description": "บอส (ไว้เรียกคนที่จองบอส)",
+                        "required": true,
+                        "choices": [
+                            {
+                                "name": "บอส 1",
+                                "value": 1
+                            },
+                            {
+                                "name": "บอส 2",
+                                "value": 2
+                            },
+                            {
+                                "name": "บอส 3",
+                                "value": 3
+                            },
+                            {
+                                "name": "บอส 4",
+                                "value": 4
+                            },
+                            {
+                                "name": "บอส 5",
+                                "value": 5
+                            }
+                        ]
                     },
                     {
                         "type": 4,
@@ -179,6 +201,18 @@
         ]
     },
     {
+        "name": "score",
+        "description": "คำนวณบอสที่ตีถึงจากคะแนนใน Clan Battle",
+        "options": [
+            {
+                "type": 3,
+                "name": "score",
+                "description": "คะแนนที่ได้",
+                "required": true
+            }
+        ]
+    },
+    {
         "name": "checkluck",
         "description": "เช็คดวงก่อนต่อสู้จริงใน Clan Battle"
     },
@@ -227,8 +261,30 @@
                     {
                         "type": 4,
                         "name": "boss",
-                        "description": "เลขบอส (1,2,3,4,5)",
-                        "required": true
+                        "description": "บอส",
+                        "required": true,
+                        "choices": [
+                            {
+                                "name": "บอส 1",
+                                "value": 1
+                            },
+                            {
+                                "name": "บอส 2",
+                                "value": 2
+                            },
+                            {
+                                "name": "บอส 3",
+                                "value": 3
+                            },
+                            {
+                                "name": "บอส 4",
+                                "value": 4
+                            },
+                            {
+                                "name": "บอส 5",
+                                "value": 5
+                            }
+                        ]
                     },
                     {
                         "type": 4,

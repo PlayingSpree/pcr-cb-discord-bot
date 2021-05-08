@@ -1,15 +1,10 @@
-1.1.0
--Add score calculator
--Add gacha luck
+1.2.0
 
 TODO
 -Edit channel name to queue count
 -Set boss name
--Persistence Presence
 
 Low Prio
 -Complete Reeeeeeee Counter
 -Add Pause Counter
 -Auto mention โพย channel
-
-Done

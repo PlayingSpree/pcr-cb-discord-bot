@@ -9,6 +9,7 @@ const setpresence = {
     args: true,
     execute(message, args) {
         currentPresence = args.join(' ');
+        console.log(`Seting Presence: ${currentPresence}`);
         message.client.user.setPresence({ activity: { name: currentPresence }, status: 'online' });
     },
 };
