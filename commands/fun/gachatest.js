@@ -40,7 +40,7 @@ function getGacha() {
 
 module.exports = {
     name: 'gachatest',
-    aliases: ['gacha'],
+    aliases: ['gacha', 'gachaluck'],
     cooldown: 1,
     description: 'จำลองเปิดกาชา ว่าเปิดกี่ครั้งถึงจะได้ตัวที่ต้องการ',
     execute(message, args) {

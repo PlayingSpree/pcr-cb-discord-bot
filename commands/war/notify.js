@@ -113,7 +113,10 @@ module.exports = {
             if ((subArgs.roundend ?? -1) < subArgs.round) {
                 return interaction.channel.cmdreply.send('roundend ต้องมากกว่า round', { 'flags': 64 });
             }
-            notifyManager.start(interaction.channel, subArgs.round, subArgs.roundend);
+            if (((subArgs.roundend ?? subArgs.round) == subArgs.round) && (subArgs.bossend ?? -1) < (subArgs.boss ?? -2)) {
+                return interaction.channel.cmdreply.send('bossend ต้องมากกว่า boss', { 'flags': 64 });
+            }
+            notifyManager.start(interaction.channel, subArgs.round, subArgs.roundend, subArgs.boss, subArgs.bossend);
         }
         else {
             subCommandManager.executeSlash(subCommands, interaction.data.options[0].name, interaction, subArgs);

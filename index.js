@@ -23,8 +23,10 @@ client.once('ready', () => {
 
     // List Emoji id
     // console.log(client.guilds.cache.get('804347937647099924').emojis.cache.map((e) => `${e.name} - ${e.id}`).join('\n'));
-    setInterval(() => { secretCommands.setPresence(client); }, 1000 * 60 * 60);
-    if (process.env.DEBUG == 'true') client.user.setPresence({ activity: { name: '!กำลังทดสอบระบบ!' }, status: 'dnd' });
+
+    // Permanent Presence
+    setInterval(() => { secretCommands.setPresence(client); }, 1000 * 60 * 30);
+    if (process.env.DEBUG == 'true') client.user.setPresence({ activity: { name: '⚠️กำลังทดสอบระบบ⚠️' }, status: 'dnd' });
 });
 
 client.commands = new Discord.Collection();

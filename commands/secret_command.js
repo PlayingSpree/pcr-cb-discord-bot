@@ -8,9 +8,22 @@ const setpresence = {
     aliases: ['setp'],
     args: true,
     execute(message, args) {
-        currentPresence = args.join(' ');
-        console.log(`Seting Presence: ${currentPresence}`);
-        message.client.user.setPresence({ activity: { name: currentPresence }, status: 'online' });
+        if (args.length > 0 && args[0] == '-d') {
+            const time = args[1];
+            args = args.slice(2);
+            const newPresence = args.join(' ');
+            console.log(`Seting Interval for Delayed Presence: ${newPresence} (Time: ${time})`);
+            setInterval(() => {
+                currentPresence = newPresence;
+                console.log(`Seting Delayed Presence: ${currentPresence}`);
+                message.client.user.setPresence({ activity: { name: currentPresence }, status: 'online' });
+            }, 1000 * time);
+        }
+        else {
+            currentPresence = args.join(' ');
+            console.log(`Seting Presence: ${currentPresence}`);
+            message.client.user.setPresence({ activity: { name: currentPresence }, status: 'online' });
+        }
     },
 };
 

@@ -36,8 +36,8 @@ function getState(channel) {
     }
 }
 
-async function reactNumberOnMessage(message) {
-    for (let i = 1; i <= 5; i++) {
+async function reactNumberOnMessage(message, boss = 1, bossEnd = 5) {
+    for (let i = boss; i <= bossEnd; i++) {
         await message.react(reaction_numbers[i]);
     }
 }
@@ -54,30 +54,44 @@ function printMessage(notifyMessage) {
     let str = `====================================
 :smiling_imp: __**[บอสรอบที่ ${notifyMessage.bossRound}]**__`;
     for (let i = 0; i <= 4; i++) {
+        if (notifyMessage.players[i][0] === null)
+            continue;
         str += `\n**${reaction_numbers[i + 1]} ${bossInfo.bossInfoToString(i + 1, notifyMessage.bossRound)}** ${notifyMessage.players[i].length == 0 ? 'ยังไม่มีคนจอง' : `จองแล้ว ${notifyMessage.players[i].length} คน`}`;
     }
     return str;
 }
 
 module.exports = {
-    async start(channel, round, roundEnd) {
+    async start(channel, round, roundEnd, boss = 1, bossEnd = 5) {
         await channel.cmdreply.send(':crossed_swords: เริ่มการจองคิวบอส กด React ที่บอสที่ต้องการจองเพื่อจองบอส และรับการแจ้งเตือนเมื่อถึงบอส\n**:warning: การจองบอส ไม่มีผลต่อการเข้าตี ก่อนตียังคงต้องแปะรูปเพื่อขออนุญาติตีตามปกติ**');
         notifyStates.set(channel.guild.id, new NotifyState(channel));
         for (let i = round; i <= roundEnd; i++) {
-            await this.add(channel, i);
+            if (i != round)
+                boss = 1
+            if (i == roundEnd) {
+                await this.add(channel, i, boss, bossEnd);
+            } else
+                await this.add(channel, i, boss, 5);
         }
         console.log(`notify started at ${channel.guild.name} on ${channel.name}`);
     },
-    async add(channel, round) {
+    async add(channel, round, boss = 1, bossEnd = 5) {
         const state = getState(channel);
         if (state) {
             if (!round) {
                 round = state.messages[state.messages.length - 1].bossRound + 1;
             }
             const message = new NotifyMessage(round);
+            for (let i = 1; i <= 5; i++) {
+                if (i < boss) {
+                    message.players[i - 1].push(null);
+                } else if (i > bossEnd) {
+                    message.players[i - 1].push(null);
+                }
+            }
             message.message = await channel.send(printMessage(message));
             state.messages.push(message);
-            reactNumberOnMessage(message.message);
+            reactNumberOnMessage(message.message, boss, bossEnd);
         }
     },
     stop(channel) {
@@ -98,6 +112,9 @@ module.exports = {
             const playerlist = notifymessage.players[boss - 1];
             if (playerlist.length == 0) {
                 return channel.cmdreply.send('ไม่มีผู้เล่นจองบอสที่ต้องการเรียก', { 'flags': 64 });
+            }
+            if (playerlist[0] === null) {
+                return channel.cmdreply.send('ไม่พบรอบบอสที่ต้องการเรียก', { 'flags': 64 });
             }
             callplayer(channel, playerlist, bossInfo.bossInfoToInt(boss, round), message);
         }

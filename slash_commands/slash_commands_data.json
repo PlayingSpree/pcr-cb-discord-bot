@@ -240,6 +240,62 @@
                         "name": "roundend",
                         "description": "รอบสิ้นสุด",
                         "required": true
+                    },
+                    {
+                        "type": 4,
+                        "name": "boss",
+                        "description": "บอสเรื่มต้น",
+                        "required": false,
+                        "choices": [
+                            {
+                                "name": "บอส 1",
+                                "value": 1
+                            },
+                            {
+                                "name": "บอส 2",
+                                "value": 2
+                            },
+                            {
+                                "name": "บอส 3",
+                                "value": 3
+                            },
+                            {
+                                "name": "บอส 4",
+                                "value": 4
+                            },
+                            {
+                                "name": "บอส 5",
+                                "value": 5
+                            }
+                        ]
+                    },
+                    {
+                        "type": 4,
+                        "name": "bossend",
+                        "description": "บอสสิ้นสุด",
+                        "required": false,
+                        "choices": [
+                            {
+                                "name": "บอส 1",
+                                "value": 1
+                            },
+                            {
+                                "name": "บอส 2",
+                                "value": 2
+                            },
+                            {
+                                "name": "บอส 3",
+                                "value": 3
+                            },
+                            {
+                                "name": "บอส 4",
+                                "value": 4
+                            },
+                            {
+                                "name": "บอส 5",
+                                "value": 5
+                            }
+                        ]
                     }
                 ]
             },
