@@ -205,7 +205,7 @@
         "description": "คำนวณบอสที่ตีถึงจากคะแนนใน Clan Battle",
         "options": [
             {
-                "type": 3,
+                "type": 4,
                 "name": "score",
                 "description": "คะแนนที่ได้",
                 "required": true
