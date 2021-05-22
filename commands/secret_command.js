@@ -13,7 +13,7 @@ const setpresence = {
             args = args.slice(2);
             const newPresence = args.join(' ');
             console.log(`Seting Interval for Delayed Presence: ${newPresence} (Time: ${time})`);
-            setInterval(() => {
+            setTimeout(() => {
                 currentPresence = newPresence;
                 console.log(`Seting Delayed Presence: ${currentPresence}`);
                 message.client.user.setPresence({ activity: { name: currentPresence }, status: 'online' });

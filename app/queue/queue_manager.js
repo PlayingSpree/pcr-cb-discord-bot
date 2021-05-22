@@ -9,8 +9,8 @@ class QueueState {
         this.isActive = true;
         this.queueChannel = channel;
         this.queueMax = max;
-        this.boss = 1;
-        this.round = 1;
+        this.boss = null;
+        this.round = null;
         this.playerQueue = [];
         this.reactedMessage = [];
     }
@@ -44,19 +44,27 @@ module.exports = {
         if (cont) {
             const oldState = getState(channel);
             if (oldState) {
+                if (oldState.boss == null || oldState.round == null) {
+                    channel.cmdreply.send('รอบที่แล้วไม่ได้ใส่รอบบอสไว้ ทำให้ไม่สามารถเรียกผู้เล่นที่จองไว้ได้');
+                }
                 boss = oldState.boss + 1;
                 if (boss == 6) {
                     round = oldState.round + 1;
                     boss = 1;
                 }
                 else {
-                    round = oldState.round;
+                    round = oldState.boss;
                 }
+            }
+            else {
+                channel.cmdreply.send('ทำให้ไม่สามารถเรียกผู้เล่นที่จองไว้ได้');
             }
         }
         const state = new QueueState(channel, max);
         queueStates.set(channel.guild.id, state);
-        await channel.cmdreply.send(`บอส ${name} มาแล้ว ต้องการ ${max} ไม้ โพสรูปแล้วรออนุมัติ เมื่อได้รับอนุมัติแล้วก็ตีได้เลยจ้า~`);
+        await channel.cmdreply.send(`========================================================================
+**__บอส ${name} มาแล้ว ต้องการ ${max} ไม้ โพสรูปแล้วรออนุมัติ เมื่อได้รับอนุมัติแล้วก็ตีได้เลยจ้า~__**
+========================================================================`);
         if (boss != null && round != null) {
             state.boss = boss;
             state.round = round;

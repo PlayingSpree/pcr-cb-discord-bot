@@ -106,7 +106,7 @@ module.exports = {
         const n = args.indexOf('-n');
         if (n !== -1) {
             args.splice(n, 1)
-            if (!await clearchat.forceClear(message.channel, message.member)) return;
+            await clearchat.forceClear(message.channel, message.member)
         }
         const teamCount = parseInt(args[1]);
         if (isNaN(teamCount)) {
@@ -151,7 +151,8 @@ module.exports = {
         const next = interaction.data.options[0].name === 'next';
         if (interaction.data.options[0].name === 'start' || next) {
             if (next) {
-                if (!await clearchat.forceClear(interaction.channel, interaction.member)) return;
+                interaction.channel.cmdreply.send('กำลังล้างแชทและเรียกบอสรอบถัดไป', { 'flags': 64 });
+                await clearchat.forceClear(interaction.channel, interaction.member)
             }
             queueManager.start(interaction.channel, subArgs.count, subArgs.bossname, next, subArgs.boss ?? null, subArgs.round ?? null);
         }

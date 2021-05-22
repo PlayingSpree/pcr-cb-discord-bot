@@ -15,13 +15,14 @@ async function tryClearChat(channel) {
 
 async function clearChat(channel) {
     console.log('Clearing all chat from ' + channel.name);
-    const message = await channel.send(':warning: **__กำลังล้างแชท อย่าเพิ่งพิมพ์น้า~__** :warning:');
+    const message = await channel.send(':warning: **__กำลังล้างแชท รอสักครู่น้า~__** :warning:');
     let fetched;
     let error = false;
+    const timeStart = Date.now();
     do {
         try {
             fetched = await channel.messages.fetch({ limit: 100 });
-            fetched = fetched.filter(m => m.id !== message.id);
+            fetched = fetched.filter(m => (m.id !== message.id) && (m.createdAt <= timeStart));
             await channel.bulkDelete(fetched);
         }
         catch (err) {
@@ -49,7 +50,7 @@ module.exports = {
     async forceClear(channel, user) {
         const authorPerms = channel.permissionsFor(user);
         if (!authorPerms || !authorPerms.has(this.permissions)) {
-            channel.cmdreply.send(`ใช้ได้เฉพาะ User ที่มี Permission ${this.permissions} เท่านั้น`, { 'flags': 64 });
+            channel.cmdreply.send(`ล้างแชทใช้ได้เฉพาะ User ที่มี Permission ${this.permissions} เท่านั้น`, { 'flags': 64 });
             return false;
         }
         usedChannels.push(channel);
