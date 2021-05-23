@@ -15,10 +15,10 @@ async function tryClearChat(channel) {
 
 async function clearChat(channel) {
     console.log('Clearing all chat from ' + channel.name);
-    const message = await channel.send(':warning: **__กำลังล้างแชท รอสักครู่น้า~__** :warning:');
+    const message = await channel.send(':warning: **__กำลังล้างแชทที่อยู่ด้านบน แต่พิมพ์กันได้ปกติน้า__** :warning:');
     let fetched;
     let error = false;
-    const timeStart = Date.now();
+    const timeStart = new Date(Date.now() - 1000);
     do {
         try {
             fetched = await channel.messages.fetch({ limit: 100 });
@@ -35,9 +35,9 @@ async function clearChat(channel) {
         }
     }
     while (fetched.size >= 2 && !error);
-    message.edit('ล้างแชทเสร็จแล้วจ้า~ พิมพ์ต่อกันได้เลย');
+    message.edit('ล้างแชทเสร็จแล้วจ้า~');
     console.log('Chat cleared.');
-    setTimeout(() => message.delete(), 10000);
+    setTimeout(() => message.delete(), 5000);
 }
 
 module.exports = {
