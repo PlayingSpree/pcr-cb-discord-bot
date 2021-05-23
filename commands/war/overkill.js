@@ -44,7 +44,7 @@ module.exports = {
     name: 'overkill',
     aliases: ['ovk'],
     description: 'คำนวณเวลาและดาเมจหาก Overkill',
-    usage: '[HPบอส] [ดาเมจทีม1] ([ดาเมจทีม2]) สามารถใส่ดาเมจแค่ทีมเดียวเพื่อดูดาเมจที่ต้องทำได้ในทีม 2',
+    usage: '[HPบอส] [ดาเมจทีม1] <ดาเมจทีม2> สามารถใส่ดาเมจแค่ทีมเดียวเพื่อดูดาเมจที่ต้องทำได้ในทีม 2',
     execute(message, args) {
         const guildConfig = message.client.settings.get(message.guild.id);
         const prefix = guildConfig.prefix;

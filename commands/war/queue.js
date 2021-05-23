@@ -88,7 +88,7 @@ module.exports = {
     name: 'queue',
     aliases: ['q'],
     description: 'ใช้เตรียมอนุมัติตีบอส',
-    usage: '<-n> [บอส] [จำนวนทีมที่ใช้ในบอสนี้] (เลขบอส) (รอบบอส) เริ่มการอนุมัติตีบอส สามารถใส่บอสเพื่อเรียกคนที่จองบอสไว้ได้ หากใส่ -n (next) จะเรียกบอสถัดไปโดยไม่ต้องใส่บอสและรอบ และถ้าเป็น Admin จะล้างแชทอัตโนมัติ' + subCommandManager.getSubCommandsUsage(subCommands),
+    usage: '<-n> [เลขบอส] [รอบบอส] [จำนวนทีมที่ใช้ในบอสนี้] เริ่มการอนุมัติตีบอส ใส่เลขบอสเพื่อเรียกคนที่จองบอสไว้ได้ หากใส่ -n (next) จะเรียกบอสถัดไปโดยไม่ต้องใส่บอสและรอบ และถ้าเป็น Admin จะล้างแชทอัตโนมัติ' + subCommandManager.getSubCommandsUsage(subCommands),
     guildOnly: true,
     async execute(message, args) {
         const guildConfig = message.client.settings.get(message.guild.id);
@@ -105,18 +105,24 @@ module.exports = {
         }
         const n = args.indexOf('-n');
         if (n !== -1) {
-            args.splice(n, 1)
-            clearchat.forceClear(message.channel, message.member)
+            if (!queueManager.isRunning(message.channel)) {
+                return message.channel.send('ขณะนี้ยังไม่มีการอนุมัติการตีบอสใน Server นี้');
+            }
+            args.splice(n, 1);
+            clearchat.forceClear(message.channel, message.member);
         }
-        const teamCount = parseInt(args[1]);
+        if (args.length < 3 && n !== -1) {
+            return message.channel.send(`arguments ไม่พอ\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
+        }
+        const teamCount = parseInt(args[2]);
         if (isNaN(teamCount)) {
-            return message.channel.send(`arguments ที่ 2 ต้องเป็นตัวเลข\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
+            return message.channel.send(`จำนวนไม้ ต้องเป็นตัวเลข\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
         }
         if (teamCount <= 0) {
-            return message.channel.send(`arguments ที่ 2 ต้องมากกว่า 0\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
+            return message.channel.send(`จำนวนไม้ ต้องมากกว่า 0\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
         }
-        if (args.length >= 4) {
-            const boss = parseInt(args[2]);
+        if (args.length >= 3) {
+            const boss = parseInt(args[0]);
             if (isNaN(boss)) {
                 return message.channel.send(`boss ต้องเป็นตัวเลข\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
             }
@@ -126,17 +132,17 @@ module.exports = {
             if (boss > 5) {
                 return message.channel.send(`boss ต้องน้อยกว่า 5\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
             }
-            const round = parseInt(args[3]);
+            const round = parseInt(args[1]);
             if (isNaN(round)) {
                 return message.channel.send(`round ต้องเป็นตัวเลข\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
             }
             if (round <= 0) {
                 return message.channel.send(`round ต้องมากกว่า 0\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
             }
-            queueManager.start(message.channel, teamCount, args[0], n !== -1, boss, round);
+            queueManager.start(message.channel, teamCount, n !== -1, boss, round);
         }
         else {
-            queueManager.start(message.channel, teamCount, args[0]);
+            queueManager.start(message.channel, teamCount);
         }
         message.delete();
     },
@@ -151,9 +157,12 @@ module.exports = {
         const next = interaction.data.options[0].name === 'next';
         if (interaction.data.options[0].name === 'start' || next) {
             if (next) {
-                clearchat.forceClear(interaction.channel, interaction.member)
+                if (!queueManager.isRunning(interaction.channel)) {
+                    return interaction.channel.cmdreply.send('ขณะนี้ยังไม่มีการอนุมัติการตีบอสใน Server นี้', { 'flags': 64 });
+                }
+                clearchat.forceClear(interaction.channel, interaction.member);
             }
-            queueManager.start(interaction.channel, subArgs.count, subArgs.bossname, next, subArgs.boss ?? null, subArgs.round ?? null);
+            queueManager.start(interaction.channel, subArgs.count, next, subArgs.boss, subArgs.round);
         }
         else {
             subCommandManager.executeSlash(subCommands, interaction.data.options[0].name, interaction, subArgs);

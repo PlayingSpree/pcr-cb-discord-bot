@@ -13,18 +13,6 @@
                 "description": "เริ่มการอนุมัติตีบอส",
                 "options": [
                     {
-                        "type": 3,
-                        "name": "bossname",
-                        "description": "ชื่อบอส",
-                        "required": true
-                    },
-                    {
-                        "type": 4,
-                        "name": "count",
-                        "description": "จำนวนไม้ที่ต้องการ",
-                        "required": true
-                    },
-                    {
                         "type": 4,
                         "name": "boss",
                         "description": "บอส (ไว้เรียกคนที่จองบอส)",
@@ -57,6 +45,12 @@
                         "name": "round",
                         "description": "รอบบอส (ไว้เรียกคนที่จองบอส)",
                         "required": true
+                    },
+                    {
+                        "type": 4,
+                        "name": "count",
+                        "description": "จำนวนไม้ที่ต้องการ",
+                        "required": true
                     }
                 ]
             },
@@ -65,12 +59,6 @@
                 "name": "next",
                 "description": "เริ่มการอนุมัติตีและเรียกคนที่จองบอสถัดไป และถ้าเป็น Admin จะล้างแชทอัตโนมัติ",
                 "options": [
-                    {
-                        "type": 3,
-                        "name": "bossname",
-                        "description": "ชื่อบอส",
-                        "required": true
-                    },
                     {
                         "type": 4,
                         "name": "count",

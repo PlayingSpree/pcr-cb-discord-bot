@@ -15,7 +15,35 @@ module.exports = {
             if (guildConf) data.push(`prefix ของ server นี้: \`${guildConf.prefix}\``);
             data.push(`สามารถใช้ \`${guildConf.prefix}help [command name]\` เพื่อแสดงรายละเอียดเกี่ยวกับ command นั้น ๆ ได้`);
 
-            return message.channel.send(data, { split: true });
+            return message.channel.send(data, { split: { maxLength: 1000 } });
+        }
+
+        if (args[0] == '-f') {
+            const groupBy = (xs, key) => {
+                return xs.reduce((rv, x) => {
+                    (rv[x[key]] = rv[x[key]] || []).push(x);
+                    return rv;
+                }, {});
+            };
+
+            data.push('__**วิธีใช้คำสั่งทั้งหมด**__');
+            data.push('คำสั่งบางคำสั่งสามารถใช้ด้วยการพิมพ์ / นำหน้าแทนได้');
+            if (guildConf) data.push(`prefix ของ server นี้: \`${guildConf.prefix}\``);
+            data.push('===========================');
+
+            for (const [group, commandsInGroup] of Object.entries(groupBy(commands, 'group'))) {
+                data.push(`**__คำสั่งกลุ่ม ${group}__**`);
+                for (const command of commandsInGroup) {
+                    data.push(`\n**ชื่อคำสั่ง:** ${command.name}`);
+
+                    if (command.aliases) data.push(`**ชื่อย่อ:** ${command.aliases.join(', ')}`);
+                    if (command.description) data.push(`**รายละเอียด:** ${command.description}`);
+                    if (command.usage) data.push(`**วิธีใช้:** ${guildConf.prefix}${command.name} ${command.usage}`);
+                }
+                data.push('===========================');
+            }
+
+            return message.channel.send(data, { split: { maxLength: 1000 } });
         }
 
         const name = args[0].toLowerCase();
@@ -32,6 +60,6 @@ module.exports = {
         if (command.description) data.push(`**รายละเอียด:** ${command.description}`);
         if (command.usage) data.push(`**วิธีใช้:** ${guildConf.prefix}${command.name} ${command.usage}`);
 
-        message.channel.send(data, { split: true });
+        message.channel.send(data, { split: { maxLength: 1000 } });
     },
 };

@@ -8,8 +8,8 @@ class BossInfo {
     toInt() {
         return this.boss + ((this.round - 1) * 5);
     }
-    toString() {
-        return `${appConfig.bossname[this.boss]} รอบ ${(this.round - 1) * 5}`;
+    toString(config = appConfig) {
+        return `${config.bossname[this.boss - 1]} รอบ ${(this.round - 1) * 5}`;
     }
 }
 
@@ -23,10 +23,10 @@ module.exports = {
     bossInfoFromInt(i) {
         return new BossInfo(((i - 1) % 5) + 1, Math.floor((i - 1) / 5) + 1);
     },
-    bossIntToString(i) {
-        return `${appConfig.bossname[((i - 1) % 5) + 1]} รอบ ${Math.floor((i - 1) / 5) + 1}`;
+    bossIntToString(i, config = appConfig) {
+        return `${config.bossname[((i - 1) % 5)]} รอบ ${Math.floor((i - 1) / 5) + 1}`;
     },
-    bossInfoToString(boss, round) {
-        return this.bossIntToString(this.bossInfoToInt(boss, round));
+    bossInfoToString(boss, round, config = appConfig) {
+        return this.bossIntToString(this.bossInfoToInt(boss, round), config);
     },
 };

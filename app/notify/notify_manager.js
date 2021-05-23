@@ -43,20 +43,22 @@ async function reactNumberOnMessage(message, boss = 1, bossEnd = 5) {
 }
 
 async function callplayer(channel, playerlist, bossInt, message) {
+    const config = channel.client.settings.get(channel.guild.id);
     playerlist = await Promise.all(playerlist.map(async (user, index) => {
         const member = await channel.guild.members.fetch(user);
         return `${index + 1}. ${member.nickname ?? user.username} (${user})`
     }));
-    channel.cmdreply.send(`${(message ?? '')}\n**รายชื่อผู้เล่นที่จองบอส ${bossInfo.bossIntToString(bossInt)}**\n${playerlist.join('\n')}`);
+    channel.cmdreply.send(`${(message ?? '')}\n**รายชื่อผู้เล่นที่จองบอส ${bossInfo.bossIntToString(bossInt, config)}**\n${playerlist.join('\n')}`);
 }
 
-function printMessage(notifyMessage) {
+function printMessage(notifyMessage, channel) {
+    const config = channel.client.settings.get(channel.guild.id);
     let str = `====================================
 :smiling_imp: __**[บอสรอบที่ ${notifyMessage.bossRound}]**__`;
     for (let i = 0; i <= 4; i++) {
         if (notifyMessage.players[i][0] === null)
             continue;
-        str += `\n**${reaction_numbers[i + 1]} ${bossInfo.bossInfoToString(i + 1, notifyMessage.bossRound)}** ${notifyMessage.players[i].length == 0 ? 'ยังไม่มีคนจอง' : `จองแล้ว ${notifyMessage.players[i].length} คน`}`;
+        str += `\n**${reaction_numbers[i + 1]} ${bossInfo.bossInfoToString(i + 1, notifyMessage.bossRound, config)}** ${notifyMessage.players[i].length == 0 ? 'ยังไม่มีคนจอง' : `จองแล้ว ${notifyMessage.players[i].length} คน`}`;
     }
     return str;
 }
@@ -89,7 +91,7 @@ module.exports = {
                     message.players[i - 1].push(null);
                 }
             }
-            message.message = await channel.send(printMessage(message));
+            message.message = await channel.send(printMessage(message, channel));
             state.messages.push(message);
             reactNumberOnMessage(message.message, boss, bossEnd);
         }
@@ -149,7 +151,7 @@ module.exports = {
                 if (!message.players[4].includes(user)) message.players[4].push(user);
                 break;
         }
-        message.message.edit(printMessage(message));
+        message.message.edit(printMessage(message, messageChannel));
     },
     reactionRemoveEvent(reaction, user) {
         const messageChannel = reaction.message.channel;
@@ -187,6 +189,6 @@ module.exports = {
                 removeItem(4, user);
                 break;
         }
-        message.message.edit(printMessage(message));
+        message.message.edit(printMessage(message, messageChannel));
     }
 };

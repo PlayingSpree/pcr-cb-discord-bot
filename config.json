@@ -3,13 +3,13 @@
     "debug": true,
     "presence": "กำลังทดสอบระบบ",
     "overkill_time_gain": 10,
-    "bossname": {
-        "1": "[1]ก็อบลินเกรท",
-        "2": "[2]กริฟฟอน",
-        "3": "[3]เวรทลอร์ด",
-        "4": "[4]มูฟเวอร์",
-        "5": "[5]อัลเกตี้"
-    },
+    "bossname": [
+        "Boss 1",
+        "Boss 2",
+        "Boss 3",
+        "Boss 4",
+        "Boss 5"
+    ],
     "queue_comment_length": 48,
     "score_info": {
         "multiplier": [

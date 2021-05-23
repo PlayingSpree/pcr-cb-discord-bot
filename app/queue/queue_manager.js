@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const notifyManager = require('../notify/notify_manager.js');
 const appConfig = require('../../config.json');
+const bossInfo = require('../util/boss_info.js');
 
 const queueStates = new Discord.Collection();
 
@@ -40,7 +41,7 @@ function getState(channel, reply = true) {
 }
 
 module.exports = {
-    async start(channel, max, name, cont, boss, round) {
+    async start(channel, max, cont, boss, round) {
         if (cont) {
             const oldState = getState(channel);
             if (oldState) {
@@ -53,7 +54,7 @@ module.exports = {
                     boss = 1;
                 }
                 else {
-                    round = oldState.boss;
+                    round = oldState.round;
                 }
             }
             else {
@@ -63,7 +64,7 @@ module.exports = {
         const state = new QueueState(channel, max);
         queueStates.set(channel.guild.id, state);
         await channel.cmdreply.send(`======================================
-**__:smiling_imp: บอส ${name} มาแล้ว :crossed_swords: ต้องการ ${max} ไม้ __**
+**__:smiling_imp: บอส ${bossInfo.bossInfoToString(boss, round, channel.client.settings.get(channel.guild.id))} มาแล้ว :crossed_swords: ต้องการ ${max} ไม้ __**
 โพสรูปแล้วรออนุมัติ เมื่อได้รับอนุมัติแล้วก็ตีได้เลยจ้า~
 ======================================`);
         if (boss != null && round != null) {
@@ -150,6 +151,16 @@ module.exports = {
             const pauseCount = state.playerQueue.filter(x => x.paused === true).length;
             channel.cmdreply.send(`:crossed_swords: ขณะนี้มีคนได้รับอนุมัติไปแล้ว ${state.playerQueue.length}/${state.queueMax} ไม้${pauseCount > 0 ? ` ⏸️ พอสอยู่ ${pauseCount} ไม้` : ''}\n${playerList.join('\n')}`, { 'allowedMentions': { 'users': [] } });
         }
+    },
+    isRunning(channel) {
+        if (!queueStates.has(channel.guild.id)) {
+            return false;
+        }
+        const state = queueStates.get(channel.guild.id);
+        if (state.isActive) {
+            return true;
+        }
+        return false;
     },
     reactionEvent(reaction, user) {
         const messageChannel = reaction.message.channel;

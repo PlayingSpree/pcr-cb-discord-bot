@@ -1,6 +1,6 @@
 module.exports = {
     getSubCommandsUsage(subCommands) {
-        let subCommandsUsage = '\n**Subcommand:**';
+        let subCommandsUsage = '\n**คำสั่งย่อย:**';
         for (const cmd of subCommands) {
             subCommandsUsage += `\n${cmd.name}`;
 

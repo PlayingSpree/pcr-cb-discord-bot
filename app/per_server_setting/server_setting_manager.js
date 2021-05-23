@@ -8,6 +8,7 @@ const settings = new Enmap({
     autoEnsure: {
         prefix: '%',
         approvalRole: 'Approval',
+        bossname: ['Boss1', 'Boss2', 'Boss3', 'Boss4', 'Boss 5']
     }
 });
 

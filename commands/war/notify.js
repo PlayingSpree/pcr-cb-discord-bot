@@ -65,7 +65,7 @@ module.exports = {
     name: 'notify',
     aliases: ['n'],
     description: 'ใช้เตรียมระบบแจ้งเตือนบอสที่จะมาถึง',
-    usage: '[รอบ] <รอบสิ้นสุด> แสดงหน้าจองบอส' + subCommandManager.getSubCommandsUsage(subCommands),
+    usage: '[รอบ] <รอบสิ้นสุด> <บอสเริ่มต้น> <บอสสิ้นสุด> แสดงหน้าจองบอส' + subCommandManager.getSubCommandsUsage(subCommands),
     guildOnly: true,
     execute(message, args) {
         const guildConfig = message.client.settings.get(message.guild.id);
