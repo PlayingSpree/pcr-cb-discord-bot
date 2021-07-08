@@ -68,12 +68,8 @@ module.exports = {
         await channel.cmdreply.send(':crossed_swords: เริ่มการจองคิวบอส กด React ที่บอสที่ต้องการจองเพื่อจองบอส และรับการแจ้งเตือนเมื่อถึงบอส\n**:warning: การจองบอส ไม่มีผลต่อการเข้าตี ก่อนตียังคงต้องแปะรูปเพื่อขออนุญาติตีตามปกติ**');
         notifyStates.set(channel.guild.id, new NotifyState(channel));
         for (let i = round; i <= roundEnd; i++) {
-            if (i != round)
-                boss = 1
-            if (i == roundEnd) {
-                await this.add(channel, i, boss, bossEnd);
-            } else
-                await this.add(channel, i, boss, 5);
+            await this.add(channel, i, boss, (i == roundEnd) ? bossEnd : 5);
+            boss = 1
         }
         console.log(`notify started at ${channel.guild.name} on ${channel.name}`);
     },

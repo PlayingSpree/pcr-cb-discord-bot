@@ -1,5 +1,3 @@
-const queueManager = require('../../app/queue/queue_manager.js');
-
 const usedChannels = [];
 
 async function tryClearChat(channel) {
@@ -18,7 +16,7 @@ async function clearChat(channel) {
     const message = await channel.send(':warning: **__กำลังล้างแชทที่อยู่ด้านบน แต่พิมพ์กันได้ปกติน้า__** :warning:');
     let fetched;
     let error = false;
-    const timeStart = new Date(Date.now() - 1000);
+    const timeStart = new Date(Date.now() - 1500);
     do {
         try {
             fetched = await channel.messages.fetch({ limit: 100 });

@@ -35,7 +35,7 @@ client.secretCommands = secretCommands.load();
 const commandFolders = fs.readdirSync('./commands');
 
 for (const folder of commandFolders) {
-    if (!appConfig.debug & folder == 'debug') {
+    if (!appConfig.debug && folder == 'debug') {
         continue;
     }
     if (folder == 'secret_command.js') {

@@ -19,23 +19,23 @@
                         "required": true,
                         "choices": [
                             {
-                                "name": "บอส 1",
+                                "name": "1",
                                 "value": 1
                             },
                             {
-                                "name": "บอส 2",
+                                "name": "2",
                                 "value": 2
                             },
                             {
-                                "name": "บอส 3",
+                                "name": "3",
                                 "value": 3
                             },
                             {
-                                "name": "บอส 4",
+                                "name": "4",
                                 "value": 4
                             },
                             {
-                                "name": "บอส 5",
+                                "name": "5",
                                 "value": 5
                             }
                         ]
@@ -161,6 +161,49 @@
                 "type": 1,
                 "name": "unpause",
                 "description": "Mention คนที่พอสอยู่ในรายชื่ออนุมัติ และลบสถานะ Pause"
+            },
+            {
+                "type": 1,
+                "name": "doi",
+                "description": "เพิ่ม/ลบสถานะติดดอยให้ User (เพิ่มได้สูงสุดทีละ 5 คน)",
+                "options": [
+                    {
+                        "type": 5,
+                        "name": "remove",
+                        "description": "ลบสถานะติดดอย",
+                        "required": true
+                    },
+                    {
+                        "type": 6,
+                        "name": "user1",
+                        "description": "User ที่อนุมัติ",
+                        "required": true
+                    },
+                    {
+                        "type": 6,
+                        "name": "user2",
+                        "description": "User ที่อนุมัติ",
+                        "required": false
+                    },
+                    {
+                        "type": 6,
+                        "name": "user3",
+                        "description": "User ที่อนุมัติ",
+                        "required": false
+                    },
+                    {
+                        "type": 6,
+                        "name": "user4",
+                        "description": "User ที่อนุมัติ",
+                        "required": false
+                    },
+                    {
+                        "type": 6,
+                        "name": "user5",
+                        "description": "User ที่อนุมัติ",
+                        "required": false
+                    }
+                ]
             }
         ]
     },
@@ -236,23 +279,23 @@
                         "required": false,
                         "choices": [
                             {
-                                "name": "บอส 1",
+                                "name": "1",
                                 "value": 1
                             },
                             {
-                                "name": "บอส 2",
+                                "name": "2",
                                 "value": 2
                             },
                             {
-                                "name": "บอส 3",
+                                "name": "3",
                                 "value": 3
                             },
                             {
-                                "name": "บอส 4",
+                                "name": "4",
                                 "value": 4
                             },
                             {
-                                "name": "บอส 5",
+                                "name": "5",
                                 "value": 5
                             }
                         ]
@@ -264,23 +307,23 @@
                         "required": false,
                         "choices": [
                             {
-                                "name": "บอส 1",
+                                "name": "1",
                                 "value": 1
                             },
                             {
-                                "name": "บอส 2",
+                                "name": "2",
                                 "value": 2
                             },
                             {
-                                "name": "บอส 3",
+                                "name": "3",
                                 "value": 3
                             },
                             {
-                                "name": "บอส 4",
+                                "name": "4",
                                 "value": 4
                             },
                             {
-                                "name": "บอส 5",
+                                "name": "5",
                                 "value": 5
                             }
                         ]
@@ -309,23 +352,23 @@
                         "required": true,
                         "choices": [
                             {
-                                "name": "บอส 1",
+                                "name": "1",
                                 "value": 1
                             },
                             {
-                                "name": "บอส 2",
+                                "name": "2",
                                 "value": 2
                             },
                             {
-                                "name": "บอส 3",
+                                "name": "3",
                                 "value": 3
                             },
                             {
-                                "name": "บอส 4",
+                                "name": "4",
                                 "value": 4
                             },
                             {
-                                "name": "บอส 5",
+                                "name": "5",
                                 "value": 5
                             }
                         ]

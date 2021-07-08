@@ -34,11 +34,11 @@ module.exports = {
             for (const [group, commandsInGroup] of Object.entries(groupBy(commands, 'group'))) {
                 data.push(`**__คำสั่งกลุ่ม ${group}__**`);
                 for (const command of commandsInGroup) {
-                    data.push(`\n**ชื่อคำสั่ง:** ${command.name}`);
+                    data.push(`\n__**คำสั่ง:** \`${command.name}\`__`);
 
-                    if (command.aliases) data.push(`**ชื่อย่อ:** ${command.aliases.join(', ')}`);
-                    if (command.description) data.push(`**รายละเอียด:** ${command.description}`);
-                    if (command.usage) data.push(`**วิธีใช้:** ${guildConf.prefix}${command.name} ${command.usage}`);
+                    if (command.aliases) data.push(`**ชื่อย่อ:** \`${command.aliases.join(', ')}\``);
+                    if (command.description) data.push(`**รายละเอียด:** \`${command.description}\``);
+                    if (command.usage) data.push(`**วิธีใช้:** \`\`\`${guildConf.prefix}${command.name} ${command.usage}\`\`\``);
                 }
                 data.push('===========================');
             }

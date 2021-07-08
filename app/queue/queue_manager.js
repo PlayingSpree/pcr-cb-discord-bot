@@ -22,6 +22,7 @@ class PlayerQueueState {
         this.user = user;
         this.paused = paused;
         this.comment = comment;
+        this.doi = false;
     }
 }
 
@@ -63,10 +64,10 @@ module.exports = {
         }
         const state = new QueueState(channel, max);
         queueStates.set(channel.guild.id, state);
-        await channel.cmdreply.send(`======================================
+        await channel.cmdreply.send(`=====================================
 **__:smiling_imp: บอส ${bossInfo.bossInfoToString(boss, round, channel.client.settings.get(channel.guild.id))} มาแล้ว :crossed_swords: ต้องการ ${max} ไม้ __**
 โพสรูปแล้วรออนุมัติ เมื่อได้รับอนุมัติแล้วก็ตีได้เลยจ้า~
-======================================`);
+=====================================`);
         if (boss != null && round != null) {
             state.boss = boss;
             state.round = round;
@@ -108,7 +109,7 @@ module.exports = {
                 }
             }
             if (notFoundUsers.length > 0) {
-                channel.cmdreply.send(`ไม่เจอ ${notFoundUsers.join(' ')} ในรายชื่ออนุมัติ`, { 'allowedMentions': { 'users': [] }, 'flags': 64 });
+                channel.cmdreply.send(`ไม่เจอ ${notFoundUsers.join(' ')} ในรายชื่ออนุมัติ`, { 'allowedMentions': { 'users': [] } });
             }
             const removedUsers = users.filter(user => !notFoundUsers.includes(user));
             if (removedUsers.length > 0) {
@@ -137,6 +138,52 @@ module.exports = {
             channel.cmdreply.send(`${pausedUsers.join(' ')} ปล่อยพอสได้เลยจ้า~`);
         }
     },
+    async doi(channel, users, setTo = true) {
+        const state = getState(channel);
+        if (state) {
+            const notFoundUsers = [];
+            for (const user of users) {
+                const player = state.playerQueue.filter(x => x.doi != setTo && x.user == user);
+                if (player.length == 0) {
+                    notFoundUsers.push(user);
+                }
+                else if (player.length == 1) {
+                    player[0].doi = setTo;
+                }
+                else {
+                    const playerList = player.map((p, index) => `**__${index + 1}__** ${p.comment || p.user.username}`);
+                    channel.cmdreply.send(`**เจอ ${user} มากกว่า 1 ช่วยเลือกให้หน่อยจ้า**\n\n${playerList.join('\n')}\n\nพิมพ์ - แล้วตามด้วยตัวเลขของผู้เล่นที่เลือก เช่น -1`, { 'allowedMentions': { 'users': [] } });
+
+                    const filter = x => /^-[0-9]+$/.exec(x.content);
+                    try {
+                        const collected = await channel.awaitMessages(filter, { max: 1, time: 20000, errors: ['time'] });
+                        const index = parseInt(collected.first().content.substring(1));
+                        player[index - 1].doi = setTo;
+                    }
+                    catch (collected) {
+                        channel.cmdreply.send('ยังไม่มีคำตอบ เลือกคนแรกละกัน');
+                        player[0].doi = setTo;
+                    }
+                }
+            }
+            if (notFoundUsers.length > 0) {
+                channel.cmdreply.send(`ไม่เจอ ${notFoundUsers.join(' ')} ในรายชื่อ${setTo ? 'ติดดอย' : 'อนุมัติ'}`, { 'allowedMentions': { 'users': [] } });
+            }
+            const doiUsers = users.filter(user => !notFoundUsers.includes(user));
+            if (doiUsers.length > 0) {
+                if (setTo) {
+                    channel.cmdreply.send(`${doiUsers.join(' ')} ติดดอยซะแล้ว ⛰️ `, { 'allowedMentions': { 'users': [] } });
+                }
+                else {
+                    channel.cmdreply.send(`${doiUsers.join(' ')} ลบสถานะติดดอยแล้ว ⛰️ `, { 'allowedMentions': { 'users': [] } });
+                }
+                this.print(channel);
+            }
+            else {
+                channel.cmdreply.send('ไม่มีผู้เล่นที่ถูกติดดอย');
+            }
+        }
+    },
     async print(channel) {
         const state = getState(channel);
         if (state) {
@@ -144,12 +191,17 @@ module.exports = {
                 channel.cmdreply.send('ขณะนี้มียังไม่มีคนได้รับอนุมัติ', { 'flags': 64 });
                 return;
             }
-            const playerList = await Promise.all(state.playerQueue.map(async (player, index) => {
+            const playerList = await Promise.all(state.playerQueue.filter(x => x.doi === false).map(async (player, index) => {
                 const member = await channel.guild.members.fetch(player.user);
                 return `${index + 1}. ${player.comment || member.nickname || player.user.username} (${player.user})${player.paused ? ' ⏸️' : ''}`;
             }));
+            const doiList = await Promise.all(state.playerQueue.filter(x => x.doi === true).map(async (player, index) => {
+                const member = await channel.guild.members.fetch(player.user);
+                return `${index + 1}. ${player.comment || member.nickname || player.user.username} (${player.user})`;
+            }));
             const pauseCount = state.playerQueue.filter(x => x.paused === true).length;
-            channel.cmdreply.send(`:crossed_swords: ขณะนี้มีคนได้รับอนุมัติไปแล้ว ${state.playerQueue.length}/${state.queueMax} ไม้${pauseCount > 0 ? ` ⏸️ พอสอยู่ ${pauseCount} ไม้` : ''}\n${playerList.join('\n')}`, { 'allowedMentions': { 'users': [] } });
+            const doiCount = state.playerQueue.filter(x => x.doi === true).length;
+            channel.cmdreply.send(`**:crossed_swords: ขณะนี้มีคนได้รับอนุมัติไปแล้ว ${state.playerQueue.filter(x => x.doi === false).length}/${state.queueMax} ไม้${pauseCount > 0 ? ` ⏸️ พอสอยู่ ${pauseCount} ไม้` : ''}**\n${playerList.join('\n')}${(doiList.length > 0) ? `\n**⛰️ ติดดอยอยู่ ${doiCount} ไม้**\n` + doiList.join('\n') : ''}`, { 'allowedMentions': { 'users': [] } });
         }
     },
     isRunning(channel) {

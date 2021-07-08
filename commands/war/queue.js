@@ -73,6 +73,33 @@ const subCommands = [{
         queueManager.remove(interaction.channel, users);
     }
 }, {
+    name: 'doi',
+    aliases: ['d'],
+    usage: '<-r> [@user] เพิ่มสถานะติดดอย ให้กับคนที่ Mention ในรายชื่ออนุมัติ (เพิ่มทีละหลายคนได้) สามารถเพิ่ม -r เพื่อลบสถานะติดดอยได้',
+    execute(message, args) {
+        if (message.mentions.users.size > 0) {
+            if (args.length > 0 && args[0] == '-r') {
+                queueManager.doi(message.channel, [...message.mentions.users.values()], false);
+            }
+            else {
+                queueManager.doi(message.channel, [...message.mentions.users.values()]);
+            }
+        }
+        else {
+            const prefix = message.client.settings.get(message.guild.id).prefix;
+            return message.channel.send(`กรุณา Mention User ที่ต้องการเพิ่ม\nวิธีใช้: ${prefix}${this.name} ${this.usage}`);
+        }
+    },
+    async executeSlash(interaction, args) {
+        const users = [];
+        for (const arg in args) {
+            if (arg.includes('user')) {
+                users.push(await interaction.client.users.fetch(args[arg]));
+            }
+        }
+        queueManager.doi(interaction.channel, users, !args.remove);
+    }
+}, {
     name: 'unpause',
     aliases: ['up'],
     usage: 'Mention คนที่พอสอยู่ในรายชื่ออนุมัติ และลบสถานะ Pause',
