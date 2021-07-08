@@ -1,13 +1,13 @@
 module.exports = {
     getSubCommandsUsage(subCommands) {
-        let subCommandsUsage = '\n**คำสั่งย่อย:**';
+        let subCommandsUsage = '\n**คำสั่งย่อย:**```';
         for (const cmd of subCommands) {
             subCommandsUsage += `\n${cmd.name}`;
 
             if (cmd.aliases) subCommandsUsage += `(${cmd.aliases.join('|')})`;
             if (cmd.usage) subCommandsUsage += ` ${cmd.usage}`;
         }
-        return subCommandsUsage;
+        return subCommandsUsage + '```';
     },
     execute(subCommands, message, args) {
         if (args.length === 0) return false;
