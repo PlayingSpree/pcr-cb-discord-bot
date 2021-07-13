@@ -132,8 +132,9 @@ module.exports = {
         }
         const n = args.indexOf('-n');
         if (n !== -1) {
-            if (!queueManager.isRunning(message.channel)) {
-                return message.channel.send('ขณะนี้ยังไม่มีการอนุมัติการตีบอสใน Server นี้');
+            const err = queueManager.isRunning(message.channel);
+            if (err != null) {
+                return message.channel.send(err);
             }
             args.splice(n, 1);
             clearchat.forceClear(message.channel, message.member);
@@ -184,7 +185,8 @@ module.exports = {
         const next = interaction.data.options[0].name === 'next';
         if (interaction.data.options[0].name === 'start' || next) {
             if (next) {
-                if (!queueManager.isRunning(interaction.channel)) {
+                const err = queueManager.isRunning(interaction.channel);
+                if (err != null) {
                     return interaction.channel.cmdreply.send('ขณะนี้ยังไม่มีการอนุมัติการตีบอสใน Server นี้', { 'flags': 64 });
                 }
                 clearchat.forceClear(interaction.channel, interaction.member);

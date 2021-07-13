@@ -24,7 +24,7 @@ const subCommands = [{
     },
     executeSlash(interaction, args) {
         notifyManager.add(interaction.channel);
-        channel.cmdreply.send('เพิ่มรอบเรียบร้อยแล้ว', { 'flags': 64 });
+        interaction.channel.cmdreply.send('เพิ่มรอบเรียบร้อยแล้ว', { 'flags': 64 });
     }
 }, {
     name: 'call',

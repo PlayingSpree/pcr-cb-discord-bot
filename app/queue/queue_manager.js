@@ -206,13 +206,16 @@ module.exports = {
     },
     isRunning(channel) {
         if (!queueStates.has(channel.guild.id)) {
-            return false;
+            return 'ขณะนี้ยังไม่มีการอนุมัติการตีบอสใน Server นี้';
         }
         const state = queueStates.get(channel.guild.id);
-        if (state.isActive) {
-            return true;
+        if (channel != state.queueChannel) {
+            return 'ผิดห้อง 😂';
         }
-        return false;
+        if (state.isActive) {
+            return null;
+        }
+        return 'ขณะนี้การอนุมัติการตีบอสใน Server นี้ได้หยุดไปแล้ว';
     },
     reactionEvent(reaction, user) {
         const messageChannel = reaction.message.channel;
