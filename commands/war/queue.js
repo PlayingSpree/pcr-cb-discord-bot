@@ -187,7 +187,7 @@ module.exports = {
             if (next) {
                 const err = queueManager.isRunning(interaction.channel);
                 if (err != null) {
-                    return interaction.channel.cmdreply.send('ขณะนี้ยังไม่มีการอนุมัติการตีบอสใน Server นี้', { 'flags': 64 });
+                    return interaction.channel.cmdreply.send(err, { 'flags': 64 });
                 }
                 clearchat.forceClear(interaction.channel, interaction.member);
             }
