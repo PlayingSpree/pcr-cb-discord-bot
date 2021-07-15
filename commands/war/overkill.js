@@ -61,10 +61,14 @@ module.exports = {
 
         return message.channel.send(calcOverkill(args[0], args[1], args[2]));
     },
-    executeSlash(interaction, args) {
-        const [invalid, _] = validateOverkill(args.hp, args.dmg1, args.dmg2);
-        if (invalid) return interaction.channel.cmdreply.send(invalid, { 'flags': 64 });
+    executeSlash(interaction) {
+        const hp = interaction.options.get('hp').value;
+        const dmg1 = interaction.options.get('hp').value;
+        const dmg2 = interaction.options.get('hp').value;
 
-        interaction.channel.cmdreply.send(calcOverkill(args.hp, args.dmg1, args.dmg2));
+        const [invalid, _] = validateOverkill(hp, dmg1, dmg2);
+        if (invalid) return interaction.channel.cmdreply.send({ content: invalid, ephemeral: true });
+
+        interaction.channel.cmdreply.send(calcOverkill(hp, dmg1, dmg2));
     }
 };

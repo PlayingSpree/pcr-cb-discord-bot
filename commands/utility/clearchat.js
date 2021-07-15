@@ -1,12 +1,14 @@
+const { Permissions } = require('discord.js');
+
 const usedChannels = [];
 
 async function tryClearChat(channel) {
     if (usedChannels.includes(channel)) {
-        channel.cmdreply.send('กำลังลบข้อความทั้งหมด', { 'flags': 64 });
+        channel.cmdreply.send({ content: 'กำลังลบข้อความทั้งหมด', ephemeral: true });
         await clearChat(channel);
     }
     else {
-        channel.cmdreply.send(':warning: ยังไม่เคยล้างแชทในช่องนี้มาก่อนในช่วงเร็ว ๆ นี้\n:exclamation: พิมพ์คำสั่งอีกครั้งเพื่อยืนยันการใช้งาน', { 'flags': 64 });
+        channel.cmdreply.send({ content: ':warning: ยังไม่เคยล้างแชทในช่องนี้มาก่อนในช่วงเร็ว ๆ นี้\n:exclamation: พิมพ์คำสั่งอีกครั้งเพื่อยืนยันการใช้งาน', ephemeral: true });
         usedChannels.push(channel);
     }
 }
@@ -42,13 +44,13 @@ module.exports = {
     name: 'clearchat',
     aliases: ['cc'],
     description: 'ลบแชทใน channel ทั้งหมด (Admin เท่านั้น)',
-    permissions: 'ADMINISTRATOR',
+    permissions: Permissions.FLAGS.ADMINISTRATOR,
     guildOnly: true,
     cooldown: 3,
     async forceClear(channel, user) {
         const authorPerms = channel.permissionsFor(user);
         if (!authorPerms || !authorPerms.has(this.permissions)) {
-            channel.cmdreply.send(`ล้างแชทใช้ได้เฉพาะ User ที่มี Permission ${this.permissions} เท่านั้น`, { 'flags': 64 });
+            channel.cmdreply.send({ content: `ล้างแชทใช้ได้เฉพาะ User ที่มี Permission ${this.permissions} เท่านั้น`, ephemeral: true });
             return false;
         }
         usedChannels.push(channel);
@@ -58,7 +60,7 @@ module.exports = {
     execute(message, args) {
         tryClearChat(message.channel);
     },
-    executeSlash(interaction, args) {
+    executeSlash(interaction) {
         tryClearChat(interaction.channel);
     }
 };

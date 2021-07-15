@@ -1,8 +1,10 @@
+const { Permissions } = require('discord.js');
+
 module.exports = {
     name: 'showconfig',
     aliases: ['showconf', 'listconfig', 'listconf'],
     description: 'แสดงรายการการตั้งค่าบอทสำหรับ server นี้ (Admin เท่านั้น)',
-    permissions: 'ADMINISTRATOR',
+    permissions: Permissions.FLAGS.ADMINISTRATOR,
     execute(message, args) {
         const guildConf = message.client.settings.get(message.guild.id);
 

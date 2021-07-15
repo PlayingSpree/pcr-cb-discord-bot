@@ -33,7 +33,7 @@ module.exports = {
         message.channel.send(luckstr[0]);
         return message.channel.send(luckstr[1]);
     },
-    async executeSlash(interaction, args) {
+    async executeSlash(interaction) {
         const luckstr = getLuck();
         await interaction.channel.cmdreply.send(luckstr[0]);
         interaction.channel.cmdreply.send(luckstr[1]);

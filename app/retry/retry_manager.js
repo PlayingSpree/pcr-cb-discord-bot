@@ -20,7 +20,7 @@ class RetryMessage {
 
 function getState(channel) {
     if (!retryStates.has(channel.guild.id)) {
-        channel.cmdreply.send('ขณะนี้ยังไม่มีการนับคนรีแล้วใน Server นี้', { 'flags': 64 });
+        channel.cmdreply.send({ content: 'ขณะนี้ยังไม่มีการนับคนรีแล้วใน Server นี้', ephemeral: true });
         return;
     }
     const state = retryStates.get(channel.guild.id);
@@ -28,14 +28,14 @@ function getState(channel) {
         return state;
     }
     else {
-        channel.cmdreply.send('ขณะนี้ระบบการนับคนรีแล้วใน Server นี้ได้หยุดไปแล้ว', { 'flags': 64 });
+        channel.cmdreply.send({ content: 'ขณะนี้ระบบการนับคนรีแล้วใน Server นี้ได้หยุดไปแล้ว', ephemeral: true });
         return;
     }
 }
 
 async function printMessage(retryMessage) {
     const playerList = await Promise.all(retryMessage.players.map(async (user, index) => {
-        const member = await channel.guild.members.fetch(user);
+        const member = await channel.guild.members.fetch(user.id);
         return `${index + 1}. ${member.nickname ?? user.username} (${user})`
     }));
     return `====================================

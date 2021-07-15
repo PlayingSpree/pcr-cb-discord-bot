@@ -10,7 +10,7 @@ const secretCommands = require('./commands/secret_command.js');
 
 dotenv.config();
 
-const client = new Discord.Client();
+const client = new Discord.Client({ intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS'] });
 // Attach per server settings to client.settings
 client.settings = require('./app/per_server_setting/server_setting_manager.js');
 
@@ -26,7 +26,7 @@ client.once('ready', () => {
 
     // Permanent Presence
     setInterval(() => { secretCommands.setPresence(client); }, 1000 * 60 * 30);
-    if (process.env.DEBUG == 'true') client.user.setPresence({ activity: { name: '⚠️กำลังทดสอบระบบ⚠️' }, status: 'dnd' });
+    if (process.env.DEBUG == 'true') client.user.setPresence({ activities: [{ name: '⚠️กำลังทดสอบระบบ⚠️' }] });
 });
 
 client.commands = new Discord.Collection();
@@ -49,7 +49,7 @@ for (const folder of commandFolders) {
     }
 }
 
-client.on('message', message => {
+client.on('messageCreate', message => {
     const prefix = message.guild ? message.client.settings.get(message.guild.id).prefix : appConfig.prefix;
     // Extract command from message
     if (!message.content.startsWith(prefix) || message.author.bot) return;
@@ -84,7 +84,7 @@ client.on('message', message => {
     console.log(`Execute: ${command.name} with args: ${args.join(' ')}`);
     try {
         // Normal reply
-        message.channel.cmdreply = { send(data, send_args) { message.channel.send(data, send_args); } };
+        message.channel.cmdreply = { send(data) { message.channel.send(data); } };
         command.execute(message, args);
     }
     catch (error) {
@@ -110,34 +110,20 @@ client.on('guildDelete', guild => {
     client.settings.delete(guild.id);
 });
 
-client.ws.on('INTERACTION_CREATE', async interaction => {
-    if (interaction.type !== 2) return;
-    console.log(`Got interaction: ${interaction.data.name} from: ${interaction.guild_id}`);
-    if (interaction.data.name === 'enableslashcmd') {
-        if (interaction.guild_id !== undefined) {
-            slashManager.registerServer(client, interaction.guild_id);
-            client.api.interactions(interaction.id, interaction.token).callback.post({
-                data: {
-                    type: 4,
-                    data: {
-                        content: 'อัพเดต Slash Commands แล้ว'
-                    }
-                }
-            });
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isCommand()) return;
+    console.log(`Got interaction: ${interaction.commandName} from: ${interaction.guild?.name}`);
+    if (interaction.commandName === 'enableslashcmd') {
+        if (interaction.guildId !== undefined) {
+            slashManager.registerServer(client, interaction.guildId);
+            await interaction.reply('อัพเดต Slash Commands แล้ว');
         }
         else {
-            client.api.interactions(interaction.id, interaction.token).callback.post({
-                data: {
-                    type: 4,
-                    data: {
-                        content: 'ใช้ได้เฉพาะใน Server เท่านั้น'
-                    }
-                }
-            });
+            await interaction.reply('ใช้ได้เฉพาะใน Server เท่านั้น');
         }
     }
     else {
-        slashManager.handleInteraction(client, interaction);
+        slashManager.handleInteraction(interaction);
     }
 });
 

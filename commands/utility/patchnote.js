@@ -1,3 +1,4 @@
+const { Util } = require('discord.js');
 const patchnote = require('../../patchnote.json');
 
 module.exports = {
@@ -24,7 +25,11 @@ module.exports = {
             for (const k of keys) {
                 notes.push(`**${k}**\n` + patchnote[k]);
             }
-            return message.channel.send(notes, { split: true });
+            const messages = Util.splitMessage(notes.join('\n'), { maxLength: 1000 });
+            for (const text of messages) {
+                message.channel.send(text);
+            }
+            return;
         }
         return message.channel.send('ไม่พบ patchnote ใน version ที่ท่านใส่');
     }

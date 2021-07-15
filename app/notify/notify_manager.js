@@ -23,7 +23,7 @@ const reaction_numbers = ['\u0030\u20E3', '\u0031\u20E3', '\u0032\u20E3', '\u003
 
 function getState(channel) {
     if (!notifyStates.has(channel.guild.id)) {
-        channel.cmdreply.send('ขณะนี้ยังไม่มีระบบแจ้งเตือบอสใน Server นี้', { 'flags': 64 });
+        channel.cmdreply.send({ content: 'ขณะนี้ยังไม่มีระบบแจ้งเตือบอสใน Server นี้', ephemeral: true });
         return;
     }
     const state = notifyStates.get(channel.guild.id);
@@ -31,7 +31,7 @@ function getState(channel) {
         return state;
     }
     else {
-        channel.cmdreply.send('ขณะนี้ระบบแจ้งเตือบอสใน Server นี้ได้หยุดไปแล้ว', { 'flags': 64 });
+        channel.cmdreply.send({ content: 'ขณะนี้ระบบแจ้งเตือบอสใน Server นี้ได้หยุดไปแล้ว', ephemeral: true });
         return;
     }
 }
@@ -45,7 +45,7 @@ async function reactNumberOnMessage(message, boss = 1, bossEnd = 5) {
 async function callplayer(channel, playerlist, bossInt, message) {
     const config = channel.client.settings.get(channel.guild.id);
     playerlist = await Promise.all(playerlist.map(async (user, index) => {
-        const member = await channel.guild.members.fetch(user);
+        const member = await channel.guild.members.fetch(user.id);
         return `${index + 1}. ${member.nickname ?? user.username} (${user})`
     }));
     channel.cmdreply.send(`${(message ?? '')}\n**รายชื่อผู้เล่นที่จองบอส ${bossInfo.bossIntToString(bossInt, config)}**\n${playerlist.join('\n')}`);
@@ -105,14 +105,14 @@ module.exports = {
         if (state) {
             const notifymessage = state.messages.find(x => x.bossRound == round);
             if (!notifymessage) {
-                return channel.cmdreply.send('ไม่พบรอบบอสที่ต้องการเรียก', { 'flags': 64 });
+                return channel.cmdreply.send({ content: 'ไม่พบรอบบอสที่ต้องการเรียก', ephemeral: true });
             }
             const playerlist = notifymessage.players[boss - 1];
             if (playerlist.length == 0) {
-                return channel.cmdreply.send('ไม่มีผู้เล่นจองบอสที่ต้องการเรียก', { 'flags': 64 });
+                return channel.cmdreply.send({ content: 'ไม่มีผู้เล่นจองบอสที่ต้องการเรียก', ephemeral: true });
             }
             if (playerlist[0] === null) {
-                return channel.cmdreply.send('ไม่พบรอบบอสที่ต้องการเรียก', { 'flags': 64 });
+                return channel.cmdreply.send({ content: 'ไม่พบรอบบอสที่ต้องการเรียก', ephemeral: true });
             }
             callplayer(channel, playerlist, bossInfo.bossInfoToInt(boss, round), message);
         }

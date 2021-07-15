@@ -48,7 +48,7 @@ module.exports = {
         message.channel.send(gachastr[0]);
         return message.channel.send(gachastr[1]);
     },
-    async executeSlash(interaction, args) {
+    async executeSlash(interaction) {
         const gachastr = getGacha();
         await interaction.channel.cmdreply.send(gachastr[0]);
         interaction.channel.cmdreply.send(gachastr[1]);

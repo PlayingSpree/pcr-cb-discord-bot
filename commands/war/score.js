@@ -63,10 +63,11 @@ module.exports = {
 
         return message.channel.send(calcScore(args[0]));
     },
-    executeSlash(interaction, args) {
-        const [invalid, _] = validateScore(args.score);
-        if (invalid) return interaction.channel.cmdreply.send(invalid, { 'flags': 64 });
+    executeSlash(interaction) {
+        const score = interaction.options.get('score').value;
+        const [invalid, _] = validateScore(score);
+        if (invalid) return interaction.channel.cmdreply.send({ content: invalid, ephemeral: true });
 
-        interaction.channel.cmdreply.send(calcScore(args.score));
+        interaction.channel.cmdreply.send(calcScore(score));
     }
 };

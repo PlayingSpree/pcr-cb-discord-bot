@@ -27,14 +27,16 @@ module.exports = {
 
         message.channel.send(setBossname(message.channel, args.slice(0, 5)));
     },
-    executeSlash(interaction, args) {
-        const guildConfig = interaction.client.settings.get(interaction.guild.id);
+    executeSlash(interaction) {
+        const args = interaction.options;
+        const guildConfig = interaction.client.settings.get(interaction.guildId);
 
         // Check Role
         if (!interaction.member.roles.cache.some(role => role.name === guildConfig.approvalRole)) {
-            return interaction.channel.send(`ท่านต้องมี Role: \`${guildConfig.approvalRole}\` ถึงจะใช้งานได้`);
+            return interaction.channel.cmdreply.send({ content: `ท่านต้องมี Role: \`${guildConfig.approvalRole}\` ถึงจะใช้งานได้`, ephemeral: true });
         }
 
-        interaction.channel.cmdreply.send(setBossname(interaction.channel, [args.boss1, args.boss2, args.boss3, args.boss4, args.boss5]));
+        interaction.channel.cmdreply.send(setBossname(interaction.channel,
+            [args.get('boss1').value, args.get('boss2').value, args.get('boss3').value, args.get('boss4').value, args.get('boss5').value]));
     }
 };
