@@ -97,7 +97,7 @@ client.on('messageCreate', message => {
 client.on('messageReactionAdd', async (reaction, user) => {
     // Check bot
     if (user.bot) return;
-    if (queueManager.reactionEvent(reaction, user)) queuePanel.update(reaction.message.channel);
+    queueManager.reactionEvent(reaction, user);
     notifyManager.reactionEvent(reaction, user);
 });
 
