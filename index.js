@@ -7,6 +7,7 @@ const notifyManager = require('./app/notify/notify_manager.js');
 const slashManager = require('./slash_commands/slash_commands_manager.js');
 const commands_validator = require('./command_validator.js');
 const secretCommands = require('./commands/secret_command.js');
+const queuePanel = require('./app/control_panel/queue_panel.js');
 
 dotenv.config();
 
@@ -96,7 +97,7 @@ client.on('messageCreate', message => {
 client.on('messageReactionAdd', async (reaction, user) => {
     // Check bot
     if (user.bot) return;
-    queueManager.reactionEvent(reaction, user);
+    if (queueManager.reactionEvent(reaction, user)) queuePanel.update(reaction.message.channel);
     notifyManager.reactionEvent(reaction, user);
 });
 
@@ -111,19 +112,24 @@ client.on('guildDelete', guild => {
 });
 
 client.on('interactionCreate', async interaction => {
-    if (!interaction.isCommand()) return;
-    console.log(`Got interaction: ${interaction.commandName} from: ${interaction.guild?.name}`);
-    if (interaction.commandName === 'enableslashcmd') {
-        if (interaction.guildId !== undefined) {
-            slashManager.registerServer(client, interaction.guildId);
-            await interaction.reply('อัพเดต Slash Commands แล้ว');
+    if (interaction.isCommand()) {
+        console.log(`Got interaction: ${interaction.commandName} from: ${interaction.guild?.name}`);
+        if (interaction.commandName === 'enableslashcmd') {
+            if (interaction.guildId !== undefined) {
+                slashManager.registerServer(client, interaction.guildId);
+                await interaction.reply('อัพเดต Slash Commands แล้ว');
+            }
+            else {
+                await interaction.reply('ใช้ได้เฉพาะใน Server เท่านั้น');
+            }
         }
         else {
-            await interaction.reply('ใช้ได้เฉพาะใน Server เท่านั้น');
+            slashManager.handleInteraction(interaction);
         }
     }
-    else {
-        slashManager.handleInteraction(interaction);
+    else if (interaction.isButton()) {
+        console.log(`Got button interaction: ${interaction.customId} from: ${interaction.guild?.name}`);
+        queuePanel.interactionCreateEvent(interaction);
     }
 });
 

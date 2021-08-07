@@ -1,6 +1,6 @@
 const queueManager = require('../../app/queue/queue_manager.js');
+// const queuePanel = require('../../app/control_panel/queue_panel.js');
 const subCommandManager = require('../../sub_command_manager.js');
-const slashManager = require('../../slash_commands/slash_commands_manager.js');
 const clearchat = require('../utility/clearchat.js');
 
 const subCommands = [{
@@ -112,6 +112,16 @@ const subCommands = [{
     executeSlash(interaction, args) {
         queueManager.unpause(interaction.channel);
     }
+// }, {
+//     name: 'panel',
+//     aliases: ['p'],
+//     usage: 'สร้าง Control Panel ในช่องนี้',
+//     execute(message, args) {
+//         queuePanel.start(message.channel);
+//     },
+//     executeSlash(interaction, args) {
+//         queuePanel.start(interaction.channel);
+//     }
 }];
 
 module.exports = {
@@ -128,7 +138,10 @@ module.exports = {
             return message.channel.send(`ท่านต้องมี Role: \`${guildConfig.approvalRole}\` ถึงจะใช้งานได้`);
         }
         // Sub commands
-        if (subCommandManager.execute(subCommands, message, args)) return;
+        if (subCommandManager.execute(subCommands, message, args)) {
+            // queuePanel.update(message.channel);
+            return;
+        }
         // Validation
         if (args.length < 2) {
             return message.channel.send(`arguments ไม่พอ\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
@@ -176,6 +189,7 @@ module.exports = {
             queueManager.start(message.channel, teamCount);
         }
         message.delete();
+        // queuePanel.update(message.channel);
     },
     async executeSlash(interaction) {
         // Check Role
@@ -196,9 +210,11 @@ module.exports = {
                 clearchat.forceClear(interaction.channel, interaction.member);
             }
             queueManager.start(interaction.channel, subArgs.get('count').value, next, subArgs.get('boss')?.value, subArgs.get('round')?.value);
+            // queuePanel.update(interaction.channel);
         }
         else {
             subCommandManager.executeSlash(subCommands, subName, interaction, subArgs);
+            // queuePanel.update(interaction.channel);
         }
     }
 };

@@ -67,7 +67,10 @@ module.exports = {
         await channel.cmdreply.send(`=====================================
 **__:smiling_imp: บอส ${bossInfo.bossInfoToString(boss, round, channel.client.settings.get(channel.guild.id))} มาแล้ว :crossed_swords: ต้องการ ${max} ไม้ __**
 โพสรูปแล้วรออนุมัติ เมื่อได้รับอนุมัติแล้วก็ตีได้เลยจ้า~
-=====================================`);
+=====================================
+✅ = อนุมัติ ตีได้เลย
+⏸️ = อนุมัติ แต่ต้องพอสรอตอนจบ
+❎❌ = ไม่อนุมัติ`);
         if (boss != null && round != null) {
             state.boss = boss;
             state.round = round;
@@ -93,6 +96,15 @@ module.exports = {
             }
             channel.cmdreply.send(`อนุมัติผู้เล่นเพิ่ม${users.length > 1 ? `อีก ${users.length} คน` : ''}แล้วจ้า~`);
             this.print(channel);
+        }
+    },
+    edit(channel, max, boss, round) {
+        const state = getState(channel);
+        if (state) {
+            state.queueMax = max || state.queueMax;
+            state.boss = boss || state.boss;
+            state.round = round || state.round;
+            channel.cmdreply.send(`แก้ไขข้อมูลการอนุมัติแล้ว${max ? `\nไม้ที่ต้องการ: ${max}` : ''}${boss ? `\nบอส: ${boss}` : ''}${round ? `\nรอบ: ${round}` : ''}`);
         }
     },
     remove(channel, users) {
@@ -186,12 +198,23 @@ module.exports = {
             }
         }
     },
-    async print(channel) {
-        const state = getState(channel);
+    async print(channel, direct = false) {
+        const [err, str] = await this.printString(channel, true);
+        if (err !== null) {
+            if (direct) {
+                await channel.send({ content: str, ephemeral: err });
+            }
+            else {
+                await channel.cmdreply.send({ content: str, ephemeral: err });
+            }
+
+        }
+    },
+    async printString(channel, reply = false) {
+        const state = getState(channel, reply);
         if (state) {
             if (state.playerQueue.length === 0) {
-                channel.cmdreply.send({ content: 'ขณะนี้มียังไม่มีคนได้รับอนุมัติ', ephemeral: true });
-                return;
+                return [true, 'ขณะนี้มียังไม่มีคนได้รับอนุมัติ'];
             }
             const playerList = await Promise.all(state.playerQueue.filter(x => x.doi === false).map(async (player, index) => {
                 const member = await channel.guild.members.fetch(player.user.id);
@@ -203,8 +226,9 @@ module.exports = {
             }));
             const pauseCount = state.playerQueue.filter(x => x.paused === true).length;
             const doiCount = state.playerQueue.filter(x => x.doi === true).length;
-            channel.cmdreply.send({ content: `**:crossed_swords: ขณะนี้มีคนได้รับอนุมัติไปแล้ว ${state.playerQueue.filter(x => x.doi === false).length}/${state.queueMax} ไม้${pauseCount > 0 ? ` ⏸️ พอสอยู่ ${pauseCount} ไม้` : ''}**\n${playerList.join('\n')}${(doiList.length > 0) ? `\n**⛰️ ติดดอยอยู่ ${doiCount} ไม้**\n` + doiList.join('\n') : ''}`, 'allowedMentions': { 'users': [] } });
+            return [false, `**:crossed_swords: ขณะนี้มีคนได้รับอนุมัติไปแล้ว ${state.playerQueue.filter(x => x.doi === false).length}/${state.queueMax} ไม้${pauseCount > 0 ? ` ⏸️ พอสอยู่ ${pauseCount} ไม้` : ''}**\n${playerList.join('\n')}${(doiList.length > 0) ? `\n**⛰️ ติดดอยอยู่ ${doiCount} ไม้**\n` + doiList.join('\n') : ''}`];
         }
+        return [null, this.isRunning(channel)];
     },
     isRunning(channel) {
         if (!queueStates.has(channel.guild.id)) {
@@ -219,7 +243,9 @@ module.exports = {
         }
         return 'ขณะนี้การอนุมัติการตีบอสใน Server นี้ได้หยุดไปแล้ว';
     },
-    reactionEvent(reaction, user) {
+    getState(channel) {
+        return getState(channel, false);
+    }, reactionEvent(reaction, user) {
         const messageChannel = reaction.message.channel;
         const state = queueStates.get(messageChannel.guild.id);
         if (!state || !state.isActive) return;
@@ -241,7 +267,8 @@ module.exports = {
             state.playerQueue.push(new PlayerQueueState(reaction.message.author, false, comment.length > appConfig.queue_comment_length ? null : comment));
             state.reactedMessage.push(reaction.message);
             messageChannel.send(`${player} ตีได้เลยจ้า~`);
-            this.print(messageChannel);
+            this.print(messageChannel, true);
+            return true;
         }
         if (reaction.emoji.name === '❌' || reaction.emoji.name === '❎') {
             messageChannel.send(`${player} อย่าเพิ่งตีก่อน ซ้อมให้ดีกว่านี้แล้วมาขออนุญาตใหม่น้า~`);
@@ -250,7 +277,8 @@ module.exports = {
             state.playerQueue.push(new PlayerQueueState(reaction.message.author, true, comment.length > appConfig.queue_comment_length ? null : comment));
             messageChannel.send(`${player} ตีได้เลยจ้า~ แต่ต้องพอสรอด้วยน้า~`);
             state.reactedMessage.push(reaction.message);
-            this.print(messageChannel);
+            this.print(messageChannel, true);
+            return true;
         }
     }
 };
