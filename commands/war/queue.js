@@ -194,9 +194,9 @@ module.exports = {
             return interaction.channel.cmdreply.send({ content: `ท่านต้องมี Role: \`${guildConfig.approvalRole}\` ถึงจะใช้งานได้`, ephemeral: true });
         }
         // Run
-        const subArgs = interaction.options.first().options;
-        const subName = interaction.options.first().name;
-        const next = interaction.options.first().name === 'next';
+        const subArgs = interaction.options;
+        const subName = interaction.options.getSubcommand();
+        const next = subName === 'next';
         if (subName === 'start' || next) {
             if (next) {
                 const err = queueManager.isRunning(interaction.channel);

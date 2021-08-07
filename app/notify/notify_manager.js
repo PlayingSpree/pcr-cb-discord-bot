@@ -4,10 +4,11 @@ const bossInfo = require('../util/boss_info.js');
 const notifyStates = new Discord.Collection();
 
 class NotifyState {
-    constructor(channel) {
+    constructor(channel, bossMessage) {
         this.isActive = true;
         this.queueChannel = channel;
         this.messages = [];
+        this.bossMessage = bossMessage;
     }
 }
 
@@ -46,7 +47,7 @@ async function callplayer(channel, playerlist, bossInt, message) {
     const config = channel.client.settings.get(channel.guild.id);
     playerlist = await Promise.all(playerlist.map(async (user, index) => {
         const member = await channel.guild.members.fetch(user.id);
-        return `${index + 1}. ${member.nickname ?? user.username} (${user})`
+        return `${index + 1}. ${member.nickname ?? user.username} (${user})`;
     }));
     channel.cmdreply.send(`${(message ?? '')}\n**รายชื่อผู้เล่นที่จองบอส ${bossInfo.bossIntToString(bossInt, config)}**\n${playerlist.join('\n')}`);
 }
@@ -56,8 +57,7 @@ function printMessage(notifyMessage, channel) {
     let str = `====================================
 :smiling_imp: __**[บอสรอบที่ ${notifyMessage.bossRound}]**__`;
     for (let i = 0; i <= 4; i++) {
-        if (notifyMessage.players[i][0] === null)
-            continue;
+        if (notifyMessage.players[i][0] === null) { continue; }
         str += `\n**${reaction_numbers[i + 1]} ${bossInfo.bossInfoToString(i + 1, notifyMessage.bossRound, config)}** ${notifyMessage.players[i].length == 0 ? 'ยังไม่มีคนจอง' : `จองแล้ว ${notifyMessage.players[i].length} คน`}`;
     }
     return str;
@@ -66,10 +66,11 @@ function printMessage(notifyMessage, channel) {
 module.exports = {
     async start(channel, round, roundEnd, boss = 1, bossEnd = 5) {
         await channel.cmdreply.send(':crossed_swords: เริ่มการจองคิวบอส กด React ที่บอสที่ต้องการจองเพื่อจองบอส และรับการแจ้งเตือนเมื่อถึงบอส\n**:warning: การจองบอส ไม่มีผลต่อการเข้าตี ก่อนตียังคงต้องแปะรูปเพื่อขออนุญาติตีตามปกติ**');
-        notifyStates.set(channel.guild.id, new NotifyState(channel));
+        const bossMessage = await channel.send('**บอสปัจจุบัน:** ยังไม่ได้กำหนด');
+        notifyStates.set(channel.guild.id, new NotifyState(channel, bossMessage));
         for (let i = round; i <= roundEnd; i++) {
             await this.add(channel, i, boss, (i == roundEnd) ? bossEnd : 5);
-            boss = 1
+            boss = 1;
         }
         console.log(`notify started at ${channel.guild.name} on ${channel.name}`);
     },
@@ -83,7 +84,8 @@ module.exports = {
             for (let i = 1; i <= 5; i++) {
                 if (i < boss) {
                     message.players[i - 1].push(null);
-                } else if (i > bossEnd) {
+                }
+                else if (i > bossEnd) {
                     message.players[i - 1].push(null);
                 }
             }
@@ -126,7 +128,7 @@ module.exports = {
         // Check channel
         if (messageChannel.id !== state.queueChannel.id) return;
         // Check message
-        const message = state.messages.find(x => x.message == reaction.message);
+        const message = state.messages.find(x => x.message.id == reaction.message.id);
         if (!message) return;
         // Add
         console.log('Notify React: ' + reaction.emoji.name);
@@ -158,7 +160,7 @@ module.exports = {
         // Check channel
         if (messageChannel.id !== state.queueChannel.id) return;
         // Check message
-        const message = state.messages.find(x => x.message == reaction.message);
+        const message = state.messages.find(x => x.message.id == reaction.message.id);
         if (!message) return;
         // Remove
         console.log('Notify React Removed: ' + reaction.emoji.name);
@@ -186,5 +188,23 @@ module.exports = {
                 break;
         }
         message.message.edit(printMessage(message, messageChannel));
+    },
+    setCurrentBoss(channel, boss, round) {
+        const state = notifyStates.get(channel.guild.id);
+        if (state) {
+            state.messages.forEach(m => {
+                if (m.bossRound < round) {
+                    m.message.delete();
+                }
+            });
+            state.messages = state.messages.filter(m => m.bossRound >= round);
+            if (state.messages.every(m => m.bossRound < round + 1)) {
+                this.add(state.queueChannel);
+            }
+            if (state.bossMessage) {
+                const config = channel.client.settings.get(channel.guild.id);
+                return state.bossMessage.edit(`\n**บอสปัจจุบัน:** ${reaction_numbers[boss]} ${bossInfo.bossInfoToString(boss, round, config)}`);
+            }
+        }
     }
 };

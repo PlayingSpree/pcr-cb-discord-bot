@@ -109,13 +109,13 @@ module.exports = {
             return interaction.channel.cmdreply.send({ content: `ท่านต้องมี Role: \`${guildConfig.approvalRole}\` ถึงจะใช้งานได้`, ephemeral: true });
         }
         // Run
-        const subArgs = interaction.options.first().options;
-        const subName = interaction.options.first().name;
+        const subArgs = interaction.options;
+        const subName = interaction.options.getSubcommand();
         if (subName === 'start') {
-            const round = subArgs.get('round').value;
-            const roundend = subArgs.get('roundend').value;
-            const boss = subArgs.get('boss').value;
-            const bossend = subArgs.get('bossend').value;
+            const round = subArgs.getInteger('round', true);
+            const roundend = subArgs.getInteger('roundend', true);
+            const boss = subArgs.getInteger('boss') ?? undefined;
+            const bossend = subArgs.getInteger('bossend') ?? undefined;
 
             if ((roundend ?? -1) < round) {
                 return interaction.channel.cmdreply.send({ content: 'roundend ต้องมากกว่า round', ephemeral: true });

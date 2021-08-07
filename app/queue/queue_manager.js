@@ -69,12 +69,13 @@ module.exports = {
 โพสรูปแล้วรออนุมัติ เมื่อได้รับอนุมัติแล้วก็ตีได้เลยจ้า~
 =====================================
 ✅ = อนุมัติ ตีได้เลย
-⏸️ = อนุมัติ แต่ต้องพอสรอตอนจบ
+⏸️ = อนุมัติ แต่ต้องพอสรอตอนใกล้จบ
 ❎❌ = ไม่อนุมัติ`);
         if (boss != null && round != null) {
             state.boss = boss;
             state.round = round;
             notifyManager.call(channel, boss, round);
+            notifyManager.setCurrentBoss(channel, boss, round);
         }
         console.log(`queue started at ${channel.guild.name} on ${channel.name}`);
     },
@@ -104,7 +105,7 @@ module.exports = {
             state.queueMax = max || state.queueMax;
             state.boss = boss || state.boss;
             state.round = round || state.round;
-            channel.cmdreply.send(`แก้ไขข้อมูลการอนุมัติแล้ว${max ? `\nไม้ที่ต้องการ: ${max}` : ''}${boss ? `\nบอส: ${boss}` : ''}${round ? `\nรอบ: ${round}` : ''}`);
+            channel.cmdreply.send(`**แก้ไขข้อมูลการอนุมัติแล้ว**${max ? `\n**ไม้ที่ต้องการ:** \`${max}\`` : ''}${boss ? `\n**บอส:** \`${boss}\`` : ''}${round ? `\n**รอบ:** \`${round}\`` : ''}`);
         }
     },
     remove(channel, users) {

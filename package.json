@@ -1,6 +1,6 @@
 {
   "name": "pcr-cb-discord-bot",
-  "version": "v1.3.0",
+  "version": "v1.2.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/PlayingSpree/pcr-cb-discord-bot#readme",
   "dependencies": {
-    "discord.js": "^13.0.0",
+    "discord.js": "^13.0.1",
     "dotenv": "^8.2.0",
     "enmap": "^5.8.4",
     "eslint": "^7.21.0"
