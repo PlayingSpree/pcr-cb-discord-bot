@@ -204,6 +204,53 @@
                         "required": false
                     }
                 ]
+            },
+            {
+                "type": 1,
+                "name": "edit",
+                "description": "แก้ไขรายละเอียดการอนุมัติบอส",
+                "options": [
+                    {
+                        "type": 4,
+                        "name": "boss",
+                        "description": "บอส (ไว้เรียกคนที่จองบอส)",
+                        "required": false,
+                        "choices": [
+                            {
+                                "name": "1",
+                                "value": 1
+                            },
+                            {
+                                "name": "2",
+                                "value": 2
+                            },
+                            {
+                                "name": "3",
+                                "value": 3
+                            },
+                            {
+                                "name": "4",
+                                "value": 4
+                            },
+                            {
+                                "name": "5",
+                                "value": 5
+                            }
+                        ]
+                    },
+                    {
+                        "type": 4,
+                        "name": "round",
+                        "description": "รอบบอส (ไว้เรียกคนที่จองบอส)",
+                        "required": false
+                    },
+                    {
+                        "type": 4,
+                        "name": "count",
+                        "description": "จำนวนไม้ที่ต้องการ",
+                        "required": false
+                    }
+                ]
             }
         ]
     },

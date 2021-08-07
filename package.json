@@ -1,6 +1,6 @@
 {
   "name": "pcr-cb-discord-bot",
-  "version": "v2.0.0",
+  "version": "v1.3.0",
   "description": "",
   "main": "index.js",
   "scripts": {

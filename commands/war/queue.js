@@ -111,6 +111,15 @@ const subCommands = [{
     executeSlash(interaction, args) {
         queueManager.unpause(interaction.channel);
     }
+}, {
+    name: 'edit',
+    usage: '[เลขบอส] [รอบบอส] [จำนวนทีมที่ใช้ในบอสนี้] แก้ไขรายละเอียดการอนุมัติบอส (ใช้ได้เฉพาะ Slash Commands)',
+    executeSlash(interaction, args) {
+        if (args.get('count') || args.get('boss')?.value || args.get('round')?.value) {
+            return queueManager.edit(interaction.channel, args.get('count')?.value, args.get('boss')?.value, args.get('round')?.value);
+        }
+        interaction.channel.cmdreply.send({ content: 'กรุณาใส่ค่าอย่างน้อย 1 ช่อง', ephemeral: true });
+    }
 }];
 
 module.exports = {
