@@ -1,9 +1,11 @@
+const { Permissions } = require('discord.js');
+
 module.exports = {
     name: 'setconfig',
     aliases: ['setconf'],
     description: 'ตั้งค่าบอทสำหรับ server นี้ (Admin เท่านั้น)',
     usage: '[key] [value]',
-    permissions: 'ADMINISTRATOR',
+    permissions: Permissions.FLAGS.ADMINISTRATOR,
     execute(message, args) {
         const guildConfig = message.client.settings.get(message.guild.id);
         const prefix = guildConfig.prefix;

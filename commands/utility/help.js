@@ -1,3 +1,5 @@
+const { Util } = require('discord.js');
+
 module.exports = {
     name: 'help',
     description: 'แสดงรายการ command ทั้งหมด หรือ แสดงรายละเอียด command ที่ใส่',
@@ -15,7 +17,11 @@ module.exports = {
             if (guildConf) data.push(`prefix ของ server นี้: \`${guildConf.prefix}\``);
             data.push(`สามารถใช้ \`${guildConf.prefix}help [command name]\` เพื่อแสดงรายละเอียดเกี่ยวกับ command นั้น ๆ ได้`);
 
-            return message.channel.send(data, { split: { maxLength: 1000 } });
+            const messages = Util.splitMessage(data.join('\n'), { maxLength: 1000 });
+            for (const text of messages) {
+                message.channel.send(text);
+            }
+            return;
         }
 
         if (args[0] == '-f') {
@@ -42,8 +48,11 @@ module.exports = {
                 }
                 data.push('===========================');
             }
-
-            return message.channel.send(data, { split: { maxLength: 1000 } });
+            const messages = Util.splitMessage(data.join('\n'), { maxLength: 1000 });
+            for (const text of messages) {
+                message.channel.send(text);
+            }
+            return;
         }
 
         const name = args[0].toLowerCase();
@@ -60,6 +69,9 @@ module.exports = {
         if (command.description) data.push(`**รายละเอียด:** ${command.description}`);
         if (command.usage) data.push(`**วิธีใช้:** ${guildConf.prefix}${command.name} ${command.usage}`);
 
-        message.channel.send(data, { split: { maxLength: 1000 } });
+        const messages = Util.splitMessage(data.join('\n'), { maxLength: 1000 });
+        for (const text of messages) {
+            message.channel.send(text);
+        }
     },
 };

@@ -8,8 +8,10 @@ module.exports = function validate(command, message) {
     }
 
     // Permission Check (permissions: string)
+    const author = message.author ?? message.member;
+
     if (command.permissions) {
-        const authorPerms = message.channel.permissionsFor(message.author);
+        const authorPerms = message.channel.permissionsFor(author);
         if (!authorPerms || !authorPerms.has(command.permissions)) {
             return `ใช้ได้เฉพาะ User ที่มี Permission ${command.permissions} เท่านั้น`;
         }
@@ -24,16 +26,16 @@ module.exports = function validate(command, message) {
     const timestamps = cooldowns.get(command.name);
     const cooldownAmount = (command.cooldown || 3) * 1000;
 
-    if (timestamps.has(message.author.id)) {
-        const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
+    if (timestamps.has(author.id)) {
+        const expirationTime = timestamps.get(author.id) + cooldownAmount;
 
         if (now < expirationTime) {
             const timeLeft = (expirationTime - now) / 1000;
-            return `please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`;
+            return `กรุณารออีก ${timeLeft.toFixed(1)} วินาที ก่อนใช้คำสั่ง \`${command.name}\` อีกครั้ง.`;
         }
     }
-    timestamps.set(message.author.id, now);
-    setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+    timestamps.set(author.id, now);
+    setTimeout(() => timestamps.delete(author.id), cooldownAmount);
 
     return false;
 };

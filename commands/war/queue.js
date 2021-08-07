@@ -1,6 +1,5 @@
 const queueManager = require('../../app/queue/queue_manager.js');
 const subCommandManager = require('../../sub_command_manager.js');
-const slashManager = require('../../slash_commands/slash_commands_manager.js');
 const clearchat = require('../utility/clearchat.js');
 
 const subCommands = [{
@@ -43,9 +42,10 @@ const subCommands = [{
     },
     async executeSlash(interaction, args) {
         const users = [];
-        for (const arg in args) {
-            if (arg.includes('user')) {
-                users.push(await interaction.client.users.fetch(args[arg]));
+        for (const arg of ['user1', 'user2', 'user3', 'user4', 'user5']) {
+            const options = args.get(arg);
+            if (options) {
+                users.push(options.member ?? options.user);
             }
         }
         queueManager.add(interaction.channel, users, args.pause);
@@ -65,9 +65,10 @@ const subCommands = [{
     },
     async executeSlash(interaction, args) {
         const users = [];
-        for (const arg in args) {
-            if (arg.includes('user')) {
-                users.push(await interaction.client.users.fetch(args[arg]));
+        for (const arg of ['user1', 'user2', 'user3', 'user4', 'user5']) {
+            const options = args.get(arg);
+            if (options) {
+                users.push(options.member ?? options.user);
             }
         }
         queueManager.remove(interaction.channel, users);
@@ -92,9 +93,10 @@ const subCommands = [{
     },
     async executeSlash(interaction, args) {
         const users = [];
-        for (const arg in args) {
-            if (arg.includes('user')) {
-                users.push(await interaction.client.users.fetch(args[arg]));
+        for (const arg of ['user1', 'user2', 'user3', 'user4', 'user5']) {
+            const options = args.get(arg);
+            if (options) {
+                users.push(options.member ?? options.user);
             }
         }
         queueManager.doi(interaction.channel, users, !args.remove);
@@ -125,7 +127,9 @@ module.exports = {
             return message.channel.send(`ท่านต้องมี Role: \`${guildConfig.approvalRole}\` ถึงจะใช้งานได้`);
         }
         // Sub commands
-        if (subCommandManager.execute(subCommands, message, args)) return;
+        if (subCommandManager.execute(subCommands, message, args)) {
+            return;
+        }
         // Validation
         if (args.length < 2) {
             return message.channel.send(`arguments ไม่พอ\n**วิธีใช้:** ${prefix}${this.name} ${this.usage}`);
@@ -174,27 +178,28 @@ module.exports = {
         }
         message.delete();
     },
-    async executeSlash(interaction, args) {
+    async executeSlash(interaction) {
         // Check Role
         const guildConfig = interaction.client.settings.get(interaction.guild.id);
         if (!interaction.member.roles.cache.some(role => role.name === guildConfig.approvalRole)) {
-            return interaction.channel.cmdreply.send(`ท่านต้องมี Role: \`${guildConfig.approvalRole}\` ถึงจะใช้งานได้`, { 'flags': 64 });
+            return interaction.channel.cmdreply.send({ content: `ท่านต้องมี Role: \`${guildConfig.approvalRole}\` ถึงจะใช้งานได้`, ephemeral: true });
         }
-        const subArgs = slashManager.parseArgs(interaction.data.options[0].options);
         // Run
-        const next = interaction.data.options[0].name === 'next';
-        if (interaction.data.options[0].name === 'start' || next) {
+        const subArgs = interaction.options.first().options;
+        const subName = interaction.options.first().name;
+        const next = interaction.options.first().name === 'next';
+        if (subName === 'start' || next) {
             if (next) {
                 const err = queueManager.isRunning(interaction.channel);
                 if (err != null) {
-                    return interaction.channel.cmdreply.send(err, { 'flags': 64 });
+                    return interaction.channel.cmdreply.send({ content: err, ephemeral: true });
                 }
                 clearchat.forceClear(interaction.channel, interaction.member);
             }
-            queueManager.start(interaction.channel, subArgs.count, next, subArgs.boss, subArgs.round);
+            queueManager.start(interaction.channel, subArgs.get('count').value, next, subArgs.get('boss')?.value, subArgs.get('round')?.value);
         }
         else {
-            subCommandManager.executeSlash(subCommands, interaction.data.options[0].name, interaction, subArgs);
+            subCommandManager.executeSlash(subCommands, subName, interaction, subArgs);
         }
     }
 };

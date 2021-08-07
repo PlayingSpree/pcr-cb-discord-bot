@@ -9,7 +9,7 @@ const subCommands = [{
     execute(message, args) {
         notifyManager.stop(message.channel);
     },
-    executeSlash(interaction, args) {
+    executeSlash(interaction) {
         notifyManager.stop(interaction.channel);
     }
 }, {
@@ -22,9 +22,9 @@ const subCommands = [{
         notifyManager.add(message.channel);
         message.delete();
     },
-    executeSlash(interaction, args) {
+    executeSlash(interaction) {
         notifyManager.add(interaction.channel);
-        interaction.channel.cmdreply.send('เพิ่มรอบเรียบร้อยแล้ว', { 'flags': 64 });
+        interaction.channel.cmdreply.send({ content: 'เพิ่มรอบเรียบร้อยแล้ว', ephemeral: true });
     }
 }, {
     name: 'call',
@@ -56,8 +56,9 @@ const subCommands = [{
         notifyManager.call(message.channel, boss, round, args.slice(2).join(' '));
         message.delete();
     },
-    executeSlash(interaction, args) {
-        notifyManager.call(interaction.channel, args.boss, args.round, args.message);
+    executeSlash(interaction) {
+        const args = interaction.options;
+        notifyManager.call(interaction.channel, args.get('boss').value, args.get('round').value, args.get('message').value);
     }
 }];
 
@@ -101,25 +102,31 @@ module.exports = {
         notifyManager.start(message.channel, round, roundEnd);
         message.delete();
     },
-    executeSlash(interaction, args) {
+    executeSlash(interaction) {
         // Check Role
-        const guildConfig = interaction.client.settings.get(interaction.guild.id);
+        const guildConfig = interaction.client.settings.get(interaction.guildId);
         if (!interaction.member.roles.cache.some(role => role.name === guildConfig.approvalRole)) {
-            return interaction.channel.cmdreply.send(`ท่านต้องมี Role: \`${guildConfig.approvalRole}\` ถึงจะใช้งานได้`, { 'flags': 64 });
+            return interaction.channel.cmdreply.send({ content: `ท่านต้องมี Role: \`${guildConfig.approvalRole}\` ถึงจะใช้งานได้`, ephemeral: true });
         }
         // Run
-        const subArgs = slashManager.parseArgs(interaction.data.options[0].options);
-        if (interaction.data.options[0].name === 'start') {
-            if ((subArgs.roundend ?? -1) < subArgs.round) {
-                return interaction.channel.cmdreply.send('roundend ต้องมากกว่า round', { 'flags': 64 });
+        const subArgs = interaction.options.first().options;
+        const subName = interaction.options.first().name;
+        if (subName === 'start') {
+            const round = subArgs.get('round').value;
+            const roundend = subArgs.get('roundend').value;
+            const boss = subArgs.get('boss').value;
+            const bossend = subArgs.get('bossend').value;
+
+            if ((roundend ?? -1) < round) {
+                return interaction.channel.cmdreply.send({ content: 'roundend ต้องมากกว่า round', ephemeral: true });
             }
-            if (((subArgs.roundend ?? subArgs.round) == subArgs.round) && (subArgs.bossend ?? -1) < (subArgs.boss ?? -2)) {
-                return interaction.channel.cmdreply.send('bossend ต้องมากกว่า boss', { 'flags': 64 });
+            if (((roundend ?? round) == round) && (bossend ?? -1) < (boss ?? -2)) {
+                return interaction.channel.cmdreply.send({ content: 'bossend ต้องมากกว่า boss', ephemeral: true });
             }
-            notifyManager.start(interaction.channel, subArgs.round, subArgs.roundend, subArgs.boss, subArgs.bossend);
+            notifyManager.start(interaction.channel, round, roundend, boss, bossend);
         }
         else {
-            subCommandManager.executeSlash(subCommands, interaction.data.options[0].name, interaction, subArgs);
+            subCommandManager.executeSlash(subCommands, subName, interaction, subArgs);
         }
     }
 };

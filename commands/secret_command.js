@@ -16,13 +16,13 @@ const setpresence = {
             setTimeout(() => {
                 currentPresence = newPresence;
                 console.log(`Seting Delayed Presence: ${currentPresence}`);
-                message.client.user.setPresence({ activity: { name: currentPresence }, status: 'online' });
+                message.client.user.setPresence({ activities: [{ name: currentPresence }] });
             }, 1000 * time);
         }
         else {
             currentPresence = args.join(' ');
             console.log(`Seting Presence: ${currentPresence}`);
-            message.client.user.setPresence({ activity: { name: currentPresence }, status: 'online' });
+            message.client.user.setPresence({ activities: [{ name: currentPresence }] });
         }
     },
 };
@@ -31,7 +31,7 @@ module.exports = {
     setPresence(client) {
         if (currentPresence) {
             console.log(`Reseting Presence... [${currentPresence}]`);
-            client.user.setPresence({ activity: { name: currentPresence }, status: 'online' });
+            client.user.setPresence({ activities: [{ name: currentPresence }] });
         }
     },
     load() {
