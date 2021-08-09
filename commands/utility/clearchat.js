@@ -1,16 +1,31 @@
-const { Permissions } = require('discord.js');
+const { MessageActionRow, MessageButton, Permissions } = require('discord.js');
+
+class usedChannel {
+    constructor(channel) {
+        this.channel = channel;
+        this.time = Date.now();
+    }
+}
 
 const usedChannels = [];
 
 async function tryClearChat(channel) {
-    if (usedChannels.includes(channel)) {
+    const isUsed = usedChannels.find(x => x.channel == channel.id);
+    if (isUsed && (isUsed.time > Date.now() || isUsed.time == 0)) {
+        isUsed.time = 0;
         channel.cmdreply.send({ content: 'กำลังลบข้อความทั้งหมด', ephemeral: true });
         await clearChat(channel);
+        return;
     }
-    else {
-        channel.cmdreply.send({ content: ':warning: ยังไม่เคยล้างแชทในช่องนี้มาก่อนในช่วงเร็ว ๆ นี้\n:exclamation: พิมพ์คำสั่งอีกครั้งเพื่อยืนยันการใช้งาน', ephemeral: true });
-        usedChannels.push(channel);
-    }
+    const row = new MessageActionRow()
+        .addComponents(
+            new MessageButton()
+                .setCustomId('/clearchat')
+                .setLabel('ยืนยัน')
+                .setStyle('DANGER'),
+        );
+    channel.cmdreply.send({ content: `**:warning: ยังไม่เคยล้างแชทในช่องนี้มาก่อนในช่วงเร็ว ๆ นี้**\n\n**ชื่อช่อง: \`${channel.name}\`**\n\n:exclamation: กดปุ่มยืนยันหรือพิมพ์คำสั่งอีกครั้งภายใน 30 วินาทีเพื่อยืนยันการใช้งาน`, components: [row], ephemeral: true });
+    usedChannels.push(new usedChannel(channel.id, Date.now() + 30000));
 }
 
 async function clearChat(channel) {
@@ -46,7 +61,6 @@ module.exports = {
     description: 'ลบแชทใน channel ทั้งหมด (Admin เท่านั้น)',
     permissions: Permissions.FLAGS.ADMINISTRATOR,
     guildOnly: true,
-    cooldown: 3,
     async forceClear(channel, user) {
         const authorPerms = channel.permissionsFor(user);
         if (!authorPerms || !authorPerms.has(this.permissions)) {
@@ -62,5 +76,17 @@ module.exports = {
     },
     executeSlash(interaction) {
         tryClearChat(interaction.channel);
+    },
+    buttonInteractionEvent(interaction) {
+        if (interaction.customId == '/clearchat') {
+            const isUsed = usedChannels.find(x => x.channel == interaction.channel.id);
+            isUsed.time = 0;
+            interaction.channel.cmdreply = {
+                send(data) {
+                    interaction.reply(data);
+                }
+            };
+            tryClearChat(interaction.channel);
+        }
     }
 };

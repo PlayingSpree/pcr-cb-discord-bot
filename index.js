@@ -7,6 +7,7 @@ const notifyManager = require('./app/notify/notify_manager.js');
 const slashManager = require('./slash_commands/slash_commands_manager.js');
 const commands_validator = require('./command_validator.js');
 const secretCommands = require('./commands/secret_command.js');
+const clearChat = require('./commands/utility/clearchat.js');
 
 dotenv.config();
 
@@ -127,6 +128,7 @@ client.on('interactionCreate', async interaction => {
         }
     }
     else if (interaction.isButton()) {
+        clearChat.buttonInteractionEvent(interaction);
         console.log(`Got button interaction: ${interaction.customId} from: ${interaction.guild?.name}`);
     }
 });
