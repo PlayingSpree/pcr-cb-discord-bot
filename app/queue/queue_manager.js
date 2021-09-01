@@ -123,11 +123,11 @@ module.exports = {
                 }
             }
             if (notFoundUsers.length > 0) {
-                channel.cmdreply.send({ content: `ไม่เจอ ${notFoundUsers.join(' ')} ในรายชื่ออนุมัติ`, 'allowedMentions': { 'users': [] } });
+                channel.cmdreply.send({ content: `ไม่เจอ ${notFoundUsers.join(' ')} ในรายชื่ออนุมัติ`, allowedMentions: { 'users': [] } });
             }
             const removedUsers = users.filter(user => !notFoundUsers.includes(user));
             if (removedUsers.length > 0) {
-                channel.cmdreply.send({ content: `นำผู้เล่น${removedUsers.join(' ')} ออกจากรายชื่ออนุมัติ`, 'allowedMentions': { 'users': [] } });
+                channel.cmdreply.send({ content: `นำผู้เล่น${removedUsers.join(' ')} ออกจากรายชื่ออนุมัติ`, allowedMentions: { 'users': [] } });
                 this.print(channel);
             }
             else {
@@ -167,7 +167,7 @@ module.exports = {
                 else {
                     // TODO Use Dropdown
                     const playerList = player.map((p, index) => `**__${index + 1}__** ${p.comment || p.user.username}`);
-                    channel.cmdreply.send({ content: `**เจอ ${user} มากกว่า 1 ช่วยเลือกให้หน่อยจ้า**\n\n${playerList.join('\n')}\n\nพิมพ์ - แล้วตามด้วยตัวเลขของผู้เล่นที่เลือก เช่น -1`, 'allowedMentions': { 'users': [] } });
+                    channel.cmdreply.send({ content: `**เจอ ${user} มากกว่า 1 ช่วยเลือกให้หน่อยจ้า**\n\n${playerList.join('\n')}\n\nพิมพ์ - แล้วตามด้วยตัวเลขของผู้เล่นที่เลือก เช่น -1`, allowedMentions: { 'users': [] } });
 
                     const filter = x => /^-[0-9]+$/.exec(x.content);
                     try {
@@ -182,15 +182,15 @@ module.exports = {
                 }
             }
             if (notFoundUsers.length > 0) {
-                channel.cmdreply.send({ content: `ไม่เจอ ${notFoundUsers.join(' ')} ในรายชื่อ${setTo ? 'ติดดอย' : 'อนุมัติ'}`, 'allowedMentions': { 'users': [] } });
+                channel.cmdreply.send({ content: `ไม่เจอ ${notFoundUsers.join(' ')} ในรายชื่อ${setTo ? 'ติดดอย' : 'อนุมัติ'}`, allowedMentions: { 'users': [] } });
             }
             const doiUsers = users.filter(user => !notFoundUsers.includes(user));
             if (doiUsers.length > 0) {
                 if (setTo) {
-                    channel.cmdreply.send({ content: `${doiUsers.join(' ')} ติดดอยซะแล้ว ⛰️ `, 'allowedMentions': { 'users': [] } });
+                    channel.cmdreply.send({ content: `${doiUsers.join(' ')} ติดดอยซะแล้ว ⛰️ `, allowedMentions: { 'users': [] } });
                 }
                 else {
-                    channel.cmdreply.send({ content: `${doiUsers.join(' ')} ลบสถานะติดดอยแล้ว ⛰️ `, 'allowedMentions': { 'users': [] } });
+                    channel.cmdreply.send({ content: `${doiUsers.join(' ')} ลบสถานะติดดอยแล้ว ⛰️ `, allowedMentions: { 'users': [] } });
                 }
                 this.print(channel);
             }
@@ -203,7 +203,7 @@ module.exports = {
         const [err, str] = await this.printString(channel, true);
         if (err !== null) {
             if (direct) {
-                await channel.send({ content: str, ephemeral: err });
+                await channel.send({ content: str, ephemeral: err, allowedMentions: { 'users': [] } });
             }
             else {
                 await channel.cmdreply.send({ content: str, ephemeral: err });
