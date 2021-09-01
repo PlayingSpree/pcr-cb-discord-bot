@@ -63,8 +63,8 @@ module.exports = {
     },
     executeSlash(interaction) {
         const hp = interaction.options.get('hp').value;
-        const dmg1 = interaction.options.get('hp').value;
-        const dmg2 = interaction.options.get('hp').value;
+        const dmg1 = interaction.options.get('dmg1').value;
+        const dmg2 = interaction.options.get('dmg2').value;
 
         const [invalid, _] = validateOverkill(hp, dmg1, dmg2);
         if (invalid) return interaction.channel.cmdreply.send({ content: invalid, ephemeral: true });
