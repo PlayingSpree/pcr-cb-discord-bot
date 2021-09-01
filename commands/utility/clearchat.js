@@ -62,11 +62,6 @@ module.exports = {
     permissions: Permissions.FLAGS.ADMINISTRATOR,
     guildOnly: true,
     async forceClear(channel, user) {
-        const authorPerms = channel.permissionsFor(user);
-        if (!authorPerms || !authorPerms.has(this.permissions)) {
-            channel.cmdreply.send({ content: `ล้างแชทใช้ได้เฉพาะ User ที่มี Permission ${this.permissions} เท่านั้น`, ephemeral: true });
-            return false;
-        }
         usedChannels.push(channel);
         await clearChat(channel);
         return true;
