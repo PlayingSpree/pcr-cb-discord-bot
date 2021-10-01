@@ -41,11 +41,20 @@ function getState(channel, reply = true) {
     }
 }
 
+async function downDoi(channel, state) {
+    const doiList = await Promise.all(state.playerQueue.filter(x => x.doi === true).map(async (player, index) => {
+        const member = await channel.guild.members.fetch(player.user.id);
+        return `${index + 1}. ${player.comment || member.nickname || player.user.username} (${player.user})`;
+    }));
+    channel.cmdreply.send('**⛰️ ลงดอยได้เลยจ้า**\n' + doiList.join('\n'));
+}
+
 module.exports = {
     async start(channel, max, cont, boss, round) {
         if (cont) {
             const oldState = getState(channel);
             if (oldState) {
+                downDoi(channel, oldState);
                 if (oldState.boss == null || oldState.round == null) {
                     channel.cmdreply.send('รอบที่แล้วไม่ได้ใส่รอบบอสไว้ ทำให้ไม่สามารถเรียกผู้เล่นที่จองไว้ได้');
                 }
@@ -113,7 +122,7 @@ module.exports = {
         if (state) {
             const notFoundUsers = [];
             for (const user of users) {
-                const index = state.playerQueue.findIndex(x => x.user == user);
+                const index = state.playerQueue.findIndex(x => x.user.id == user.id);
                 if (index == -1) {
                     notFoundUsers.push(user);
                 }
