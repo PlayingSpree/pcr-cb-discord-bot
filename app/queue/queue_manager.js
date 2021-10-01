@@ -166,7 +166,7 @@ module.exports = {
         if (state) {
             const notFoundUsers = [];
             for (const user of users) {
-                const player = state.playerQueue.filter(x => x.doi != setTo && x.user == user);
+                const player = state.playerQueue.filter(x => x.doi != setTo && x.user.id == user.id);
                 if (player.length == 0) {
                     notFoundUsers.push(user);
                 }
