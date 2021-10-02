@@ -198,7 +198,7 @@ module.exports = {
                 }
             });
             state.messages = state.messages.filter(m => m.bossRound >= round);
-            if (state.messages.every(m => m.bossRound < round + 1)) {
+            if (state.messages.every(m => m.bossRound < round + 2)) {
                 this.add(state.queueChannel);
             }
             if (state.bossMessage) {
