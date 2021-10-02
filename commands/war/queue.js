@@ -76,6 +76,7 @@ const subCommands = [{
 }, {
     name: 'doi',
     aliases: ['d'],
+    slashNames: ['doiremove'],
     usage: '<-r> [@user] เพิ่มสถานะติดดอย ให้กับคนที่ Mention ในรายชื่ออนุมัติ (เพิ่มทีละหลายคนได้) สามารถเพิ่ม -r เพื่อลบสถานะติดดอยได้',
     execute(message, args) {
         if (message.mentions.users.size > 0) {
@@ -99,7 +100,7 @@ const subCommands = [{
                 users.push(options.member ?? options.user);
             }
         }
-        queueManager.doi(interaction.channel, users, !args.remove);
+        queueManager.doi(interaction.channel, users, interaction.options.getSubcommand() !== 'doiremove');
     }
 }, {
     name: 'unpause',

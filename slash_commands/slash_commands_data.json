@@ -165,42 +165,73 @@
             {
                 "type": 1,
                 "name": "doi",
-                "description": "เพิ่ม/ลบสถานะติดดอยให้ User (เพิ่มได้สูงสุดทีละ 5 คน)",
+                "description": "เพิ่มสถานะติดดอยให้ User (เพิ่มได้สูงสุดทีละ 5 คน)",
                 "options": [
-                    {
-                        "type": 5,
-                        "name": "remove",
-                        "description": "ลบสถานะติดดอย",
-                        "required": true
-                    },
                     {
                         "type": 6,
                         "name": "user1",
-                        "description": "User ที่อนุมัติ",
+                        "description": "User ที่ติดดอย",
                         "required": true
                     },
                     {
                         "type": 6,
                         "name": "user2",
-                        "description": "User ที่อนุมัติ",
+                        "description": "User ที่ติดดอย",
                         "required": false
                     },
                     {
                         "type": 6,
                         "name": "user3",
-                        "description": "User ที่อนุมัติ",
+                        "description": "User ที่ติดดอย",
                         "required": false
                     },
                     {
                         "type": 6,
                         "name": "user4",
-                        "description": "User ที่อนุมัติ",
+                        "description": "User ที่ติดดอย",
                         "required": false
                     },
                     {
                         "type": 6,
                         "name": "user5",
-                        "description": "User ที่อนุมัติ",
+                        "description": "User ที่ติดดอย",
+                        "required": false
+                    }
+                ]
+            },
+            {
+                "type": 1,
+                "name": "doiremove",
+                "description": "ลบสถานะติดดอยให้ User (ลบได้สูงสุดทีละ 5 คน)",
+                "options": [
+                    {
+                        "type": 6,
+                        "name": "user1",
+                        "description": "User ที่จะลบสถานะติดดอย",
+                        "required": true
+                    },
+                    {
+                        "type": 6,
+                        "name": "user2",
+                        "description": "User ที่จะลบสถานะติดดอย",
+                        "required": false
+                    },
+                    {
+                        "type": 6,
+                        "name": "user3",
+                        "description": "User ที่จะลบสถานะติดดอย",
+                        "required": false
+                    },
+                    {
+                        "type": 6,
+                        "name": "user4",
+                        "description": "User ที่จะลบสถานะติดดอย",
+                        "required": false
+                    },
+                    {
+                        "type": 6,
+                        "name": "user5",
+                        "description": "User ที่จะลบสถานะติดดอย",
                         "required": false
                     }
                 ]

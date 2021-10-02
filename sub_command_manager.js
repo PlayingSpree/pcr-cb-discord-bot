@@ -28,7 +28,7 @@ module.exports = {
         return true;
     },
     executeSlash(subCommands, commandName, interaction, args) {
-        const command = subCommands.find(cmd => (cmd.name === commandName) || (cmd.aliases && cmd.aliases.includes(commandName)));
+        const command = subCommands.find(cmd => (cmd.name === commandName) || (cmd.aliases && cmd.aliases.includes(commandName)) || (cmd.slashNames && cmd.slashNames.includes(commandName)));
 
         if (!command) return false;
 

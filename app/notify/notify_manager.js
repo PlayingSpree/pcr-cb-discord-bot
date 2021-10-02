@@ -203,7 +203,7 @@ module.exports = {
             }
             if (state.bossMessage) {
                 const config = channel.client.settings.get(channel.guild.id);
-                return state.bossMessage.edit(`\n**บอสปัจจุบัน:** ${reaction_numbers[boss]} ${bossInfo.bossInfoToString(boss, round, config)}`);
+                return state.bossMessage.edit(`\n====================================\n**บอสปัจจุบัน:** ${reaction_numbers[boss]} ${bossInfo.bossInfoToString(boss, round, config)}`);
             }
         }
     }
