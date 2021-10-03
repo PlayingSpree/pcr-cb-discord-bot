@@ -46,7 +46,9 @@ async function downDoi(channel, state) {
         const member = await channel.guild.members.fetch(player.user.id);
         return `${index + 1}. ${player.comment || member.nickname || player.user.username} (${player.user})`;
     }));
-    channel.cmdreply.send('**⛰️ ลงดอยได้เลยจ้า**\n' + doiList.join('\n'));
+    if (doiList) {
+        channel.cmdreply.send('**⛰️ ลงดอยได้เลยจ้า**\n' + doiList.join('\n'));
+    }
 }
 
 module.exports = {
