@@ -107,7 +107,7 @@ module.exports = {
                 state.playerQueue.push(new PlayerQueueState(user, pause));
             }
             channel.cmdreply.send(`อนุมัติผู้เล่นเพิ่ม${users.length > 1 ? `อีก ${users.length} คน` : ''}แล้วจ้า~`);
-            this.print(channel);
+            this.print(channel, true);
         }
     },
     edit(channel, max, boss, round) {
@@ -139,7 +139,7 @@ module.exports = {
             const removedUsers = users.filter(user => !notFoundUsers.includes(user));
             if (removedUsers.length > 0) {
                 channel.cmdreply.send({ content: `นำผู้เล่น${removedUsers.join(' ')} ออกจากรายชื่ออนุมัติ`, allowedMentions: { 'users': [] } });
-                this.print(channel);
+                this.print(channel, true);
             }
             else {
                 channel.cmdreply.send('ไม่มีผู้เล่นที่ถูกนำออกจากรายชื่ออนุมัติ');
@@ -198,12 +198,12 @@ module.exports = {
             const doiUsers = users.filter(user => !notFoundUsers.includes(user));
             if (doiUsers.length > 0) {
                 if (setTo) {
-                    channel.cmdreply.send({ content: `${doiUsers.join(' ')} ติดดอยซะแล้ว ⛰️ `, allowedMentions: { 'users': [] } });
+                    channel.cmdreply.send({ content: `${doiUsers.join(' ')} ติดดอยซะแล้ว ⛰️ ` });
                 }
                 else {
-                    channel.cmdreply.send({ content: `${doiUsers.join(' ')} ลบสถานะติดดอยแล้ว ⛰️ `, allowedMentions: { 'users': [] } });
+                    channel.cmdreply.send({ content: `${doiUsers.join(' ')} ลบสถานะติดดอยแล้ว ⛰️ ` });
                 }
-                this.print(channel);
+                this.print(channel, true);
             }
             else {
                 channel.cmdreply.send('ไม่มีผู้เล่นที่ถูกติดดอย');
