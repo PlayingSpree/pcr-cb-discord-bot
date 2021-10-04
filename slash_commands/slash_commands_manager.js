@@ -32,7 +32,6 @@ module.exports = {
         }
         // Slash reply
         interaction.channel.cmdreply = new SlashReply(interaction);
-        console.log(`command: ${interaction.commandName}`);
         // Run
         try {
             command.executeSlash(interaction);
@@ -41,5 +40,17 @@ module.exports = {
             console.error(error);
             interaction.channel.cmdreply.send('มีข้อผิดพลาดระหว่างการทำคำสั่ง');
         }
+    },
+    commandInteractionToString(interaction) {
+        let commandDetails = '';
+        const subcommand = interaction.options.getSubcommand(false);
+        if (subcommand) {
+            commandDetails += subcommand + ' ';
+            commandDetails += interaction.options.data[0].options.map(d => d.value).join(' ');
+        }
+        else {
+            commandDetails += interaction.options.data.map(d => d.value).join(' ');
+        }
+        return `${interaction.commandName}${commandDetails ? ' ' + commandDetails : ''}`;
     }
 };
