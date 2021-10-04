@@ -195,9 +195,22 @@ module.exports = {
             state.messages.forEach(m => {
                 if (m.bossRound < round) {
                     m.message.delete();
+                    m.deleted = true;
+                }
+                else if (m.bossRound === round) {
+                    if (boss === 5) {
+                        m.message.delete();
+                        m.deleted = true;
+                        return;
+                    }
+                    m.message.reactions.cache.filter(r => r.emoji.name <= reaction_numbers[boss]).forEach(r => r.remove());
+                    for (let i = 1; i <= boss; i++) {
+                        m.players[i - 1] = [null];
+                    }
+                    m.message.edit(printMessage(m, channel));
                 }
             });
-            state.messages = state.messages.filter(m => m.bossRound >= round);
+            state.messages = state.messages.filter(m => !m.deleted);
             if (state.messages.every(m => m.bossRound < round + 2)) {
                 this.add(state.queueChannel);
             }

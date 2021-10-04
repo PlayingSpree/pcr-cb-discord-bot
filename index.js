@@ -113,7 +113,7 @@ client.on('guildDelete', guild => {
 
 client.on('interactionCreate', async interaction => {
     if (interaction.isCommand()) {
-        console.log(`Got command interaction: ${slashManager.commandInteractionToString(interaction)} from: ${interaction.member?.displayName || interaction.user.username} (${interaction.guild?.name})`);
+        console.log(`Got command interaction: ${slashManager.commandInteractionToString(interaction)} from: ${interaction.member?.displayName || interaction.user.username} (${interaction.guild?.name}/${interaction.channel?.name})`);
         if (interaction.commandName === 'enableslashcmd') {
             if (interaction.guildId !== undefined) {
                 slashManager.registerServer(client, interaction.guildId);
@@ -129,7 +129,7 @@ client.on('interactionCreate', async interaction => {
     }
     else if (interaction.isButton()) {
         clearChat.buttonInteractionEvent(interaction);
-        console.log(`Got button interaction: ${interaction.customId} from: ${interaction.member?.displayName || interaction.user.username} (${interaction.guild?.name})`);
+        console.log(`Got button interaction: ${interaction.customId} from: ${interaction.member?.displayName || interaction.user.username} (${interaction.guild?.name}/${interaction.channel?.name})`);
     }
 });
 
