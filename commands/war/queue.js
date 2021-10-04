@@ -1,6 +1,26 @@
 const queueManager = require('../../app/queue/queue_manager.js');
 const subCommandManager = require('../../sub_command_manager.js');
 const clearchat = require('../utility/clearchat.js');
+const Discord = require('discord.js');
+
+const nextCooldowns = new Discord.Collection();
+
+function getNextCooldown(guildId) {
+    const now = Date.now();
+    const cooldownAmount = 15;
+
+    if (nextCooldowns.has(guildId)) {
+        const expirationTime = nextCooldowns.get(guildId) + cooldownAmount;
+
+        if (now < expirationTime) {
+            const timeLeft = (expirationTime - now) / 1000;
+            return `กรุณารออีก ${timeLeft.toFixed(1)} วินาที ก่อนใช้คำสั่งอีกครั้ง.`;
+        }
+    }
+    nextCooldowns.set(guildId, now);
+    setTimeout(() => nextCooldowns.delete(guildId), cooldownAmount);
+    return false;
+}
 
 const subCommands = [{
     name: 'list',
@@ -203,6 +223,10 @@ module.exports = {
                 const err = queueManager.isRunning(interaction.channel);
                 if (err != null) {
                     return interaction.channel.cmdreply.send({ content: err, ephemeral: true });
+                }
+                const cd = getNextCooldown(interaction.guildId);
+                if (cd) {
+                    return interaction.channel.cmdreply.send({ content: cd, ephemeral: true });
                 }
                 clearchat.forceClear(interaction.channel, interaction.member);
             }
