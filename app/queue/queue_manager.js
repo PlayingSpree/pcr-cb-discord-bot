@@ -236,7 +236,7 @@ module.exports = {
                 const member = await channel.guild.members.fetch(player.user.id);
                 return `${index + 1}. ${player.comment || member.nickname || player.user.username} (${player.user})`;
             }));
-            const pauseCount = state.playerQueue.filter(x => x.paused === true).length;
+            const pauseCount = state.playerQueue.filter(x => x.doi === false && x.paused === true).length;
             const doiCount = state.playerQueue.filter(x => x.doi === true).length;
             return [false, `**:crossed_swords: ขณะนี้มีคนได้รับอนุมัติไปแล้ว ${state.playerQueue.filter(x => x.doi === false).length}/${state.queueMax} ไม้${pauseCount > 0 ? ` ⏸️ พอสอยู่ ${pauseCount} ไม้` : ''}**\n${playerList.join('\n')}${(doiList.length > 0) ? `\n**⛰️ ติดดอยอยู่ ${doiCount} ไม้**\n` + doiList.join('\n') : ''}`];
         }
