@@ -44,7 +44,7 @@ function getState(channel, reply = true) {
 async function downDoi(channel, state) {
     const doiList = await Promise.all(state.playerQueue.filter(x => x.doi === true).map(async (player, index) => {
         const member = await channel.guild.members.fetch(player.user.id);
-        return `${index + 1}. ${player.comment || member.nickname || player.user.username} (${player.user})`;
+        return `${index + 1}. ${player.comment || member.nickname || player.user.user.username} (${player.user})`;
     }));
     if (doiList?.length) {
         channel.cmdreply.send('**⛰️ ลงดอยได้เลยจ้า**\n' + doiList.join('\n'));
@@ -81,7 +81,8 @@ module.exports = {
 =====================================
 ✅ = อนุมัติ ตีได้เลย
 ⏸️ = อนุมัติ แต่ต้องพอสรอตอนใกล้จบ
-❎❌ = ไม่อนุมัติ`);
+❎❌ = ไม่อนุมัติ
+⛰️ = ติดดอย รอบอสตายก่อนแล้วค่อยปล่อย`);
         if (boss != null && round != null) {
             state.boss = boss;
             state.round = round;
@@ -104,7 +105,7 @@ module.exports = {
         const state = getState(channel);
         if (state) {
             for (const user of users) {
-                state.playerQueue.push(new PlayerQueueState(user, pause));
+                state.playerQueue.push(new PlayerQueueState(user, pause, null));
             }
             channel.cmdreply.send(`อนุมัติผู้เล่นเพิ่ม${users.length > 1 ? `อีก ${users.length} คน` : ''}แล้วจ้า~`);
             this.print(channel, true);
@@ -230,11 +231,11 @@ module.exports = {
             }
             const playerList = await Promise.all(state.playerQueue.filter(x => x.doi === false).map(async (player, index) => {
                 const member = await channel.guild.members.fetch(player.user.id);
-                return `${index + 1}. ${player.comment || member.nickname || player.user.username} (${player.user})${player.paused ? ' ⏸️' : ''}`;
+                return `${index + 1}. ${player.comment || member.nickname || player.user.user.username} (${player.user})${player.paused ? ' ⏸️' : ''}`;
             }));
             const doiList = await Promise.all(state.playerQueue.filter(x => x.doi === true).map(async (player, index) => {
                 const member = await channel.guild.members.fetch(player.user.id);
-                return `${index + 1}. ${player.comment || member.nickname || player.user.username} (${player.user})`;
+                return `${index + 1}. ${player.comment || member.nickname || player.user.user.username} (${player.user})`;
             }));
             const pauseCount = state.playerQueue.filter(x => x.doi === false && x.paused === true).length;
             const doiCount = state.playerQueue.filter(x => x.doi === true).length;
@@ -290,6 +291,15 @@ module.exports = {
             messageChannel.send(`${player} ตีได้เลยจ้า~ แต่ต้องพอสรอด้วยน้า~`);
             state.reactedMessage.push(reaction.message);
             this.print(messageChannel, true);
+            return true;
+        }
+        if (reaction.emoji.name === '⛰️') {
+            if (!state.playerQueue.some(p => p.user.id == reaction.message.author.id)) {
+                state.playerQueue.push(new PlayerQueueState(reaction.message.author, true, comment.length > appConfig.queue_comment_length ? null : comment));
+            }
+            messageChannel.cmdreply = { send(data) { messageChannel.send(data); } };
+            this.doi(messageChannel, [reaction.message.author], true);
+            state.reactedMessage.push(reaction.message);
             return true;
         }
     }

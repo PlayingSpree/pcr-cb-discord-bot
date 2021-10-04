@@ -1,12 +1,9 @@
 1.3.0
 -notify บอสปัจจุบัน
--queue round edit
 
 TODO
 -Edit channel name to queue count
 
 Low Prio
 -boss to score
--Queue next คนติดดอยปล่อยได้เลย
 -Complete Reeeeeeee Counter
--Add Pause Counter
