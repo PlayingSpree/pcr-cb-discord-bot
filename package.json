@@ -1,10 +1,12 @@
 {
   "name": "pcr-cb-discord-bot",
-  "version": "v1.2.5",
-  "description": "",
-  "main": "index.js",
+  "version": "v2.0.0-alpha.1",
+  "description": "Discord bot for princess connect re:dive clan discord server",
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/index.js",
+    "watch": "tsc -p tsconfig.json -w",
+    "test": "mocha -r ts-node/register \"tests/**/*.spec.ts\""
   },
   "repository": {
     "type": "git",
@@ -17,9 +19,12 @@
   },
   "homepage": "https://github.com/PlayingSpree/pcr-cb-discord-bot#readme",
   "dependencies": {
-    "discord.js": "^13.0.1",
-    "dotenv": "^8.2.0",
-    "enmap": "^5.8.4",
-    "eslint": "^7.21.0"
+    "@types/node": "^16.10.4",
+    "discord.js": "^13.2.0",
+    "dotenv": "^10.0.0",
+    "inversify": "^5.1.1"
+  },
+  "devDependencies": {
+    "typescript": "^4.4.3"
   }
 }
