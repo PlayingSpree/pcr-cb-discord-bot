@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.reactionEvent = exports.start = void 0;
-const state_1 = require("../../data/state");
-const message_1 = require("../../util/message");
-const reaction_1 = require("../../util/reaction");
+const state_1 = require("../data/state");
+const message_1 = require("../util/message");
+const reaction_1 = require("../util/reaction");
 async function reactNumberOnMessage(message) {
     for (let i = 1; i <= 5; i++) {
         await message.react(reaction_1.reaction_numbers[i]);

@@ -13,10 +13,10 @@ export interface Command {
 export const commands = new Collection<string, Command>();
 
 export async function loadCommands() {
-    const commandFolders = fs.readdirSync('./src/commands').filter(file => !(file.endsWith('.js') || file.endsWith('.ts')));
+    const commandFolders = fs.readdirSync('./build/src/commands').filter(file => !(file.endsWith('.js') || file.endsWith('.map') || file.endsWith('.ts')));
     console.log('Loading commands...');
     for (const folder of commandFolders) {
-        const commandFiles = fs.readdirSync(`./src/commands/${folder}`).filter(file => file.endsWith('.js'));
+        const commandFiles = fs.readdirSync(`./build/src/commands/${folder}`).filter(file => file.endsWith('.js'));
         console.log(`Found ${commandFiles.length} commands in ${folder}`);
 
         for (const file of commandFiles) {

@@ -1,7 +1,7 @@
 import { CommandInteraction, Guild, Message, MessageReaction, TextChannel, User } from "discord.js";
-import { BossRoleState, bossRoleStateData } from "../../data/state";
-import { sendTimedMessage } from "../../util/message";
-import { reaction_numbers } from "../../util/reaction";
+import { BossRoleState, bossRoleStateData } from "../data/state";
+import { sendTimedMessage } from "../util/message";
+import { reaction_numbers } from "../util/reaction";
 
 async function reactNumberOnMessage(message: Message) {
     for (let i = 1; i <= 5; i++) {

@@ -27,10 +27,10 @@ const discord_js_1 = require("discord.js");
 const fs_1 = __importDefault(require("fs"));
 exports.commands = new discord_js_1.Collection();
 async function loadCommands() {
-    const commandFolders = fs_1.default.readdirSync('./src/commands').filter(file => !(file.endsWith('.js') || file.endsWith('.ts')));
+    const commandFolders = fs_1.default.readdirSync('./build/src/commands').filter(file => !(file.endsWith('.js') || file.endsWith('.map') || file.endsWith('.ts')));
     console.log('Loading commands...');
     for (const folder of commandFolders) {
-        const commandFiles = fs_1.default.readdirSync(`./src/commands/${folder}`).filter(file => file.endsWith('.js'));
+        const commandFiles = fs_1.default.readdirSync(`./build/src/commands/${folder}`).filter(file => file.endsWith('.js'));
         console.log(`Found ${commandFiles.length} commands in ${folder}`);
         for (const file of commandFiles) {
             const { command } = await Promise.resolve().then(() => __importStar(require(`./${folder}/${file}`)));

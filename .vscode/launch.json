@@ -1,18 +1,14 @@
 {
     "configurations": [
         {
-            "type": "node-terminal",
-            "name": "Run Script: watch",
+            "type": "node",
             "request": "launch",
-            "command": "npm run watch",
-            "cwd": "${workspaceFolder}"
-        },
-        {
-            "type": "node-terminal",
-            "name": "Run Script: start",
-            "request": "launch",
-            "command": "npm run start",
-            "cwd": "${workspaceFolder}"
+            "name": "Launch Program",
+            "program": "${workspaceFolder}/src/index.ts",
+            "preLaunchTask": "tsc: build - tsconfig.json",
+            "outFiles": [
+                "${workspaceFolder}/build/src/**/*.js"
+            ]
         }
     ]
 }

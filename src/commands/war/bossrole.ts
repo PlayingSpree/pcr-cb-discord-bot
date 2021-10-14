@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { reactionEvent, start } from "../../logic/bossrole/bossrole";
+import { reactionEvent, start } from "../../logic/bossrole";
 import { Command } from "../commands";
 
 export const command: Command = {

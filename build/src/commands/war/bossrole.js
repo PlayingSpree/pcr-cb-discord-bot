@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.command = void 0;
 const builders_1 = require("@discordjs/builders");
-const bossrole_1 = require("../../logic/bossrole/bossrole");
+const bossrole_1 = require("../../logic/bossrole");
 exports.command = {
     data: new builders_1.SlashCommandBuilder()
         .setName('bossrole')
