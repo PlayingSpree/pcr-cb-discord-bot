@@ -6,3 +6,4 @@ async function sendTimedMessage(channel, ms, content) {
     setTimeout(() => message.delete(), ms);
 }
 exports.sendTimedMessage = sendTimedMessage;
+//# sourceMappingURL=message.js.map

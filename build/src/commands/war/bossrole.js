@@ -20,3 +20,4 @@ exports.command = {
         (0, bossrole_1.reactionEvent)(reaction, user, add);
     },
 };
+//# sourceMappingURL=bossrole.js.map

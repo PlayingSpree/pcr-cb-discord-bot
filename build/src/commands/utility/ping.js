@@ -10,3 +10,4 @@ exports.command = {
         await interaction.reply(`🏓Latency: ${Math.round(interaction.client.ws.ping)}ms`);
     },
 };
+//# sourceMappingURL=ping.js.map

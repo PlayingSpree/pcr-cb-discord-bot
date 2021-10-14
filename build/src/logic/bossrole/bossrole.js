@@ -74,3 +74,4 @@ function reactionEvent(reaction, user, add) {
     }
 }
 exports.reactionEvent = reactionEvent;
+//# sourceMappingURL=bossrole.js.map

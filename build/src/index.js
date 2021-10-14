@@ -45,3 +45,4 @@ process.on('unhandledRejection', error => {
     console.error('Unhandled promise rejection:', error);
 });
 client.login(process.env.TOKEN);
+//# sourceMappingURL=index.js.map

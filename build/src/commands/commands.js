@@ -55,3 +55,4 @@ function logCommandInteraction(interaction) {
     console.log(`Got command interaction: ${interaction.commandName}${commandDetails ? ' ' + commandDetails : ''} from: ${interaction.member?.displayName || interaction.user.username} (${interaction.guild?.name}/${interaction.channel?.name})`);
 }
 exports.logCommandInteraction = logCommandInteraction;
+//# sourceMappingURL=commands.js.map

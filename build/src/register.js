@@ -28,3 +28,4 @@ async function registerCommand() {
     }
 }
 exports.registerCommand = registerCommand;
+//# sourceMappingURL=register.js.map
