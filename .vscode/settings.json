@@ -1,0 +1,10 @@
+{
+    "files.exclude": {
+        "**/*.js.map": true,
+        "**/*.js": {
+            "when": "$(basename).ts"
+        },
+        "**/node_modules/": true
+    },
+    "files.autoSave": "afterDelay"
+}

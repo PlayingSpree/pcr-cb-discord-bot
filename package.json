@@ -19,7 +19,10 @@
   },
   "homepage": "https://github.com/PlayingSpree/pcr-cb-discord-bot#readme",
   "dependencies": {
+    "@discordjs/builders": "^0.6.0",
+    "@discordjs/rest": "^0.1.0-canary.0",
     "@types/node": "^16.10.4",
+    "discord-api-types": "^0.23.1",
     "discord.js": "^13.2.0",
     "dotenv": "^10.0.0",
     "inversify": "^5.1.1"

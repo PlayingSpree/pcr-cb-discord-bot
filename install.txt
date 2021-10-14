@@ -1,1 +1,1 @@
-npm i --only=production
+npm i --production
