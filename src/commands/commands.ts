@@ -1,23 +1,26 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { Collection, CommandInteraction, GuildMember, MessageReaction, TextChannel, User } from 'discord.js';
+import { ButtonInteraction, Collection, CommandInteraction, GuildMember, MessageReaction, TextChannel, User } from 'discord.js';
 import fs from 'fs';
 import { loginfo } from '../util/logger';
+import { commandPath } from '../../config.json'
 
 type ExecuteReturn = Promise<boolean | void> | boolean | void
 
 export interface Command {
     data: SlashCommandBuilder
     execute(interaction: CommandInteraction): ExecuteReturn
+    executeButton?(interaction: ButtonInteraction): ExecuteReturn
     handleReaction?(reaction: MessageReaction, user: User, add: boolean): ExecuteReturn
 }
 
 export const commands = new Collection<string, Command>();
 
 export async function loadCommands() {
-    const commandFolders = fs.readdirSync('./build/src/commands').filter(file => !(file.endsWith('.js') || file.endsWith('.map') || file.endsWith('.ts')));
+    let path = process.env.DEBUG ? commandPath.dev : commandPath.pro
+    const commandFolders = fs.readdirSync(path).filter(file => !(file.endsWith('.js') || file.endsWith('.map') || file.endsWith('.ts')));
     loginfo('Loading commands...');
     for (const folder of commandFolders) {
-        const commandFiles = fs.readdirSync(`./build/src/commands/${folder}`).filter(file => file.endsWith('.js'));
+        const commandFiles = fs.readdirSync(`${path}/${folder}`).filter(file => file.endsWith('.js'));
         loginfo(`Found ${commandFiles.length} commands in ${folder}`);
 
         for (const file of commandFiles) {
@@ -27,7 +30,7 @@ export async function loadCommands() {
             loginfo(`|- ${file}`);
         }
     }
-    loginfo(`Successfuly load ${commands.size} commands`);
+    loginfo(`Successfully load ${commands.size} commands`);
 }
 
 export function logCommandInteraction(interaction: CommandInteraction) {

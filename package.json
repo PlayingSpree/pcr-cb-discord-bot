@@ -4,9 +4,10 @@
   "description": "Discord bot for princess connect re:dive clan discord server",
   "main": "build/src/index.js",
   "scripts": {
-    "start": "node build/src/index.js",
+    "start": "node out/src/index.js",
     "watch": "tsc -p tsconfig.json -w",
-    "build": "tsc -p tsconfig.json --outDir build"
+    "build": "tsc -p tsconfig.json --outDir build",
+    "register": "node out/src/register.js"
   },
   "repository": {
     "type": "git",

@@ -21,6 +21,5 @@ export class BossRoleState extends State {
     }
 }
 
-type GuildID = Snowflake
-
-export const bossRoleStateData = new Collection<GuildID, BossRoleState>()
+export const bossRoleStateData = new Collection<Snowflake, BossRoleState>()
+export const clearChatStateData = new Collection<Snowflake, number>()

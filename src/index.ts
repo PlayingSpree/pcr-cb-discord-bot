@@ -1,7 +1,6 @@
-import { Client, Intents, MessageReaction, User } from 'discord.js';
+import { Client, GuildMember, Intents, Message, MessageReaction, TextChannel, User } from 'discord.js';
 import { loadCommands, commands, logCommandInteraction } from './commands/commands';
-import { registerCommand } from './register';
-import { loginfo } from './util/logger';
+import { logerror, loginfo } from './util/logger';
 require('dotenv').config();
 loadCommands()
 
@@ -9,7 +8,6 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_
 
 client.once('ready', async () => {
     loginfo(`Logged in as ${client.user!.tag}`);
-    // await registerCommand()
     loginfo("Ready!")
 });
 
@@ -23,11 +21,18 @@ client.on('interactionCreate', async interaction => {
         try {
             await command.execute(interaction);
         } catch (error) {
-            console.error(error);
+            logerror(error);
             if (interaction.replied)
                 interaction.channel?.send('มีข้อผิดพลาดระหว่างการทำคำสั่ง')
             else
                 await interaction.reply({ content: 'มีข้อผิดพลาดระหว่างการทำคำสั่ง', ephemeral: true });
+        }
+    } else if (interaction.isButton()) {
+        loginfo(`Got button interaction: ${interaction.customId} from: ${(interaction.member as GuildMember)?.displayName || interaction.user.username} (${interaction.guild?.name}/${(interaction.channel as TextChannel)?.name})`);
+        if (interaction.customId == '!messagedeleteself') {
+            (interaction.message as Message).delete()
+        } else if (interaction.customId == '/clearchat') {
+            commands.get('clearchat')!.executeButton!(interaction)
         }
     }
 });
@@ -49,7 +54,7 @@ function handleReaction(reaction: MessageReaction, user: User, add: boolean) {
 }
 
 process.on('unhandledRejection', error => {
-    console.error('Unhandled promise rejection:', error);
+    logerror('Unhandled promise rejection:', error);
 });
 
 client.login(process.env.TOKEN);

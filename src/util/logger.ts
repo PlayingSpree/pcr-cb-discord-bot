@@ -1,5 +1,14 @@
-export function loginfo(message?: any, ...optionalParams: any[]) {
+function prefixDate(message: string) {
     if (message !== undefined)
-        message = `[${new Date().toISOString()}] ` + message
+        return `[${new Date().toISOString()}] ` + message
+}
+
+export function loginfo(message?: any, ...optionalParams: any[]) {
+    message = prefixDate(message)
     console.log(message, ...optionalParams);
+}
+
+export function logerror(message?: any, ...optionalParams: any[]) {
+    message = prefixDate(message)
+    console.error(message, ...optionalParams);
 }

@@ -8,5 +8,9 @@
             249887769462177793,
             874152431771090974
         ]
+    },
+    "commandPath": {
+        "pro": "./build/src/commands",
+        "dev": "./out/src/commands"
     }
 }

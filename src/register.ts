@@ -1,15 +1,16 @@
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
-import { commands } from './commands/commands'
+import { commands, loadCommands } from './commands/commands'
 import { register, clientId } from '../config.json'
-import { loginfo } from './util/logger';
+import { logerror, loginfo } from './util/logger';
+require('dotenv').config();
 
-export async function registerCommand() {
+(async () => {
     const commandData = [];
 
+    await loadCommands()
     for (const command of commands.values()) {
-        commandData.push(command.data.toJSON());
-    }
+        commandData.push(command.data.toJSON())    }
 
     try {
         const rest = new REST({ version: '9' }).setToken(process.env.TOKEN!);
@@ -32,6 +33,6 @@ export async function registerCommand() {
 
         loginfo('Successfully reloaded commands.');
     } catch (error) {
-        console.error(error);
+        logerror(error);
     }
-}
+})()
