@@ -1,5 +1,6 @@
 import { CommandInteraction, Guild, Message, MessageReaction, TextChannel, User } from "discord.js";
 import { BossRoleState, bossRoleStateData } from "../data/state";
+import { loginfo } from "../util/logger";
 import { sendTimedMessage } from "../util/message";
 import { reaction_numbers } from "../util/reaction";
 
@@ -60,7 +61,7 @@ export function reactionEvent(reaction: MessageReaction, user: User, add: boolea
     if (!state) return
     const message = state.messageId == reaction.message.id;
     if (!message) return;
-    console.log(`Bossrole React ${add ? "add" : "remove"}: ` + reaction.emoji.name);
+    loginfo(`Bossrole React ${add ? "add" : "remove"}: ` + reaction.emoji.name);
     switch (reaction.emoji.name) {
         case reaction_numbers[1]:
         case reaction_numbers[2]:

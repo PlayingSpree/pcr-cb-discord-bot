@@ -1,5 +1,6 @@
-# Database
-data/
+# Project
+v1/
+out/
 
 # Invite link
 invitelink.txt
@@ -80,6 +81,3 @@ typings/
 
 # FuseBox cache
 .fusebox/
-
-.scannerwork/
-v1/

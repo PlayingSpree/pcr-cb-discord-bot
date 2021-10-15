@@ -5,7 +5,8 @@
   "main": "build/src/index.js",
   "scripts": {
     "start": "node build/src/index.js",
-    "watch": "tsc -p tsconfig.json -w"
+    "watch": "tsc -p tsconfig.json -w",
+    "build": "tsc -p tsconfig.json --outDir build"
   },
   "repository": {
     "type": "git",

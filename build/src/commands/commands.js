@@ -25,21 +25,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.logCommandInteraction = exports.loadCommands = exports.commands = void 0;
 const discord_js_1 = require("discord.js");
 const fs_1 = __importDefault(require("fs"));
+const logger_1 = require("../util/logger");
 exports.commands = new discord_js_1.Collection();
 async function loadCommands() {
     const commandFolders = fs_1.default.readdirSync('./build/src/commands').filter(file => !(file.endsWith('.js') || file.endsWith('.map') || file.endsWith('.ts')));
-    console.log('Loading commands...');
+    (0, logger_1.loginfo)('Loading commands...');
     for (const folder of commandFolders) {
         const commandFiles = fs_1.default.readdirSync(`./build/src/commands/${folder}`).filter(file => file.endsWith('.js'));
-        console.log(`Found ${commandFiles.length} commands in ${folder}`);
+        (0, logger_1.loginfo)(`Found ${commandFiles.length} commands in ${folder}`);
         for (const file of commandFiles) {
             const { command } = await Promise.resolve().then(() => __importStar(require(`./${folder}/${file}`)));
             command.group = folder;
             exports.commands.set(command.data.name, command);
-            console.log(`|- ${file}`);
+            (0, logger_1.loginfo)(`|- ${file}`);
         }
     }
-    console.log(`Successfuly load ${exports.commands.size} commands`);
+    (0, logger_1.loginfo)(`Successfuly load ${exports.commands.size} commands`);
 }
 exports.loadCommands = loadCommands;
 function logCommandInteraction(interaction) {
@@ -52,7 +53,7 @@ function logCommandInteraction(interaction) {
     else {
         commandDetails += interaction.options.data.map(d => d.value).join(' ');
     }
-    console.log(`Got command interaction: ${interaction.commandName}${commandDetails ? ' ' + commandDetails : ''} from: ${interaction.member?.displayName || interaction.user.username} (${interaction.guild?.name}/${interaction.channel?.name})`);
+    (0, logger_1.loginfo)(`Got command interaction: ${interaction.commandName}${commandDetails ? ' ' + commandDetails : ''} from: ${interaction.member?.displayName || interaction.user.username} (${interaction.guild?.name}/${interaction.channel?.name})`);
 }
 exports.logCommandInteraction = logCommandInteraction;
 //# sourceMappingURL=commands.js.map

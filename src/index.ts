@@ -1,15 +1,16 @@
 import { Client, Intents, MessageReaction, User } from 'discord.js';
 import { loadCommands, commands, logCommandInteraction } from './commands/commands';
 import { registerCommand } from './register';
+import { loginfo } from './util/logger';
 require('dotenv').config();
 loadCommands()
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS] });
 
 client.once('ready', async () => {
-    console.log(`Logged in as ${client.user!.tag}`);
+    loginfo(`Logged in as ${client.user!.tag}`);
     // await registerCommand()
-    console.log("Ready!")
+    loginfo("Ready!")
 });
 
 client.on('interactionCreate', async interaction => {

@@ -2,12 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const commands_1 = require("./commands/commands");
+const logger_1 = require("./util/logger");
 require('dotenv').config();
 (0, commands_1.loadCommands)();
 const client = new discord_js_1.Client({ intents: [discord_js_1.Intents.FLAGS.GUILDS, discord_js_1.Intents.FLAGS.GUILD_MESSAGES, discord_js_1.Intents.FLAGS.GUILD_MESSAGE_REACTIONS] });
 client.once('ready', async () => {
-    console.log(`Logged in as ${client.user.tag}`);
-    console.log("Ready!");
+    (0, logger_1.loginfo)(`Logged in as ${client.user.tag}`);
+    (0, logger_1.loginfo)("Ready!");
 });
 client.on('interactionCreate', async (interaction) => {
     if (interaction.isCommand()) {

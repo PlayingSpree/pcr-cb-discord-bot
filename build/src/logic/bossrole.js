@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.reactionEvent = exports.start = void 0;
 const state_1 = require("../data/state");
+const logger_1 = require("../util/logger");
 const message_1 = require("../util/message");
 const reaction_1 = require("../util/reaction");
 async function reactNumberOnMessage(message) {
@@ -59,7 +60,7 @@ function reactionEvent(reaction, user, add) {
     const message = state.messageId == reaction.message.id;
     if (!message)
         return;
-    console.log(`Bossrole React ${add ? "add" : "remove"}: ` + reaction.emoji.name);
+    (0, logger_1.loginfo)(`Bossrole React ${add ? "add" : "remove"}: ` + reaction.emoji.name);
     switch (reaction.emoji.name) {
         case reaction_1.reaction_numbers[1]:
         case reaction_1.reaction_numbers[2]:

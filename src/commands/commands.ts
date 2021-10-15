@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { Collection, CommandInteraction, GuildMember, MessageReaction, TextChannel, User } from 'discord.js';
 import fs from 'fs';
+import { loginfo } from '../util/logger';
 
 type ExecuteReturn = Promise<boolean | void> | boolean | void
 
@@ -14,19 +15,19 @@ export const commands = new Collection<string, Command>();
 
 export async function loadCommands() {
     const commandFolders = fs.readdirSync('./build/src/commands').filter(file => !(file.endsWith('.js') || file.endsWith('.map') || file.endsWith('.ts')));
-    console.log('Loading commands...');
+    loginfo('Loading commands...');
     for (const folder of commandFolders) {
         const commandFiles = fs.readdirSync(`./build/src/commands/${folder}`).filter(file => file.endsWith('.js'));
-        console.log(`Found ${commandFiles.length} commands in ${folder}`);
+        loginfo(`Found ${commandFiles.length} commands in ${folder}`);
 
         for (const file of commandFiles) {
             const { command } = await import(`./${folder}/${file}`);
             command.group = folder;
             commands.set(command.data.name, command);
-            console.log(`|- ${file}`);
+            loginfo(`|- ${file}`);
         }
     }
-    console.log(`Successfuly load ${commands.size} commands`);
+    loginfo(`Successfuly load ${commands.size} commands`);
 }
 
 export function logCommandInteraction(interaction: CommandInteraction) {
@@ -39,5 +40,5 @@ export function logCommandInteraction(interaction: CommandInteraction) {
     else {
         commandDetails += interaction.options.data.map(d => d.value).join(' ');
     }
-    console.log(`Got command interaction: ${interaction.commandName}${commandDetails ? ' ' + commandDetails : ''} from: ${(interaction.member as GuildMember)?.displayName || interaction.user.username} (${interaction.guild?.name}/${(interaction.channel as TextChannel)?.name})`);
+    loginfo(`Got command interaction: ${interaction.commandName}${commandDetails ? ' ' + commandDetails : ''} from: ${(interaction.member as GuildMember)?.displayName || interaction.user.username} (${interaction.guild?.name}/${(interaction.channel as TextChannel)?.name})`);
 }
