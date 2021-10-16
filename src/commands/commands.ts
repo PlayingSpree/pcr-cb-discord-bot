@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import { ButtonInteraction, Collection, CommandInteraction, GuildMember, MessageReaction, TextChannel, User } from 'discord.js';
 import fs from 'fs';
 import { loginfo } from '../util/logger';
-import { commandPath } from '../../config.json'
+import { commandPath } from '../../config.json';
 
 type ExecuteReturn = Promise<boolean | void> | boolean | void
 
@@ -16,7 +16,7 @@ export interface Command {
 export const commands = new Collection<string, Command>();
 
 export async function loadCommands() {
-    let path = process.env.DEBUG ? commandPath.dev : commandPath.pro
+    const path = process.env.DEBUG ? commandPath.dev : commandPath.pro;
     const commandFolders = fs.readdirSync(path).filter(file => !(file.endsWith('.js') || file.endsWith('.map') || file.endsWith('.ts')));
     loginfo('Loading commands...');
     for (const folder of commandFolders) {
@@ -24,8 +24,8 @@ export async function loadCommands() {
         loginfo(`Found ${commandFiles.length} commands in ${folder}`);
 
         for (const file of commandFiles) {
-            const { command } = await import(`./${folder}/${file}`);
-            command.group = folder;
+            const { command } = await import(`./${folder}/${file}`) as { command: Command };
+            // command.group = folder
             commands.set(command.data.name, command);
             loginfo(`|- ${file}`);
         }
@@ -38,7 +38,7 @@ export function logCommandInteraction(interaction: CommandInteraction) {
     const subcommand = interaction.options.getSubcommand(false);
     if (subcommand) {
         commandDetails += subcommand + ' ';
-        commandDetails += interaction.options.data[0].options!.map(d => d.value).join(' ');
+        commandDetails += interaction.options.data[0].options?.map(d => d.value).join(' ');
     }
     else {
         commandDetails += interaction.options.data.map(d => d.value).join(' ');

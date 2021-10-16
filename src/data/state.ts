@@ -1,13 +1,13 @@
-import Collection from "@discordjs/collection";
-import { Snowflake } from "discord-api-types";
+import Collection from '@discordjs/collection';
+import { Snowflake } from 'discord-api-types';
 
 abstract class State {
     isActive = true;
     static getState<V extends State, K>(stateData: Collection<K, V>, key: K) {
         const state = stateData.get(key);
-        if (state?.isActive) {
+        if (state?.isActive)
             return state;
-        }
+
     }
 }
 
@@ -17,9 +17,9 @@ export class BossRoleState extends State {
     constructor(messageId: Snowflake, bossRoles: string[]) {
         super();
         this.messageId = messageId;
-        this.bossRolesId = bossRoles
+        this.bossRolesId = bossRoles;
     }
 }
 
-export const bossRoleStateData = new Collection<Snowflake, BossRoleState>()
-export const clearChatStateData = new Collection<Snowflake, number>()
+export const bossRoleStateData = new Collection<Snowflake, BossRoleState>();
+export const clearChatStateData = new Collection<Snowflake, number>();
