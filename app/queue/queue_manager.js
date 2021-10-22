@@ -264,8 +264,6 @@ module.exports = {
         if (!state || !state.isActive) return;
         // Check bot
         if (user.bot) return;
-        // Check channel
-        if (messageChannel.id !== state.queueChannel.id) return;
         // Check duplicate
         if (state.reactedMessage.indexOf(reaction.message) !== -1) return;
         // Check role
