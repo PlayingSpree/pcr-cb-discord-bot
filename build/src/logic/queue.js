@@ -13,13 +13,13 @@ async function start(interaction, count, boss, round) {
         state_1.queueStateData.set(interaction.guildId, state);
     }
     const bossState = new state_1.BossState(interaction.channelId, count, round, boss);
-    state.bossQueue[boss] = bossState;
-    void queueNext(interaction.channel, count, bossState);
+    state.bossQueue[boss - 1] = bossState;
+    void queuePrint(interaction.channel, bossState);
 }
 exports.start = start;
 async function reactionEvent(reaction, user, add) {
     const reactionChannel = reaction.message.channel;
-    const state = state_1.QueueState.getState(state_1.queueStateData, reactionChannel.guildId)?.bossQueue.find(i => i.channelId == reaction.message.channelId);
+    const state = state_1.QueueState.getState(state_1.queueStateData, reactionChannel.guildId)?.bossQueue.find(i => i?.channelId && i.channelId == reaction.message.channelId);
     if (!state)
         return;
     if (!reaction.emoji.name)
@@ -28,12 +28,12 @@ async function reactionEvent(reaction, user, add) {
     const player = reaction.message.mentions.users.first() || reaction.message.author;
     const comment = reaction.message.content;
     if (reaction.emoji.name === '✅') {
-        state.playerQueueStates.set(player.id, new state_1.PlayerQueueState(false, comment ? comment.length > 32 ? null : comment : null));
-        void reactionChannel.send(`[${state.playerQueueStates.size}/${state.count}] ${player.toString()} ตีได้เลยจ้า~`);
+        state.playerQueueStates.push(new state_1.PlayerQueueState(player.id, false, comment ? comment.length > 32 ? null : comment : null));
+        void reactionChannel.send(`[${state.playerQueueStates.length}/${state.count}] ✅ ${player.toString()} (${reaction.message.member?.displayName || player.username}) ตีได้เลยจ้า~`);
     }
     else if (reaction.emoji.name === '⏸️') {
-        state.playerQueueStates.set(player.id, new state_1.PlayerQueueState(true, comment ? comment.length > 32 ? null : comment : null));
-        void reactionChannel.send(`[${state.playerQueueStates.size}/${state.count}] ${player.toString()} ตีได้เลยจ้า~ แต่ต้องพอสรอ ovf ด้วยน้า~`);
+        state.playerQueueStates.push(new state_1.PlayerQueueState(player.id, true, comment ? comment.length > 32 ? null : comment : null));
+        void reactionChannel.send(`[${state.playerQueueStates.length}/${state.count}] ⏸️ ${player.toString()} (${reaction.message.member?.displayName || player.username}) ตีได้เลยจ้า~ แต่ต้องพอสรอ ovf ด้วยน้า~`);
     }
     else if (reaction.emoji.name === '⏭️') {
         const message = await reactionChannel.send({ content: 'เลือกไม้ที่ต้องการในรอบถัดไป', components: countRows });
@@ -46,14 +46,17 @@ async function reactionEvent(reaction, user, add) {
     }
 }
 exports.reactionEvent = reactionEvent;
-async function queueNext(channel, count, boss) {
+function queueNext(channel, count, boss) {
     boss.next(count);
-    await channel.send(`=====================================
-**__:smiling_imp: บอส ${boss.boss} รอบ ${boss.round} :crossed_swords: ต้องการ ${count} ไม้ __**
+    void queuePrint(channel, boss);
+}
+function queuePrint(channel, boss) {
+    void channel.send(`=====================================
+**__:smiling_imp: บอส ${boss.boss} รอบ ${boss.round} :crossed_swords: ต้องการ ${boss.count} ไม้__**
 =====================================
 ✅ = ตีได้เลย
 ⏸️ = พอสรอ ovf ตอนใกล้จบ
-⏭️ = ถือไม้เวลาโบนัส รอตีบอสถัดไป`);
+⏭️ = เริ่มบอสถัดไป`);
 }
 const countRows = [new discord_js_1.MessageActionRow()
         .addComponents(new discord_js_1.MessageButton()

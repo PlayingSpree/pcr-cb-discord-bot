@@ -13,13 +13,12 @@ export async function start(interaction: CommandInteraction, count: number, boss
 
     const bossState = new BossState(interaction.channelId, count, round, boss);
     state.bossQueue[boss - 1] = bossState;
-    console.log(state.bossQueue);
     void queuePrint(interaction.channel as TextChannel, bossState);
 }
 
 export async function reactionEvent(reaction: MessageReaction, user: User, add: boolean) {
     const reactionChannel = reaction.message.channel as TextChannel;
-    const state = QueueState.getState(queueStateData, reactionChannel.guildId)?.bossQueue.find(i => i?.channelId == reaction.message.channelId);
+    const state = QueueState.getState(queueStateData, reactionChannel.guildId)?.bossQueue.find(i => i?.channelId && i.channelId == reaction.message.channelId);
     if (!state) return;
     if (!reaction.emoji.name) return;
     // TODO Check Role
@@ -30,11 +29,11 @@ export async function reactionEvent(reaction: MessageReaction, user: User, add: 
     const comment = reaction.message.content;
     if (reaction.emoji.name === '✅') {
         state.playerQueueStates.push(new PlayerQueueState(player.id, false, comment ? comment.length > 32 ? null : comment : null));
-        void reactionChannel.send(`[${state.playerQueueStates.length}/${state.count}] ${player.toString()} ตีได้เลยจ้า~`);
+        void reactionChannel.send(`[${state.playerQueueStates.length}/${state.count}] ✅ ${player.toString()} (${reaction.message.member?.displayName || player.username}) ตีได้เลยจ้า~`);
     }
     else if (reaction.emoji.name === '⏸️') {
         state.playerQueueStates.push(new PlayerQueueState(player.id, true, comment ? comment.length > 32 ? null : comment : null));
-        void reactionChannel.send(`[${state.playerQueueStates.length}/${state.count}] ${player.toString()} ตีได้เลยจ้า~ แต่ต้องพอสรอ ovf ด้วยน้า~`);
+        void reactionChannel.send(`[${state.playerQueueStates.length}/${state.count}] ⏸️ ${player.toString()} (${reaction.message.member?.displayName || player.username}) ตีได้เลยจ้า~ แต่ต้องพอสรอ ovf ด้วยน้า~`);
     }
     else if (reaction.emoji.name === '⏭️') {
         const message = await reactionChannel.send({ content: 'เลือกไม้ที่ต้องการในรอบถัดไป', components: countRows });

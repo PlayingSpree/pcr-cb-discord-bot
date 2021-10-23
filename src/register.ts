@@ -17,7 +17,7 @@ void (async () => {
 
         loginfo('Started refreshing commands.');
 
-        for (const guildId in register.guildId) {
+        for (const guildId of register.guildId) {
             if (process.env.DEBUG) {
                 await rest.put(
                     Routes.applicationGuildCommands(clientId.dev, '249887769462177793'),

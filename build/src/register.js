@@ -14,7 +14,7 @@ void (async () => {
     try {
         const rest = new rest_1.REST({ version: '9' }).setToken(process.env.TOKEN);
         (0, logger_1.loginfo)('Started refreshing commands.');
-        for (const guildId in config_json_1.register.guildId) {
+        for (const guildId of config_json_1.register.guildId) {
             if (process.env.DEBUG) {
                 await rest.put(v9_1.Routes.applicationGuildCommands(config_json_1.clientId.dev, '249887769462177793'), { body: commandData });
             }

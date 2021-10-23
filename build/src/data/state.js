@@ -24,14 +24,14 @@ class QueueState extends State {
 exports.QueueState = QueueState;
 class BossState {
     constructor(channelId, count, round, boss) {
-        this.playerQueueStates = new collection_1.default();
-        this.playerStates = new collection_1.default();
+        this.playerQueueStates = [];
         this.channelId = channelId;
         this.count = count;
         this.round = round;
         this.boss = boss;
     }
     next(count) {
+        this.playerQueueStates = [];
         this.count = count;
         this.round++;
     }
@@ -45,7 +45,8 @@ class PlayerState {
 }
 exports.PlayerState = PlayerState;
 class PlayerQueueState {
-    constructor(isPaused, comment = null) {
+    constructor(userId, isPaused, comment = null) {
+        this.userId = userId;
         this.isPaused = isPaused;
         this.comment = comment;
     }
