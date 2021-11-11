@@ -1,13 +1,14 @@
 {
   "name": "pcr-cb-discord-bot",
-  "version": "v2.0.0-alpha.1",
+  "version": "v2.0.0-alpha.2",
   "description": "Discord bot for princess connect re:dive clan discord server",
   "main": "build/src/index.js",
   "scripts": {
     "start": "node out/src/index.js",
     "watch": "tsc -p tsconfig.json -w",
     "build": "tsc -p tsconfig.json --outDir build",
-    "register": "node out/src/register.js"
+    "register": "node out/src/register.js",
+    "registerPro": "node out/src/register.js pro"
   },
   "repository": {
     "type": "git",

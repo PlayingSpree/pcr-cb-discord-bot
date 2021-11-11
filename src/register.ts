@@ -13,20 +13,24 @@ void (async () => {
         commandData.push(command.data.toJSON());
 
     try {
-        const rest = new REST({ version: '9' }).setToken(process.env.TOKEN!);
+        const pro = process.argv[2] == 'pro';
+        if (pro)
+            loginfo('====== ON PRODUCTION ======');
+
+        const rest = new REST({ version: '9' }).setToken(pro ? process.env.TOKENPRO! : process.env.TOKENDEV!);
 
         loginfo('Started refreshing commands.');
 
         for (const guildId of register.guildId) {
-            if (process.env.DEBUG) {
+            if (pro) {
                 await rest.put(
-                    Routes.applicationGuildCommands(clientId.dev, '249887769462177793'),
+                    Routes.applicationGuildCommands(clientId.pro, guildId),
                     { body: commandData },
                 );
             }
             else {
                 await rest.put(
-                    Routes.applicationGuildCommands(clientId.pro, guildId),
+                    Routes.applicationGuildCommands(clientId.dev, '249887769462177793'),
                     { body: commandData },
                 );
             }

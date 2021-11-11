@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.clearChatStateData = exports.queueStateData = exports.PlayerQueueState = exports.PlayerState = exports.BossState = exports.QueueState = void 0;
+exports.clearChatStateData = exports.notifyStateData = exports.queueStateData = exports.NotifyState = exports.PlayerQueueState = exports.QueueState = void 0;
 const collection_1 = __importDefault(require("@discordjs/collection"));
 class State {
     constructor() {
@@ -16,14 +16,8 @@ class State {
     }
 }
 class QueueState extends State {
-    constructor() {
-        super(...arguments);
-        this.bossQueue = [];
-    }
-}
-exports.QueueState = QueueState;
-class BossState {
     constructor(channelId, count, round, boss) {
+        super();
         this.playerQueueStates = [];
         this.channelId = channelId;
         this.count = count;
@@ -33,25 +27,34 @@ class BossState {
     next(count) {
         this.playerQueueStates = [];
         this.count = count;
-        this.round++;
+        this.boss++;
+        if (this.boss > 5) {
+            this.boss = 1;
+            this.round++;
+        }
     }
 }
-exports.BossState = BossState;
-class PlayerState {
-    constructor() {
-        this.count = 0;
-        this.ovf = false;
-    }
-}
-exports.PlayerState = PlayerState;
+exports.QueueState = QueueState;
 class PlayerQueueState {
-    constructor(userId, isPaused, comment = null) {
+    constructor(userId, messageId, replyId, status, react, comment = null) {
         this.userId = userId;
-        this.isPaused = isPaused;
+        this.messageId = messageId;
+        this.replyId = replyId;
+        this.status = status;
+        this.react = react;
         this.comment = comment;
     }
 }
 exports.PlayerQueueState = PlayerQueueState;
+class NotifyState extends State {
+    constructor(messageId) {
+        super();
+        this.boss = [[], [], [], [], []];
+        this.messageId = messageId;
+    }
+}
+exports.NotifyState = NotifyState;
 exports.queueStateData = new collection_1.default();
+exports.notifyStateData = new collection_1.default();
 exports.clearChatStateData = new collection_1.default();
 //# sourceMappingURL=state.js.map

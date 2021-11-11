@@ -32,10 +32,13 @@ client.on('interactionCreate', async (interaction) => {
     }
     else if (interaction.isButton()) {
         (0, logger_1.loginfo)(`Got button interaction: ${interaction.customId} from: ${interaction.member?.displayName || interaction.user.username} (${interaction.guild?.name}/${interaction.channel?.name})`);
-        if (interaction.customId == '!messagedeleteself')
+        if (interaction.customId == '!messagedeleteself') {
             void interaction.message.delete();
-        else if (interaction.customId == '/clearchat')
+        }
+        else if (interaction.customId == '/clearchat') {
+            await interaction.message.delete();
             commands_1.commands.get('clearchat')?.executeButton?.(interaction);
+        }
     }
 });
 client.on('messageReactionAdd', (reaction, user) => {

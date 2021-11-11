@@ -11,16 +11,14 @@ abstract class State {
 }
 
 export class QueueState extends State {
-    bossQueue: BossState[] = [];
-}
-
-export class BossState {
     channelId: Snowflake;
+    messageId!: Snowflake;
     playerQueueStates: PlayerQueueState[] = [];
     boss: number;
     count: number;
     round: number;
     constructor(channelId: Snowflake, count: number, round: number, boss: number) {
+        super();
         this.channelId = channelId;
         this.count = count;
         this.round = round;
@@ -29,25 +27,41 @@ export class BossState {
     next(count: number) {
         this.playerQueueStates = [];
         this.count = count;
-        this.round++;
+        this.boss++;
+        if (this.boss > 5) {
+            this.boss = 1;
+            this.round++;
+        }
     }
-}
-
-export class PlayerState {
-    count = 0;
-    ovf = false;
 }
 
 export class PlayerQueueState {
     userId: Snowflake;
-    isPaused: boolean;
+    messageId: Snowflake;
+    replyId: Snowflake;
+    status: ('hold' | 'pause')[];
     comment: string | null;
-    constructor(userId: Snowflake, isPaused: boolean, comment: string | null = null) {
+    react: string;
+    boss: number | undefined;
+    constructor(userId: Snowflake, messageId: Snowflake, replyId: Snowflake, status: ('hold' | 'pause')[], react: string, comment: string | null = null) {
         this.userId = userId;
-        this.isPaused = isPaused;
+        this.messageId = messageId;
+        this.replyId = replyId;
+        this.status = status;
+        this.react = react;
         this.comment = comment;
     }
 }
 
+export class NotifyState extends State {
+    messageId: Snowflake;
+    boss: Snowflake[][] = [[], [], [], [], []];
+    constructor(messageId: Snowflake) {
+        super();
+        this.messageId = messageId;
+    }
+}
+
 export const queueStateData = new Collection<Snowflake, QueueState>();
+export const notifyStateData = new Collection<Snowflake, NotifyState>();
 export const clearChatStateData = new Collection<Snowflake, number>();

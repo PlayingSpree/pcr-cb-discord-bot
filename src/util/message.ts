@@ -7,3 +7,5 @@ export async function sendTimedMessage(channel: TextChannel, ms: number, content
 }
 
 export function ephemeral(message: string) { return { content: message, ephemeral: true }; }
+
+export function noMentions(message: string) { return { content: message, allowedMentions: { users: [] } }; }
