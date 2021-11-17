@@ -2,11 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const commands_1 = require("./commands/commands");
+const data_1 = require("./data/data");
 const logger_1 = require("./util/logger");
 require('dotenv').config();
 const client = new discord_js_1.Client({ intents: [discord_js_1.Intents.FLAGS.GUILDS, discord_js_1.Intents.FLAGS.GUILD_MESSAGES, discord_js_1.Intents.FLAGS.GUILD_MESSAGE_REACTIONS] });
 void (async function startBot() {
     await (0, commands_1.loadCommands)();
+    await (0, data_1.loadData)();
     void client.login(process.env.TOKEN);
 })();
 client.once('ready', () => {
@@ -16,7 +18,7 @@ client.once('ready', () => {
 client.on('interactionCreate', async (interaction) => {
     if (interaction.isCommand()) {
         (0, commands_1.logCommandInteraction)(interaction);
-        const command = commands_1.commands.get(interaction.commandName);
+        const command = commands_1.commands.get(interaction.commandName) || commands_1.secretCommands.get(interaction.commandName);
         if (!command)
             return;
         try {
@@ -31,7 +33,7 @@ client.on('interactionCreate', async (interaction) => {
         }
     }
     else if (interaction.isButton()) {
-        (0, logger_1.loginfo)(`Got button interaction: ${interaction.customId} from: ${interaction.member?.displayName || interaction.user.username} (${interaction.guild?.name}/${interaction.channel?.name})`);
+        (0, logger_1.loginfo)(`Got button interaction: ${interaction.customId} from: ${interaction.member?.displayName || interaction.user.username} (${interaction.guild.name}/${interaction.channel?.name})`);
         if (interaction.customId == '!messagedeleteself') {
             void interaction.message.delete();
         }
@@ -56,6 +58,6 @@ function handleReaction(reaction, user, add) {
     }
 }
 process.on('unhandledRejection', error => {
-    (0, logger_1.logerror)('Unhandled promise rejection:', error);
+    return (0, logger_1.logerror)('Unhandled promise rejection:', error);
 });
 //# sourceMappingURL=index.js.map

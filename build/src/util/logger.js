@@ -2,8 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.logerror = exports.loginfo = void 0;
 function prefixDate(message) {
-    if (message !== undefined)
-        return `[${new Date().toISOString()}] ` + message;
+    return `[${new Date().toISOString()}] ${message}`;
 }
 function loginfo(message, ...optionalParams) {
     message = prefixDate(message);

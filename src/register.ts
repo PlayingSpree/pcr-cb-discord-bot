@@ -1,6 +1,6 @@
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
-import { commands, loadCommands } from './commands/commands';
+import { commands, secretCommands, loadCommands } from './commands/commands';
 import { register, clientId } from '../config.json';
 import { logerror, loginfo } from './util/logger';
 require('dotenv').config();
@@ -21,19 +21,22 @@ void (async () => {
 
         loginfo('Started refreshing commands.');
 
-        for (const guildId of register.guildId) {
-            if (pro) {
+        if (pro) {
+            for (const guildId of register.guildId) {
+
                 await rest.put(
                     Routes.applicationGuildCommands(clientId.pro, guildId),
                     { body: commandData },
                 );
             }
-            else {
-                await rest.put(
-                    Routes.applicationGuildCommands(clientId.dev, '249887769462177793'),
-                    { body: commandData },
-                );
-            }
+        }
+        else {
+            for (const command of secretCommands.values())
+                commandData.push(command.data.toJSON());
+            await rest.put(
+                Routes.applicationGuildCommands(clientId.dev, '249887769462177793'),
+                { body: commandData },
+            );
         }
 
         loginfo('Successfully reloaded commands.');

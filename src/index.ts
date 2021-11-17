@@ -1,5 +1,6 @@
 import { Client, GuildMember, Intents, Message, MessageReaction, TextChannel, User } from 'discord.js';
-import { loadCommands, commands, logCommandInteraction } from './commands/commands';
+import { loadCommands, commands, secretCommands, logCommandInteraction } from './commands/commands';
+import { loadData } from './data/data';
 import { logerror, loginfo } from './util/logger';
 require('dotenv').config();
 
@@ -7,6 +8,7 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_
 
 void (async function startBot() {
     await loadCommands();
+    await loadData();
     void client.login(process.env.TOKEN);
 })();
 
@@ -18,7 +20,7 @@ client.once('ready', () => {
 client.on('interactionCreate', async interaction => {
     if (interaction.isCommand()) {
         logCommandInteraction(interaction);
-        const command = commands.get(interaction.commandName);
+        const command = commands.get(interaction.commandName) || secretCommands.get(interaction.commandName);
 
         if (!command) return;
 
@@ -34,7 +36,7 @@ client.on('interactionCreate', async interaction => {
         }
     }
     else if (interaction.isButton()) {
-        loginfo(`Got button interaction: ${interaction.customId} from: ${(interaction.member as GuildMember)?.displayName || interaction.user.username} (${interaction.guild?.name}/${(interaction.channel as TextChannel)?.name})`);
+        loginfo(`Got button interaction: ${interaction.customId} from: ${(interaction.member as GuildMember)?.displayName || interaction.user.username} (${interaction.guild!.name}/${(interaction.channel as TextChannel)?.name})`);
         if (interaction.customId == '!messagedeleteself') {
             void (interaction.message as Message).delete();
         }
@@ -63,5 +65,5 @@ function handleReaction(reaction: MessageReaction, user: User, add: boolean) {
 }
 
 process.on('unhandledRejection', error => {
-    logerror('Unhandled promise rejection:', error);
+    return logerror('Unhandled promise rejection:', error as never);
 });

@@ -1,34 +1,21 @@
 import { MessageEmbed } from 'discord.js';
+import { gachaData, GachaOptions } from '../data/data';
 
-const luckString = [
-    ['ดวงดีเกินไปแล้ว เปิดได้ตั้งแต่โรลแรก', '<a:YuniShake:810139601494474782>'],
-    ['ดวงดีสุด ๆ เปิดได้ตั้งแต่ 10 โรลแรก', 'https://cdn.discordapp.com/emojis/826506005625962547.gif?size=96'],
-    ['ดวงดีมาก ได้ตั้งแต่ต้น ๆ', 'https://cdn.discordapp.com/emojis/826506249054978108.png?size=96'],
-    ['ดวงดี ชนะเรท', 'https://cdn.discordapp.com/emojis/902922868499832944.png?size=96'],
-    ['ดวงปกติ ตามเรท', 'https://cdn.discordapp.com/emojis/826513806863761408.png?size=96'],
-    ['ดวงไม่ดี แพ้เรท', 'https://cdn.discordapp.com/emojis/826505984666894357.png?size=96'],
-    ['ดวงซวย เกือบต้องแลกตัว', 'https://cdn.discordapp.com/emojis/826506208562642985.png?size=96'],
-    ['ดวงซวยสุด ๆ 300 โรลเต็ม ๆ', 'https://cdn.discordapp.com/emojis/902923299561025658.png?size=96']];
+export function getGacha(game: string | null) {
+    if (!game)
+        game = 'pcr';
 
-const luckRate = [
-    1,
-    10,
-    50,
-    90,
-    160,
-    240,
-    299,
-    300];
+    const luckString = gachaData[game as GachaOptions].luckString;
+    const luckRate = gachaData[game as GachaOptions].luckRate;
+    const gachaRate = gachaData[game as GachaOptions].gachaRate;
+    const gachaRate10 = 1 - Math.pow(1 - gachaRate, 10);
+    const maxRoll = gachaData[game as GachaOptions].maxRoll;
 
-const gachaRate = 0.007;
-const gachaRate10 = 1 - Math.pow(1 - gachaRate, 10);
-
-export function getGacha() {
     let roll = 1;
     let rate = gachaRate;
     if (Math.random() > gachaRate) {
         rate = 0;
-        for (roll = 10; roll < 300; roll += 10) {
+        for (roll = 10; roll < maxRoll; roll += 10) {
             rate = 1 - ((1 - rate) * (1 - gachaRate10));
             if (Math.random() <= gachaRate10) break;
         }
@@ -37,49 +24,11 @@ export function getGacha() {
     const embed = new MessageEmbed()
         .setColor('#0099ff')
         .setTitle(luckString[i][0])
-        .setAuthor('ผลการทดลองเปิดกาชา', 'https://cdn.discordapp.com/emojis/902922377028063284.png')
+        .setAuthor(gachaData[game as GachaOptions].title, 'https://cdn.discordapp.com/emojis/902922377028063284.png')
+        .setDescription(gachaData[game as GachaOptions].description)
         .addField('โรล', roll.toString(), true)
         .addField('โอกาสเปิดได้ในจำนวนโรลปัจจุบัน', `${(rate * 100).toFixed(2)}%`, true)
         .setThumbnail(luckString[i][1]);
-
-    return embed;
-}
-const baLuckString = [
-    ['ดวงดีมาก ได้ตั้งแต่ต้น ๆ', 'https://cdn.discordapp.com/emojis/803767731710722109.png?size=96'],
-    ['ดวงดี ชนะเรท', 'https://cdn.discordapp.com/emojis/740733517994131456.png?size=96'],
-    ['ดวงปกติ ตามเรท', 'https://cdn.discordapp.com/emojis/814077772691275806.png?size=96'],
-    ['ดวงซวย เกือบต้องแลกตัว', 'https://cdn.discordapp.com/emojis/814078596175495178.png?size=96'],
-    ['ดวงซวยสุด ๆ 200 โรลเต็ม ๆ', 'https://cdn.discordapp.com/emojis/814076464378675220.png?size=96']];
-
-const baLuckRate = [
-    60,
-    120,
-    170,
-    199,
-    200];
-
-const baGachaRate = 0.0035;
-const baGachaRate10 = 1 - Math.pow(1 - baGachaRate, 10);
-
-export function getGachaBa() {
-    let roll = 1;
-    let rate = baGachaRate;
-    if (Math.random() > baGachaRate) {
-        rate = 0;
-        for (roll = 10; roll < 200; roll += 10) {
-            rate = 1 - ((1 - rate) * (1 - baGachaRate10));
-            if (Math.random() <= baGachaRate10) break;
-        }
-    }
-    const i = baLuckRate.filter(l => l < roll).length;
-    const embed = new MessageEmbed()
-        .setColor('#0099ff')
-        .setTitle(baLuckString[i][0])
-        .setDescription('ตู้เพิ่มเรท 2 ตัวละคร (0.035%)')
-        .setAuthor('ผลการทดลองเปิดกาชา Blue Archive', 'https://cdn.discordapp.com/emojis/902922377028063284.png')
-        .addField('โรล', roll.toString(), true)
-        .addField('โอกาสเปิดได้ในจำนวนโรลปัจจุบัน', `${(rate * 100).toFixed(2)}%`, true)
-        .setThumbnail(baLuckString[i][1]);
 
     return embed;
 }

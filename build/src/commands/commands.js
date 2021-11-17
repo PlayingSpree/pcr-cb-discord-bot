@@ -22,12 +22,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logCommandInteraction = exports.loadCommands = exports.commands = void 0;
+exports.logCommandInteraction = exports.loadCommands = exports.secretCommands = exports.commands = void 0;
 const discord_js_1 = require("discord.js");
 const fs_1 = __importDefault(require("fs"));
 const logger_1 = require("../util/logger");
 const config_json_1 = require("../../config.json");
 exports.commands = new discord_js_1.Collection();
+exports.secretCommands = new discord_js_1.Collection();
 async function loadCommands() {
     const path = process.env.DEBUG ? config_json_1.commandPath.dev : config_json_1.commandPath.pro;
     const commandFolders = fs_1.default.readdirSync(path).filter(file => !(file.endsWith('.js') || file.endsWith('.map') || file.endsWith('.ts')));
@@ -37,11 +38,14 @@ async function loadCommands() {
         (0, logger_1.loginfo)(`Found ${commandFiles.length} commands in ${folder}`);
         for (const file of commandFiles) {
             const { command } = await Promise.resolve().then(() => __importStar(require(`./${folder}/${file}`)));
-            exports.commands.set(command.data.name, command);
+            if (folder == 'secret')
+                exports.secretCommands.set(command.data.name, command);
+            else
+                exports.commands.set(command.data.name, command);
             (0, logger_1.loginfo)(`|- ${file}`);
         }
     }
-    (0, logger_1.loginfo)(`Successfully load ${exports.commands.size} commands`);
+    (0, logger_1.loginfo)(`Successfully load ${exports.commands.size} commands (+ ${exports.secretCommands.size} secrets)`);
 }
 exports.loadCommands = loadCommands;
 function logCommandInteraction(interaction) {

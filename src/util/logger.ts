@@ -1,14 +1,13 @@
 function prefixDate(message: string) {
-    if (message !== undefined)
-        return `[${new Date().toISOString()}] ` + message
+    return `[${new Date().toISOString()}] ${message}`;
 }
 
-export function loginfo(message?: any, ...optionalParams: any[]) {
-    message = prefixDate(message)
+export function loginfo(message: string, ...optionalParams: never[]) {
+    message = prefixDate(message);
     console.log(message, ...optionalParams);
 }
 
-export function logerror(message?: any, ...optionalParams: any[]) {
-    message = prefixDate(message)
+export function logerror(message: string | unknown, ...optionalParams: never[]) {
+    message = prefixDate(message as string);
     console.error(message, ...optionalParams);
 }

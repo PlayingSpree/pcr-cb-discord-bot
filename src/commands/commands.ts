@@ -14,6 +14,7 @@ export interface Command {
 }
 
 export const commands = new Collection<string, Command>();
+export const secretCommands = new Collection<string, Command>();
 
 export async function loadCommands() {
     const path = process.env.DEBUG ? commandPath.dev : commandPath.pro;
@@ -25,12 +26,15 @@ export async function loadCommands() {
 
         for (const file of commandFiles) {
             const { command } = await import(`./${folder}/${file}`) as { command: Command };
-            // command.group = folder
-            commands.set(command.data.name, command);
+            // TODO command.group = folder
+            if (folder == 'secret')
+                secretCommands.set(command.data.name, command);
+            else
+                commands.set(command.data.name, command);
             loginfo(`|- ${file}`);
         }
     }
-    loginfo(`Successfully load ${commands.size} commands`);
+    loginfo(`Successfully load ${commands.size} commands (+ ${secretCommands.size} secrets)`);
 }
 
 export function logCommandInteraction(interaction: CommandInteraction) {
