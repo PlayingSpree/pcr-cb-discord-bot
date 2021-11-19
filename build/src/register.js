@@ -17,16 +17,12 @@ void (async () => {
             (0, logger_1.loginfo)('====== ON PRODUCTION ======');
         const rest = new rest_1.REST({ version: '9' }).setToken(pro ? process.env.TOKENPRO : process.env.TOKENDEV);
         (0, logger_1.loginfo)('Started refreshing commands.');
-        if (pro) {
-            for (const guildId of config_json_1.register.guildId) {
-                await rest.put(v9_1.Routes.applicationGuildCommands(config_json_1.clientId.pro, guildId), { body: commandData });
-            }
+        for (const guildId of config_json_1.register.guildId) {
+            await rest.put(v9_1.Routes.applicationGuildCommands(config_json_1.clientId.pro, guildId), { body: commandData });
         }
-        else {
-            for (const command of commands_1.secretCommands.values())
-                commandData.push(command.data.toJSON());
-            await rest.put(v9_1.Routes.applicationGuildCommands(config_json_1.clientId.dev, '249887769462177793'), { body: commandData });
-        }
+        for (const command of commands_1.secretCommands.values())
+            commandData.push(command.data.toJSON());
+        await rest.put(v9_1.Routes.applicationGuildCommands(pro ? config_json_1.clientId.pro : config_json_1.clientId.dev, '249887769462177793'), { body: commandData });
         (0, logger_1.loginfo)('Successfully reloaded commands.');
     }
     catch (error) {

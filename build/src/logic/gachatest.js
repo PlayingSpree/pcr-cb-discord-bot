@@ -27,6 +27,7 @@ function getGacha(game) {
         .setTitle(luckString[i][0])
         .setAuthor(data_1.gachaData[game].title, 'https://cdn.discordapp.com/emojis/902922377028063284.png')
         .setDescription(data_1.gachaData[game].description)
+        .setFooter(data_1.gachaData.footer)
         .addField('โรล', roll.toString(), true)
         .addField('โอกาสเปิดได้ในจำนวนโรลปัจจุบัน', `${(rate * 100).toFixed(2)}%`, true)
         .setThumbnail(luckString[i][1]);
