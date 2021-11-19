@@ -4,6 +4,7 @@ import { loginfo } from '../util/logger';
 export let gachaData: GachaData;
 
 export interface GachaData {
+    footer: string,
     pcr: GachaInfo,
     ba: GachaInfo
 }

@@ -21,23 +21,20 @@ void (async () => {
 
         loginfo('Started refreshing commands.');
 
-        if (pro) {
-            for (const guildId of register.guildId) {
-
-                await rest.put(
-                    Routes.applicationGuildCommands(clientId.pro, guildId),
-                    { body: commandData },
-                );
-            }
-        }
-        else {
-            for (const command of secretCommands.values())
-                commandData.push(command.data.toJSON());
+        for (const guildId of register.guildId) {
             await rest.put(
-                Routes.applicationGuildCommands(clientId.dev, '249887769462177793'),
+                Routes.applicationGuildCommands(clientId.pro, guildId),
                 { body: commandData },
             );
         }
+
+        for (const command of secretCommands.values())
+            commandData.push(command.data.toJSON());
+
+        await rest.put(
+            Routes.applicationGuildCommands(pro ? clientId.pro : clientId.dev, '249887769462177793'),
+            { body: commandData },
+        );
 
         loginfo('Successfully reloaded commands.');
     }
