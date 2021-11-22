@@ -48,7 +48,7 @@
         "maxRoll": 300,
         "title": "ผลการทดลองเปิดกาชา",
         "description": "🎁 ไพร์ซกาชา พิคอัพ 2 ตัว (0.35%)",
-        "footer": "เปิดตู้ pickup ปกติ ใช้ /gacha type:pickup"
+        "footer": "💡 เปิดตู้ pickup ปกติ ใช้ /gacha type:pickup"
     },
     "ba": {
         "luckString": [
@@ -84,7 +84,7 @@
         "maxRoll": 200,
         "title": "ผลการทดลองเปิดกาชา เกม Blue Archive",
         "description": "",
-        "footer": "/gacha type:bluearchive"
+        "footer": "💬 /gacha type:bluearchive"
     },
     "pickup": {
         "luckString": [
