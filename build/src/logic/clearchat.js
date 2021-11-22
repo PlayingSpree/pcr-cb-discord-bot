@@ -4,12 +4,13 @@ exports.tryClearChat = void 0;
 const discord_js_1 = require("discord.js");
 const state_1 = require("../data/state");
 const logger_1 = require("../util/logger");
-const confirmTime = 30000;
+const config_json_1 = require("../../config.json");
+const confirmTime = config_json_1.commandConfig.clearchat.confirmTime;
 async function tryClearChat(interaction) {
     const channel = interaction.channel;
     const isUsed = state_1.clearChatStateData.get(channel.id);
-    if (isUsed && (isUsed > Date.now() || isUsed == 0)) {
-        state_1.clearChatStateData.set(channel.id, 0);
+    if (isUsed && (isUsed === -1 || (isUsed > Date.now()))) {
+        state_1.clearChatStateData.set(channel.id, -1);
         void interaction.reply({ content: 'กำลังลบข้อความทั้งหมด', ephemeral: true });
         await clearChat(channel);
         return;

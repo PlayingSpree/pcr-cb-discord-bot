@@ -1,15 +1,15 @@
 import { MessageEmbed } from 'discord.js';
-import { gachaData, GachaOptions } from '../data/data';
+import { gachaData } from '../data/data';
 
 export function getGacha(game: string | null) {
-    if (!game)
+    if (!game || !(game in gachaData))
         game = 'pcr';
 
-    const luckString = gachaData[game as GachaOptions].luckString;
-    const luckRate = gachaData[game as GachaOptions].luckRate;
-    const gachaRate = gachaData[game as GachaOptions].gachaRate;
+    const luckString = gachaData[game].luckString;
+    const luckRate = gachaData[game].luckRate;
+    const gachaRate = gachaData[game].gachaRate;
     const gachaRate10 = 1 - Math.pow(1 - gachaRate, 10);
-    const maxRoll = gachaData[game as GachaOptions].maxRoll;
+    const maxRoll = gachaData[game].maxRoll;
 
     let roll = 1;
     let rate = gachaRate;
@@ -24,9 +24,9 @@ export function getGacha(game: string | null) {
     const embed = new MessageEmbed()
         .setColor('#0099ff')
         .setTitle(luckString[i][0])
-        .setAuthor(gachaData[game as GachaOptions].title, 'https://cdn.discordapp.com/emojis/902922377028063284.png')
-        .setDescription(gachaData[game as GachaOptions].description)
-        .setFooter(gachaData.footer)
+        .setAuthor(gachaData[game].title, 'https://cdn.discordapp.com/emojis/902922377028063284.png')
+        .setDescription(gachaData[game].description)
+        .setFooter(gachaData[game].footer)
         .addField('โรล', roll.toString(), true)
         .addField('โอกาสเปิดได้ในจำนวนโรลปัจจุบัน', `${(rate * 100).toFixed(2)}%`, true)
         .setThumbnail(luckString[i][1]);

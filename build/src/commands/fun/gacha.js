@@ -10,7 +10,7 @@ exports.command = {
         .addStringOption(option => option.setName('type')
         .setDescription('เลือกประเภทกาชา')
         .setRequired(false)
-        .addChoices([['princone', 'pcr'], ['bluearchive', 'ba']])),
+        .addChoices([['pickup', 'pickup'], ['bluearchive', 'ba']])),
     execute(interaction) {
         void interaction.reply({ embeds: [(0, gachatest_1.getGacha)(interaction.options.getString('type'))] });
     },

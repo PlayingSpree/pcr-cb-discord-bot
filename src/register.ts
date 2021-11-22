@@ -14,18 +14,19 @@ void (async () => {
 
     try {
         const pro = process.argv[2] == 'pro';
-        if (pro)
-            loginfo('====== ON PRODUCTION ======');
 
         const rest = new REST({ version: '9' }).setToken(pro ? process.env.TOKENPRO! : process.env.TOKENDEV!);
 
         loginfo('Started refreshing commands.');
 
-        for (const guildId of register.guildId) {
-            await rest.put(
-                Routes.applicationGuildCommands(clientId.pro, guildId),
-                { body: commandData },
-            );
+        if (pro) {
+            loginfo('====== ON PRODUCTION ======');
+            for (const guildId of register.guildId) {
+                await rest.put(
+                    Routes.applicationGuildCommands(clientId.pro, guildId),
+                    { body: commandData },
+                );
+            }
         }
 
         for (const command of secretCommands.values())

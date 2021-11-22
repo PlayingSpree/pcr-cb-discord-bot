@@ -2,14 +2,15 @@ import { ButtonInteraction, CommandInteraction, MessageActionRow, MessageButton,
 import { MessageButtonStyles } from 'discord.js/typings/enums';
 import { clearChatStateData } from '../data/state';
 import { logerror, loginfo } from '../util/logger';
+import { commandConfig } from '../../config.json';
 
-const confirmTime = 30000;
+const confirmTime = commandConfig.clearchat.confirmTime;
 
 export async function tryClearChat(interaction: CommandInteraction | ButtonInteraction) {
     const channel = interaction.channel as TextChannel;
     const isUsed = clearChatStateData.get(channel.id);
-    if (isUsed && (isUsed > Date.now() || isUsed == 0)) {
-        clearChatStateData.set(channel.id, 0);
+    if (isUsed && (isUsed === -1 || (isUsed > Date.now()))) {
+        clearChatStateData.set(channel.id, -1);
         void interaction.reply({ content: 'กำลังลบข้อความทั้งหมด', ephemeral: true });
         await clearChat(channel);
         return;

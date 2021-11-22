@@ -4,9 +4,7 @@ import { loginfo } from '../util/logger';
 export let gachaData: GachaData;
 
 export interface GachaData {
-    footer: string,
-    pcr: GachaInfo,
-    ba: GachaInfo
+    [key: string]: GachaInfo
 }
 
 export interface GachaInfo {
@@ -15,10 +13,9 @@ export interface GachaInfo {
     gachaRate: number,
     maxRoll: number,
     title: string,
-    description: string
+    description: string,
+    footer: string
 }
-
-export type GachaOptions = 'pcr' | 'ba';
 
 export async function loadData() {
     loginfo('Start loading data.');
