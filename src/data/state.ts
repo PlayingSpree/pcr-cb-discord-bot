@@ -14,6 +14,7 @@ export class QueueState extends State {
     channelId: Snowflake;
     messageId!: Snowflake;
     playerQueueStates: PlayerQueueState[] = [];
+    ovfPlayers: [Snowflake, number][] = [];
     boss: number;
     count: number;
     round: number;
@@ -25,6 +26,9 @@ export class QueueState extends State {
         this.boss = boss;
     }
     next(count: number) {
+        const ovf = this.playerQueueStates.find(p => p.boss);
+        if (ovf)
+            this.ovfPlayers.push([ovf.userId, ovf.boss!]);
         this.playerQueueStates = [];
         this.count = count;
         this.boss++;
@@ -54,10 +58,12 @@ export class PlayerQueueState {
 }
 
 export class NotifyState extends State {
+    channelId: Snowflake;
     messageId: Snowflake;
     boss: Snowflake[][] = [[], [], [], [], []];
-    constructor(messageId: Snowflake) {
+    constructor(channelId: Snowflake, messageId: Snowflake) {
         super();
+        this.channelId = channelId;
         this.messageId = messageId;
     }
 }

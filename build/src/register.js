@@ -20,11 +20,12 @@ void (async () => {
             for (const guildId of config_json_1.register.guildId) {
                 await rest.put(v9_1.Routes.applicationGuildCommands(config_json_1.clientId.pro, guildId), { body: commandData });
             }
+            (0, logger_1.loginfo)('Successfully reloaded PRODUCTION commands.');
         }
         for (const command of commands_1.secretCommands.values())
             commandData.push(command.data.toJSON());
         await rest.put(v9_1.Routes.applicationGuildCommands(pro ? config_json_1.clientId.pro : config_json_1.clientId.dev, '249887769462177793'), { body: commandData });
-        (0, logger_1.loginfo)('Successfully reloaded commands.');
+        (0, logger_1.loginfo)('Successfully reloaded DEV commands.');
     }
     catch (error) {
         (0, logger_1.logerror)(error);

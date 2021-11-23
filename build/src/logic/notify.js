@@ -5,8 +5,8 @@ const state_1 = require("../data/state");
 const logger_1 = require("../util/logger");
 const reaction_1 = require("../util/reaction");
 async function start(interaction) {
-    const reply = await interaction.reply({ content: 'กด React ที่หมายเลขเพื่อรับการแจ้งเตือน เมื่อมีการเรียกตีบอสนั้น ๆ', fetchReply: true });
-    state_1.notifyStateData.set(interaction.guildId, new state_1.NotifyState(reply.id));
+    const reply = await interaction.reply({ content: '**:crossed_swords: กด React ที่หมายเลขเพื่อรับการแจ้งเตือน เมื่อมีการเรียกตีบอสนั้น ๆ**\n:warning: การแจ้งเตือนจะถูกเอาออกอัตโนมัติหลังจากได้รับอนุมัติให้ตีบอสที่กดแจ้งเตือนไว้\n หากต้องการได้รับแจ้งเตือนบอสเดิม ให้มากดรับแจ้งเตือนบอสเดิมอีกรอบ', fetchReply: true });
+    state_1.notifyStateData.set(interaction.guildId, new state_1.NotifyState(interaction.channelId, reply.id));
     void reactNumberOnMessage(reply);
 }
 exports.start = start;

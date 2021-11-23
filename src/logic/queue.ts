@@ -88,11 +88,29 @@ function printPlayer(player: GuildMember | string, comment: string | null) {
 }
 
 function queueNext(channel: TextChannel, count: number, queue: QueueState) {
+    const notify = NotifyState.getState(notifyStateData, channel.guildId);
+    if (notify) {
+        const hit = notify.boss[queue.boss - 1].filter(id => queue.playerQueueStates.some(p => p.userId === id));
+        hit.forEach(id => {
+            (channel.client.channels.cache.get(notify.channelId) as TextChannel)
+                ?.messages.cache.get(notify.messageId)
+                ?.reactions.cache.filter(r => r.emoji.name === reaction_numbers[queue.boss]).first()
+                ?.users.remove(id);
+        });
+        notify.boss[queue.boss - 1] = notify.boss[queue.boss - 1].filter(id => !queue.playerQueueStates.some(p => p.userId === id));
+    }
+
     queue.next(count);
     void queuePrintHeader(channel, queue);
-    const state = NotifyState.getState(notifyStateData, channel.guildId);
-    if (!state || state.boss[queue.boss - 1].length == 0) return;
-    void channel.send(state.boss[queue.boss - 1].map(userId => `<@${userId}>`).join(' ') + `\n บอส ${queue.boss} มาแล้วจ้า~`);
+
+    const ovf = queue.ovfPlayers.filter(p => p[1] === queue.boss);
+    if (ovf.length) {
+        void channel.send('**ผู้เล่นที่ให้ปล่อยไม้ ovf:** ' + ovf.map(p => `<@${p[0]}>`).join(' '));
+        queue.ovfPlayers = queue.ovfPlayers.filter(p => p[1] !== queue.boss);
+    }
+
+    if (!notify || notify.boss[queue.boss - 1].length == 0) return;
+    void channel.send('**ผู้เล่นที่กดแจ้งเตือนบอสนี้:** ' + notify.boss[queue.boss - 1].map(userId => `<@${userId}>`).join(' '));
 }
 
 function queuePrintHeader(channel: TextChannel, queue: QueueState) {

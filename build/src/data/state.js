@@ -19,12 +19,16 @@ class QueueState extends State {
     constructor(channelId, count, round, boss) {
         super();
         this.playerQueueStates = [];
+        this.ovfPlayers = [];
         this.channelId = channelId;
         this.count = count;
         this.round = round;
         this.boss = boss;
     }
     next(count) {
+        const ovf = this.playerQueueStates.find(p => p.boss);
+        if (ovf)
+            this.ovfPlayers.push([ovf.userId, ovf.boss]);
         this.playerQueueStates = [];
         this.count = count;
         this.boss++;
@@ -47,9 +51,10 @@ class PlayerQueueState {
 }
 exports.PlayerQueueState = PlayerQueueState;
 class NotifyState extends State {
-    constructor(messageId) {
+    constructor(channelId, messageId) {
         super();
         this.boss = [[], [], [], [], []];
+        this.channelId = channelId;
         this.messageId = messageId;
     }
 }

@@ -6,11 +6,12 @@ const data_1 = require("./data/data");
 const logger_1 = require("./util/logger");
 require('dotenv').config();
 const client = new discord_js_1.Client({ intents: [discord_js_1.Intents.FLAGS.GUILDS, discord_js_1.Intents.FLAGS.GUILD_MESSAGES, discord_js_1.Intents.FLAGS.GUILD_MESSAGE_REACTIONS] });
-void (async function startBot() {
+async function startBot() {
     await (0, commands_1.loadCommands)();
     await (0, data_1.loadData)();
     void client.login(process.env.TOKEN);
-})();
+}
+void startBot();
 client.once('ready', () => {
     (0, logger_1.loginfo)(`Logged in as ${client.user.tag}`);
     (0, logger_1.loginfo)('Ready!');

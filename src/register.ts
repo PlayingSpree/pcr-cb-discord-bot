@@ -27,6 +27,7 @@ void (async () => {
                     { body: commandData },
                 );
             }
+            loginfo('Successfully reloaded PRODUCTION commands.');
         }
 
         for (const command of secretCommands.values())
@@ -37,7 +38,7 @@ void (async () => {
             { body: commandData },
         );
 
-        loginfo('Successfully reloaded commands.');
+        loginfo('Successfully reloaded DEV commands.');
     }
     catch (error) {
         logerror(error);

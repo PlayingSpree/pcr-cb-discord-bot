@@ -6,11 +6,13 @@ require('dotenv').config();
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS] });
 
-void (async function startBot() {
+async function startBot() {
     await loadCommands();
     await loadData();
     void client.login(process.env.TOKEN);
-})();
+}
+
+void startBot();
 
 client.once('ready', () => {
     loginfo(`Logged in as ${client.user!.tag}`);
