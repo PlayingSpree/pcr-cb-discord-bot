@@ -1,5 +1,6 @@
 import { sheets } from '../service/sheets';
 import { GuildCache } from '../util/cache';
+import { loginfo } from '../util/logger';
 
 let day = 1;
 
@@ -38,6 +39,7 @@ class PlayerInfoCache extends GuildCache<SheetsPlayerInfo[]> {
 const playerInfoCache = new PlayerInfoCache();
 
 export async function setPlayerHit(guildId: string, discordId: string[], boss: number) {
+    loginfo('Try add player to sheets.');
     const playerInfo = await playerInfoCache.get(guildId);
     const hitInfo = await sheets.read(`API_Day${day}Hit`);
 
@@ -63,5 +65,6 @@ export async function setPlayerHit(guildId: string, discordId: string[], boss: n
         }
     }
     const res = await sheets.write(`API_Day${day}Hit`, data);
+    loginfo('Added player to sheets.');
     return res;
 }

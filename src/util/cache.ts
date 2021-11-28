@@ -1,5 +1,6 @@
 import Collection from '@discordjs/collection';
 import { Snowflake } from 'discord-api-types';
+import { loginfo } from './logger';
 
 export class CachedData<T> {
     cacheDate = Date.now();
@@ -16,6 +17,7 @@ export abstract class GuildCache<T> {
         const data = this.cache.get(guildId);
         if (data && (Date.now() - data.cacheDate) < this.expiredTime)
             return data.data;
+        loginfo('Cache missed. Try fetching data...');
         const fetchedData = await this.fetch(guildId);
         this.cache.set(guildId, new CachedData(fetchedData));
         return fetchedData;

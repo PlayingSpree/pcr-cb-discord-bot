@@ -6,7 +6,7 @@ import { reaction_numbers } from '../util/reaction';
 export async function start(interaction: CommandInteraction) {
     const reply = await interaction.reply({ content: '**:crossed_swords: กด React ที่หมายเลขเพื่อรับการแจ้งเตือน เมื่อมีการเรียกตีบอสนั้น ๆ**\n:warning: การแจ้งเตือนจะถูกเอาออกอัตโนมัติหลังจากได้รับอนุมัติให้ตีบอสที่กดแจ้งเตือนไว้\n หากต้องการได้รับแจ้งเตือนบอสเดิม ให้มากดรับแจ้งเตือนบอสเดิมอีกรอบ', fetchReply: true }) as Message;
 
-    notifyStateData.set(interaction.guildId!, new NotifyState(interaction.channelId, reply.id));
+    notifyStateData.set(interaction.guildId, new NotifyState(interaction.channelId, reply.id));
     void reactNumberOnMessage(reply);
 }
 
