@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.reactionEvent = exports.start = void 0;
 const discord_js_1 = require("discord.js");
+const sheets_1 = require("../data/sheets");
 const state_1 = require("../data/state");
 const logger_1 = require("../util/logger");
 const message_1 = require("../util/message");
@@ -72,7 +73,7 @@ async function reactionEvent(reaction, user, add) {
     else if (['✅', '⏸️', '⬆️', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣'].includes(reaction.emoji.name)) {
         state.playerQueueStates = state.playerQueueStates.filter(p => {
             if (p.messageId == reaction.message.id)
-                reactionChannel.messages.cache.get(p.replyId)?.delete();
+                void reactionChannel.messages.cache.get(p.replyId)?.delete();
             return p.messageId != reaction.message.id;
         });
         void queuePrint(reactionChannel, state);
@@ -89,13 +90,14 @@ function queueNext(channel, count, queue) {
     if (notify) {
         const hit = notify.boss[queue.boss - 1].filter(id => queue.playerQueueStates.some(p => p.userId === id));
         hit.forEach(id => {
-            channel.client.channels.cache.get(notify.channelId)
+            void channel.client.channels.cache.get(notify.channelId)
                 ?.messages.cache.get(notify.messageId)
                 ?.reactions.cache.filter(r => r.emoji.name === reaction_1.reaction_numbers[queue.boss]).first()
                 ?.users.remove(id);
         });
         notify.boss[queue.boss - 1] = notify.boss[queue.boss - 1].filter(id => !queue.playerQueueStates.some(p => p.userId === id));
     }
+    void (0, sheets_1.setPlayerHit)(channel.guildId, queue.playerQueueStates.map(p => p.userId), 1, queue.boss);
     queue.next(count);
     void queuePrintHeader(channel, queue);
     const ovf = queue.ovfPlayers.filter(p => p[1] === queue.boss);

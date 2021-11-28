@@ -8,6 +8,7 @@ export interface GachaData {
 }
 
 export interface GachaInfo {
+    date: number;
     luckString: [string, string][],
     luckRate: number[],
     gachaRate: number,

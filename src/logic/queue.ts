@@ -1,4 +1,5 @@
 import { CommandInteraction, GuildMember, MessageActionRow, MessageButton, MessageReaction, TextChannel, User } from 'discord.js';
+import { setPlayerHit } from '../data/sheets';
 import { queueStateData, PlayerQueueState, QueueState, NotifyState, notifyStateData } from '../data/state';
 import { loginfo } from '../util/logger';
 import { ephemeral, noMentions } from '../util/message';
@@ -14,7 +15,7 @@ export async function start(interaction: CommandInteraction, count: number, boss
     const state = new QueueState(interaction.channelId, count, round, boss);
     await queuePrintHeader(interaction.channel as TextChannel, state);
     state.messageId = (await interaction.channel!.send('ยังไม่มีผู้เล่นได้รับอนุมัติ')).id;
-    queueStateData.set(interaction.guildId!, state);
+    queueStateData.set(interaction.guildId, state);
 }
 
 export async function reactionEvent(reaction: MessageReaction, user: User, add: boolean) {
@@ -72,7 +73,7 @@ export async function reactionEvent(reaction: MessageReaction, user: User, add: 
     else if (['✅', '⏸️', '⬆️', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣'].includes(reaction.emoji.name)) {
         state.playerQueueStates = state.playerQueueStates.filter(p => {
             if (p.messageId == reaction.message.id)
-                reactionChannel.messages.cache.get(p.replyId)?.delete();
+                void reactionChannel.messages.cache.get(p.replyId)?.delete();
 
             return p.messageId != reaction.message.id;
         });
@@ -90,9 +91,10 @@ function printPlayer(player: GuildMember | string, comment: string | null) {
 function queueNext(channel: TextChannel, count: number, queue: QueueState) {
     const notify = NotifyState.getState(notifyStateData, channel.guildId);
     if (notify) {
+        // remove hit player from notify
         const hit = notify.boss[queue.boss - 1].filter(id => queue.playerQueueStates.some(p => p.userId === id));
         hit.forEach(id => {
-            (channel.client.channels.cache.get(notify.channelId) as TextChannel)
+            void (channel.client.channels.cache.get(notify.channelId) as TextChannel)
                 ?.messages.cache.get(notify.messageId)
                 ?.reactions.cache.filter(r => r.emoji.name === reaction_numbers[queue.boss]).first()
                 ?.users.remove(id);
@@ -100,6 +102,7 @@ function queueNext(channel: TextChannel, count: number, queue: QueueState) {
         notify.boss[queue.boss - 1] = notify.boss[queue.boss - 1].filter(id => !queue.playerQueueStates.some(p => p.userId === id));
     }
 
+    void setPlayerHit(channel.guildId, queue.playerQueueStates.map(p => p.userId), 1, queue.boss);
     queue.next(count);
     void queuePrintHeader(channel, queue);
 

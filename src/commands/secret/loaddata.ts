@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { loadData } from '../../data/data';
-import { getGacha } from '../../logic/gachatest';
+import { getGacha } from '../../logic/gacha';
 import { Command } from '../commands';
 
 export const command: Command = {

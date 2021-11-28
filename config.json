@@ -17,5 +17,8 @@
         "clearchat": {
             "confirmTime": 30000
         }
+    },
+    "serviceConfig": {
+        "sheetId": "1qOOF7rFMsA9yabmSuo7MvFFKAY3FeNJaPdlVBLXqJVA"
     }
 }

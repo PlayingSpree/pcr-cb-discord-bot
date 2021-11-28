@@ -2,8 +2,12 @@ import { MessageEmbed } from 'discord.js';
 import { gachaData } from '../data/data';
 
 export function getGacha(game: string | null) {
-    if (!game || !(game in gachaData))
-        game = 'pcr';
+    if (!game || !(game in gachaData)) {
+        if (gachaData['event'].date > Date.now())
+            game = 'event';
+        else
+            game = 'pcr';
+    }
 
     const luckString = gachaData[game].luckString;
     const luckRate = gachaData[game].luckRate;
