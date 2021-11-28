@@ -1,6 +1,6 @@
 import { google, sheets_v4 } from 'googleapis';
 import { serviceConfig } from '../../config.json';
-import { loginfo } from '../util/logger';
+import { logerror, loginfo } from '../util/logger';
 
 class SheetsService {
     private auth;
@@ -23,29 +23,43 @@ class SheetsService {
     }
 
     async read(range: string) {
-        const readData = await this.googleSheetsInstance.spreadsheets.values.get({
-            auth: this.auth,
-            spreadsheetId: this.spreadsheetId,
-            range: range,
-        });
+        try {
+            const readData = await this.googleSheetsInstance.spreadsheets.values.get({
+                auth: this.auth,
+                spreadsheetId: this.spreadsheetId,
+                range: range,
+            });
 
-        loginfo(`Sheets - Read ${range} - Response: ${readData.status}`);
-        return readData;
+            loginfo(`Sheets - Read ${range} - Response: ${readData.status}`);
+            return readData.data.values;
+        }
+        catch (e) {
+            logerror(`Sheets - Read ${range} - Error`);
+            logerror(e);
+            return [];
+        }
     }
 
     async write(range: string, values: string[][]) {
-        const readData = await this.googleSheetsInstance.spreadsheets.values.update({
-            auth: this.auth,
-            spreadsheetId: this.spreadsheetId,
-            range: range,
-            valueInputOption: 'USER_ENTERED',
-            requestBody: {
-                values: values,
-            }
-        });
+        try {
+            const readData = await this.googleSheetsInstance.spreadsheets.values.update({
+                auth: this.auth,
+                spreadsheetId: this.spreadsheetId,
+                range: range,
+                valueInputOption: 'USER_ENTERED',
+                requestBody: {
+                    values: values,
+                }
+            });
 
-        loginfo(`Sheets - Write ${range} - Response: ${readData.status}`);
-        return readData;
+            loginfo(`Sheets - Write ${range} - Response: ${readData.status}`);
+            return readData;
+        }
+        catch (e) {
+            logerror(`Sheets - Write ${range} - Error`);
+            logerror(e);
+            return [];
+        }
     }
 }
 

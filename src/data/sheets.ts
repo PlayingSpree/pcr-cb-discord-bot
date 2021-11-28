@@ -1,6 +1,8 @@
 import { sheets } from '../service/sheets';
 import { GuildCache } from '../util/cache';
 
+let day = 1;
+
 class SheetsPlayerInfo {
     index: number;
     id: string;
@@ -18,25 +20,32 @@ class PlayerInfoCache extends GuildCache<SheetsPlayerInfo[]> {
     async fetch(guildId: string) {
         const playerInfoCache = [];
         const res = await sheets.read('API_PlayerInfo');
-        for (const [index, player] of (res.data.values as (string | undefined)[][]).entries()) {
+        for (const [index, player] of (res as (string | undefined)[][]).entries()) {
             if (!player[0] || !player[1])
                 continue;
             playerInfoCache.push(new SheetsPlayerInfo(index, player[0], player[1], player[3]));
         }
+
+        // TODO Refactor
+        const setting = await sheets.read('API_Setting');
+        if (setting)
+            day = Number(setting[0][0]);
+
         return playerInfoCache;
     }
 }
 
 const playerInfoCache = new PlayerInfoCache();
 
-export async function setPlayerHit(guildId: string, discordId: string[], day: number, boss: number) {
-    const [playerInfo, readRes] = await Promise.all([playerInfoCache.get(guildId), sheets.read(`API_Day${day}Hit`)]);
+export async function setPlayerHit(guildId: string, discordId: string[], boss: number) {
+    const playerInfo = await playerInfoCache.get(guildId);
+    const hitInfo = await sheets.read(`API_Day${day}Hit`);
 
     const count = [];
     for (let i = 0; i < 30; i++) {
-        if (readRes.data.values) {
-            const firstNull = readRes.data.values[i]?.findIndex(p => !p);
-            count[i] = (firstNull == -1 ? readRes.data.values[i]?.length : firstNull) || 0;
+        if (hitInfo) {
+            const firstNull = hitInfo[i]?.findIndex(p => !p);
+            count[i] = (firstNull == -1 ? hitInfo[i]?.length : firstNull) || 0;
         }
         else {
             count[i] = 0;
@@ -49,7 +58,6 @@ export async function setPlayerHit(guildId: string, discordId: string[], day: nu
         const player = playerInfo?.find(p => p.index == i);
         const hit = discordId?.find(id => id == player?.discordId);
         if (hit) {
-            console.log(count[i]);
             const index = (count[i] < 2) ? count[i] : 2;
             data[i][index] = `บอส${boss}`;
         }

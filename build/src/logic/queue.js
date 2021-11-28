@@ -97,7 +97,7 @@ function queueNext(channel, count, queue) {
         });
         notify.boss[queue.boss - 1] = notify.boss[queue.boss - 1].filter(id => !queue.playerQueueStates.some(p => p.userId === id));
     }
-    void (0, sheets_1.setPlayerHit)(channel.guildId, queue.playerQueueStates.map(p => p.userId), 1, queue.boss);
+    void (0, sheets_1.setPlayerHit)(channel.guildId, queue.playerQueueStates.map(p => p.userId), queue.boss);
     queue.next(count);
     void queuePrintHeader(channel, queue);
     const ovf = queue.ovfPlayers.filter(p => p[1] === queue.boss);

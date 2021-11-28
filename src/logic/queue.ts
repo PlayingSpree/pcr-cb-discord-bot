@@ -102,7 +102,7 @@ function queueNext(channel: TextChannel, count: number, queue: QueueState) {
         notify.boss[queue.boss - 1] = notify.boss[queue.boss - 1].filter(id => !queue.playerQueueStates.some(p => p.userId === id));
     }
 
-    void setPlayerHit(channel.guildId, queue.playerQueueStates.map(p => p.userId), 1, queue.boss);
+    void setPlayerHit(channel.guildId, queue.playerQueueStates.map(p => p.userId), queue.boss);
     queue.next(count);
     void queuePrintHeader(channel, queue);
 

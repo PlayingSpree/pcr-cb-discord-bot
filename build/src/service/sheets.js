@@ -19,26 +19,40 @@ class SheetsService {
         (0, logger_1.loginfo)('Sheets Instance Created.');
     }
     async read(range) {
-        const readData = await this.googleSheetsInstance.spreadsheets.values.get({
-            auth: this.auth,
-            spreadsheetId: this.spreadsheetId,
-            range: range,
-        });
-        (0, logger_1.loginfo)(`Sheets - Read ${range} - Response: ${readData.status}`);
-        return readData;
+        try {
+            const readData = await this.googleSheetsInstance.spreadsheets.values.get({
+                auth: this.auth,
+                spreadsheetId: this.spreadsheetId,
+                range: range,
+            });
+            (0, logger_1.loginfo)(`Sheets - Read ${range} - Response: ${readData.status}`);
+            return readData.data.values;
+        }
+        catch (e) {
+            (0, logger_1.logerror)(`Sheets - Read ${range} - Error`);
+            (0, logger_1.logerror)(e);
+            return [];
+        }
     }
     async write(range, values) {
-        const readData = await this.googleSheetsInstance.spreadsheets.values.update({
-            auth: this.auth,
-            spreadsheetId: this.spreadsheetId,
-            range: range,
-            valueInputOption: 'USER_ENTERED',
-            requestBody: {
-                values: values,
-            }
-        });
-        (0, logger_1.loginfo)(`Sheets - Write ${range} - Response: ${readData.status}`);
-        return readData;
+        try {
+            const readData = await this.googleSheetsInstance.spreadsheets.values.update({
+                auth: this.auth,
+                spreadsheetId: this.spreadsheetId,
+                range: range,
+                valueInputOption: 'USER_ENTERED',
+                requestBody: {
+                    values: values,
+                }
+            });
+            (0, logger_1.loginfo)(`Sheets - Write ${range} - Response: ${readData.status}`);
+            return readData;
+        }
+        catch (e) {
+            (0, logger_1.logerror)(`Sheets - Write ${range} - Error`);
+            (0, logger_1.logerror)(e);
+            return [];
+        }
     }
 }
 exports.sheets = new SheetsService();
