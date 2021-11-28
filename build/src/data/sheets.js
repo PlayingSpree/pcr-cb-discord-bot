@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.setPlayerHit = void 0;
 const sheets_1 = require("../service/sheets");
 const cache_1 = require("../util/cache");
+const logger_1 = require("../util/logger");
 let day = 1;
 class SheetsPlayerInfo {
     constructor(index, id, name, discordId) {
@@ -29,6 +30,7 @@ class PlayerInfoCache extends cache_1.GuildCache {
 }
 const playerInfoCache = new PlayerInfoCache();
 async function setPlayerHit(guildId, discordId, boss) {
+    (0, logger_1.loginfo)('Try add player to sheets.');
     const playerInfo = await playerInfoCache.get(guildId);
     const hitInfo = await sheets_1.sheets.read(`API_Day${day}Hit`);
     const count = [];
@@ -52,6 +54,7 @@ async function setPlayerHit(guildId, discordId, boss) {
         }
     }
     const res = await sheets_1.sheets.write(`API_Day${day}Hit`, data);
+    (0, logger_1.loginfo)('Added player to sheets.');
     return res;
 }
 exports.setPlayerHit = setPlayerHit;

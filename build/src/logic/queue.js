@@ -18,6 +18,7 @@ async function start(interaction, count, boss, round) {
     await queuePrintHeader(interaction.channel, state);
     state.messageId = (await interaction.channel.send('ยังไม่มีผู้เล่นได้รับอนุมัติ')).id;
     state_1.queueStateData.set(interaction.guildId, state);
+    (0, logger_1.loginfo)(`Queue start at ${interaction.guild.name} in channel ${interaction.channel.name}`);
 }
 exports.start = start;
 async function reactionEvent(reaction, user, add) {
@@ -38,22 +39,27 @@ async function reactionEvent(reaction, user, add) {
         if (reaction.emoji.name === '✅') {
             const reply = await reactionChannel.send(`✅ ${printPlayer(player, comment)} ตีได้เลยจ้า~`);
             state.playerQueueStates.push(new state_1.PlayerQueueState(player.id, reaction.message.id, reply.id, [], reaction.emoji.name, comment ? comment.length > 32 ? null : comment : null));
+            (0, logger_1.loginfo)(`Add ${player.displayName} to queue with status ✅.`);
             void queuePrint(reactionChannel, state);
         }
         else if (reaction.emoji.name === '⏸️') {
             const reply = await reactionChannel.send(`⏸️ ${printPlayer(player, comment)} พอสรอ ovf แล้วจบก่อน ไม่ต้องถือไม้นะ`);
             state.playerQueueStates.push(new state_1.PlayerQueueState(hitter.id, reaction.message.id, reply.id, ['pause'], reaction.emoji.name, comment ? comment.length > 32 ? null : comment : null));
+            (0, logger_1.loginfo)(`Add ${player.displayName} to queue with status ⏸️.`);
             void queuePrint(reactionChannel, state);
         }
         else if (reaction.emoji.name === '⬆️') {
             const reply = await reactionChannel.send(`⬆️ ${printPlayer(player, comment)} พอสรอ ovf แล้วจบทีหลัง ถือไม้ รอเรียกปล่อยน้า~`);
             state.playerQueueStates.push(new state_1.PlayerQueueState(hitter.id, reaction.message.id, reply.id, ['pause', 'hold'], reaction.emoji.name, comment ? comment.length > 32 ? null : comment : null));
+            (0, logger_1.loginfo)(`Add ${player.displayName} to queue with status ⬆️.`);
             void queuePrint(reactionChannel, state);
         }
         else if (reaction.emoji.name === '⏭️') {
             const collector = await reactionChannel.send({ content: 'เลือกไม้ที่ต้องการในรอบถัดไป', components: countRows });
+            (0, logger_1.loginfo)('Sent queue next collector.');
             collector.awaitMessageComponent({ componentType: 'BUTTON', time: 864000000 })
                 .then(interaction => {
+                (0, logger_1.loginfo)(`queue next collector - Collected: ${interaction.customId}`);
                 void collector.delete();
                 void queueNext(reactionChannel, Number.parseInt(interaction.customId), state);
             })
@@ -66,14 +72,18 @@ async function reactionEvent(reaction, user, add) {
                 const playerState = new state_1.PlayerQueueState(hitter.id, reaction.message.id, reply.id, ['pause', 'hold'], reaction.emoji.name, comment ? comment.length > 32 ? null : comment : null);
                 playerState.boss = boss;
                 state.playerQueueStates.push(playerState);
+                (0, logger_1.loginfo)(`Add ${player.displayName} to queue with status ${reaction.emoji.name}.`);
                 void queuePrint(reactionChannel, state);
             }
         }
     }
     else if (['✅', '⏸️', '⬆️', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣'].includes(reaction.emoji.name)) {
+        (0, logger_1.loginfo)(`Try remove ${player.displayName} from queue.`);
         state.playerQueueStates = state.playerQueueStates.filter(p => {
-            if (p.messageId == reaction.message.id)
+            if (p.messageId == reaction.message.id) {
+                (0, logger_1.loginfo)(`Removed ${player.displayName} with status ${p.react} from queue.`);
                 void reactionChannel.messages.cache.get(p.replyId)?.delete();
+            }
             return p.messageId != reaction.message.id;
         });
         void queuePrint(reactionChannel, state);
@@ -88,6 +98,7 @@ function printPlayer(player, comment) {
 function queueNext(channel, count, queue) {
     const notify = state_1.NotifyState.getState(state_1.notifyStateData, channel.guildId);
     if (notify) {
+        (0, logger_1.loginfo)('Try remove hit player from notify.');
         const hit = notify.boss[queue.boss - 1].filter(id => queue.playerQueueStates.some(p => p.userId === id));
         hit.forEach(id => {
             void channel.client.channels.cache.get(notify.channelId)
@@ -102,11 +113,13 @@ function queueNext(channel, count, queue) {
     void queuePrintHeader(channel, queue);
     const ovf = queue.ovfPlayers.filter(p => p[1] === queue.boss);
     if (ovf.length) {
+        (0, logger_1.loginfo)('Calling ovf player.');
         void channel.send('**ผู้เล่นที่ให้ปล่อยไม้ ovf:** ' + ovf.map(p => `<@${p[0]}>`).join(' '));
         queue.ovfPlayers = queue.ovfPlayers.filter(p => p[1] !== queue.boss);
     }
     if (!notify || notify.boss[queue.boss - 1].length == 0)
         return;
+    (0, logger_1.loginfo)('Calling notify player.');
     void channel.send('**ผู้เล่นที่กดแจ้งเตือนบอสนี้:** ' + notify.boss[queue.boss - 1].map(userId => `<@${userId}>`).join(' '));
 }
 function queuePrintHeader(channel, queue) {
@@ -115,6 +128,7 @@ function queuePrintHeader(channel, queue) {
 =====================================`);
 }
 function queuePrint(channel, queue) {
+    (0, logger_1.loginfo)('Try printing queue.');
     const message = channel.messages.cache.get(queue.messageId);
     if (queue.playerQueueStates.length) {
         const unpausedPlayer = queue.playerQueueStates.filter(p => !p.status.includes('pause'));
