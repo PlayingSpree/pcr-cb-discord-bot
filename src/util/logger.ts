@@ -8,6 +8,7 @@ export function loginfo(message: string, ...optionalParams: never[]) {
 }
 
 export function logerror(message: string | unknown, ...optionalParams: never[]) {
-    message = prefixDate(message as string);
+    if (typeof message === 'string')
+        message = prefixDate(message);
     console.error(message, ...optionalParams);
 }

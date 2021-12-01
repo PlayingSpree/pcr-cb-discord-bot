@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { getGacha } from '../../logic/gachatest';
+import { getGacha } from '../../logic/gacha';
 import { Command } from '../commands';
 
 export const command: Command = {

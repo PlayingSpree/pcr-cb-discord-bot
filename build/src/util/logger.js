@@ -10,7 +10,8 @@ function loginfo(message, ...optionalParams) {
 }
 exports.loginfo = loginfo;
 function logerror(message, ...optionalParams) {
-    message = prefixDate(message);
+    if (typeof message === 'string')
+        message = prefixDate(message);
     console.error(message, ...optionalParams);
 }
 exports.logerror = logerror;

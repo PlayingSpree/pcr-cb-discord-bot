@@ -4,8 +4,12 @@ exports.getGacha = void 0;
 const discord_js_1 = require("discord.js");
 const data_1 = require("../data/data");
 function getGacha(game) {
-    if (!game || !(game in data_1.gachaData))
-        game = 'pcr';
+    if (!game || !(game in data_1.gachaData)) {
+        if (data_1.gachaData['event'].date > Date.now())
+            game = 'event';
+        else
+            game = 'pcr';
+    }
     const luckString = data_1.gachaData[game].luckString;
     const luckRate = data_1.gachaData[game].luckRate;
     const gachaRate = data_1.gachaData[game].gachaRate;
@@ -34,4 +38,4 @@ function getGacha(game) {
     return embed;
 }
 exports.getGacha = getGacha;
-//# sourceMappingURL=gachatest.js.map
+//# sourceMappingURL=gacha.js.map
