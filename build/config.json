@@ -16,6 +16,9 @@
     "commandConfig": {
         "clearchat": {
             "confirmTime": 30000
+        },
+        "overkill": {
+            "timeGain": 20
         }
     },
     "serviceConfig": {

@@ -28,7 +28,7 @@ client.on('interactionCreate', async (interaction) => {
         catch (error) {
             (0, logger_1.logerror)(error);
             if (interaction.replied)
-                interaction.channel?.send('มีข้อผิดพลาดระหว่างการทำคำสั่ง');
+                void interaction.channel?.send('มีข้อผิดพลาดระหว่างการทำคำสั่ง');
             else
                 await interaction.reply({ content: 'มีข้อผิดพลาดระหว่างการทำคำสั่ง', ephemeral: true });
         }
@@ -40,7 +40,7 @@ client.on('interactionCreate', async (interaction) => {
         }
         else if (interaction.customId == '/clearchat') {
             await interaction.message.delete();
-            commands_1.commands.get('clearchat')?.executeButton?.(interaction);
+            void commands_1.commands.get('clearchat')?.executeButton?.(interaction);
         }
     }
 });

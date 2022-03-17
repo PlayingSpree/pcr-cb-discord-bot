@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.reactionEvent = exports.start = void 0;
 const discord_js_1 = require("discord.js");
-const sheets_1 = require("../data/sheets");
 const state_1 = require("../data/state");
 const logger_1 = require("../util/logger");
 const message_1 = require("../util/message");
@@ -108,7 +107,6 @@ function queueNext(channel, count, queue) {
         });
         notify.boss[queue.boss - 1] = notify.boss[queue.boss - 1].filter(id => !queue.playerQueueStates.some(p => p.userId === id));
     }
-    void (0, sheets_1.setPlayerHit)(channel.guildId, queue.playerQueueStates.map(p => p.userId), queue.boss);
     queue.next(count);
     void queuePrintHeader(channel, queue);
     const ovf = queue.ovfPlayers.filter(p => p[1] === queue.boss);
