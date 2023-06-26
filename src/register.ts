@@ -22,6 +22,7 @@ void (async () => {
         if (pro) {
             loginfo('====== ON PRODUCTION ======');
             for (const guildId of register.guildId) {
+                loginfo(`Registered: ${guildId}`);
                 await rest.put(
                     Routes.applicationGuildCommands(clientId.pro, guildId),
                     { body: commandData },

@@ -18,7 +18,8 @@ void (async () => {
         if (pro) {
             (0, logger_1.loginfo)('====== ON PRODUCTION ======');
             for (const guildId of config_json_1.register.guildId) {
-                await rest.put(v9_1.Routes.applicationGuildCommands(config_json_1.clientId.pro, guildId), { body: commandData });
+                (0, logger_1.loginfo)(`Registered: ${guildId}`);
+                console.log(await rest.put(v9_1.Routes.applicationGuildCommands(config_json_1.clientId.pro, guildId), { body: commandData }));
             }
             (0, logger_1.loginfo)('Successfully reloaded PRODUCTION commands.');
         }

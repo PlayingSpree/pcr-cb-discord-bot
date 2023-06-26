@@ -4,7 +4,8 @@
   "description": "Discord bot for princess connect re:dive clan discord server",
   "main": "build/src/index.js",
   "scripts": {
-    "start": "node out/src/index.js",
+    "start": "node build/src/index.js",
+    "startDev": "node out/src/index.js",
     "watch": "tsc -p tsconfig.json -w",
     "build": "tsc -p tsconfig.json --outDir build",
     "register": "node out/src/register.js",
@@ -30,6 +31,7 @@
     "googleapis": "^91.0.0"
   },
   "devDependencies": {
+    "@flydotio/dockerfile": "^0.2.16",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^8.0.1",
