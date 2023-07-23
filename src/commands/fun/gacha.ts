@@ -10,7 +10,7 @@ export const command: Command = {
             option.setName('type')
                 .setDescription('เลือกประเภทกาชา')
                 .setRequired(false)
-                .addChoices([['pickup', 'pickup'], ['bluearchive', 'ba']])) as SlashCommandBuilder,
+                .addChoices([['bluearchive', 'ba']])) as SlashCommandBuilder,
 
     execute(interaction) {
         void interaction.reply({ embeds: [getGacha(interaction.options.getString('type'))] });
